@@ -1,2 +1,5 @@
 openai
 tiktoken
+django
+djangorestframework
+crispy-bootstrap5
