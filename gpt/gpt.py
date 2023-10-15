@@ -19,7 +19,6 @@ def create_question(content):
 
 def create_summary(long_text):
     """Creates a short summary of a long piece of text."""
-    # paragraphs = long_text.split('\n')
     messages = [
         {"role": "system", "content": "You are a summarizer AI. Your summaries should be shorter than original texts and should contain all essential information. Please summarize the following text:"},
         {"role": "user", "content": """A neural network (NN), in the case of artificial neurons called artificial neural network (ANN) or simulated neural network (SNN), is an interconnected group of natural or artificial neurons that uses a mathematical or computational model for information processing based on a connectionistic approach to computation. In most cases, an ANN is an adaptive system that changes its structure based on external or internal information that flows through the network.
@@ -35,23 +34,12 @@ def create_summary(long_text):
         {"role": "user", "content": long_text}
     ]
 
-    # for i, paragraph in enumerate(paragraphs):
-    #     messages.append({"role": "user", "content": paragraph})
-    #     print(f"Paragraph {i}: {len(paragraph.split(' '))} words")
-
-    # summaries = []
-    # for i in range(1, len(messages)):
-    #     response = generate_response(messages[:i + 1])
-    #     summaries.append(response)
-
     return generate_response(messages)
-
 
 def generate_response(messages):
     """Generate a response using the ChatGPT API."""
     chat_completion = openai.ChatCompletion.create(model=model, messages=messages)
     return chat_completion['choices'][0]['message']['content']
-
 
 def num_tokens_from_messages(messages, model):
     """Returns the number of tokens used by a list of messages."""
@@ -72,16 +60,3 @@ def num_tokens_from_messages(messages, model):
     else:
         raise NotImplementedError(f"""num_tokens_from_messages() is not presently implemented for model {model}.
     See https://github.com/openai/openai-python/blob/main/chatml.md for information on how messages are converted to tokens.""")
-
-
-
-long_text = """History The preliminary theoretical base for contemporary neural networks was independently proposed by Alexander Bain[4] (1873) and William James[5] (1890). In their work, both thoughts and body activity resulted from interactions among neurons within the brain.
-For Bain,[4] every activity led to the firing of a certain set of neurons. When activities were repeated, the connections between those neurons strengthened. According to his theory, this repetition was what led to the formation of memory. The general scientific community at the time was skeptical of Bain's[4] theory because it required what appeared to be an inordinate number of neural connections within the brain. It is now apparent that the brain is exceedingly complex and that the same brain “wiring” can handle multiple problems and inputs.
-James'[5] theory was similar to Bain's,[4] however, he suggested that memories and actions resulted from electrical currents flowing among the neurons in the brain. His model, by focusing on the flow of electrical currents, did not require individual neural connections for each memory or action.
-C. S. Sherrington[7] (1898) conducted experiments to test James' theory. He ran electrical currents down the spinal cords of rats. However, instead of demonstrating an increase in electrical current as projected by James, Sherrington found that the electrical current strength decreased as the testing continued over time. Importantly, this work led to the discovery of the concept of habituation.
-Wilhelm Lenz (1920) and Ernst Ising (1925) created and analyzed the Ising model[8] which is essentially a non-learning artificial recurrent neural network (RNN) consisting of neuron-like threshold elements.[9] In 1972, Shun'ichi Amari made this architecture adaptive.[10][9] His learning RNN was popularised by John Hopfield in 1982.[11] McCulloch and Pitts[12] (1943) also created a computational model for neural networks based on mathematics and algorithms. They called this model threshold logic. These early models paved the way for neural network research to split into two distinct approaches. One approach focused on biological processes in the brain and the other focused on the application of neural networks to artificial intelligence."""
-
-summaries = create_summary(long_text)
-print(summaries)
-# for i, summary in enumerate(summaries):
-#     print(f"Summary {i + 1}, {len(summary.split(' '))} words: {summary}")
