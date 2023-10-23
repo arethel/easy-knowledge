@@ -1,0 +1,111 @@
+.page {
+  background-color: var(--collection-1-block2);
+  border-radius: 12px;
+  height: 132px;
+  overflow: hidden;
+  position: relative;
+  width: 192px;
+}
+
+.page .text-wrapper {
+  color: #ffffff;
+  font-family: var(--main-font-font-family);
+  font-size: var(--main-font-font-size);
+  font-style: var(--main-font-font-style);
+  font-weight: var(--main-font-font-weight);
+  left: 64px;
+  letter-spacing: var(--main-font-letter-spacing);
+  line-height: var(--main-font-line-height);
+  position: absolute;
+  top: 3px;
+}
+
+.page .icon-horizontal {
+  height: 5px;
+  left: 13px;
+  position: absolute;
+  top: 17px;
+  width: 17px;
+}
+
+.page .icon-cross {
+  height: 15px;
+  left: 169px;
+  position: absolute;
+  top: 12px;
+  width: 15px;
+}
+
+.page .props {
+  height: 92px;
+  left: 5px;
+  overflow: hidden;
+  position: absolute;
+  top: 35px;
+  width: 183px;
+}
+
+.page .div {
+  color: var(--collection-1-font-1);
+  font-family: var(--smaller-font-font-family);
+  font-size: var(--smaller-font-font-size);
+  font-style: var(--smaller-font-font-style);
+  font-weight: var(--smaller-font-font-weight);
+  left: 61px;
+  letter-spacing: var(--smaller-font-letter-spacing);
+  line-height: var(--smaller-font-line-height);
+  position: absolute;
+  top: 67px;
+  white-space: nowrap;
+}
+
+.page .text-wrapper-2 {
+  color: var(--collection-1-font-1);
+  font-family: var(--smaller-font-font-family);
+  font-size: var(--smaller-font-font-size);
+  font-style: var(--smaller-font-font-style);
+  font-weight: var(--smaller-font-font-weight);
+  left: 64px;
+  letter-spacing: var(--smaller-font-letter-spacing);
+  line-height: var(--smaller-font-line-height);
+  position: absolute;
+  top: 38px;
+  white-space: nowrap;
+}
+
+.page .chapters {
+  height: 31px;
+  left: 0;
+  position: absolute;
+  top: 7px;
+  width: 185px;
+}
+
+.page .overlap-group,.page .overlap-group-hovered{
+  background-color: rgba(45, 52, 62, 0);
+  border-radius: 12px;
+  height: 31px;
+  position: relative;
+  width: 183px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.page .overlap-group-hovered {
+  background-color: var(--collection-1-bg);
+}
+
+.page .text-wrapper-3 {
+  color: var(--collection-1-font-1);
+  font-family: var(--smaller-font-font-family);
+  font-size: var(--smaller-font-font-size);
+  font-style: var(--smaller-font-font-style);
+  font-weight: var(--smaller-font-font-weight);
+  letter-spacing: var(--smaller-font-letter-spacing);
+  line-height: var(--smaller-font-line-height);
+  position: absolute;
+  white-space: nowrap;
+}

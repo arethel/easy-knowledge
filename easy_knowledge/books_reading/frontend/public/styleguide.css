@@ -1,0 +1,33 @@
+:root {
+  --big-font-font-family: "Inter-Regular", Helvetica;
+  --big-font-font-size: 32px;
+  --big-font-font-style: normal;
+  --big-font-font-weight: 400;
+  --big-font-letter-spacing: 0px;
+  --big-font-line-height: normal;
+  --collection-1-bg: rgba(34, 40, 49, 1);
+  --collection-1-block2: rgba(45, 52, 62, 1);
+  --collection-1-blocks: rgba(57, 62, 70, 1);
+  --collection-1-font-1: rgba(92, 126, 146, 1);
+  --collection-1-font-2: rgba(238, 238, 238, 1);
+  --collection-1-gold: rgba(255, 187, 92, 1);
+  --collection-1-red: rgba(224, 112, 112, 1);
+  --main-font-font-family: "Inter-Regular", Helvetica;
+  --main-font-font-size: 22px;
+  --main-font-font-style: normal;
+  --main-font-font-weight: 400;
+  --main-font-letter-spacing: 0px;
+  --main-font-line-height: normal;
+  --smaller-font-font-family: "Inter-Regular", Helvetica;
+  --smaller-font-font-size: 20px;
+  --smaller-font-font-style: normal;
+  --smaller-font-font-weight: 400;
+  --smaller-font-letter-spacing: 0px;
+  --smaller-font-line-height: normal;
+  --very-big-font-font-family: "Inter-Regular", Helvetica;
+  --very-big-font-font-size: 64px;
+  --very-big-font-font-style: normal;
+  --very-big-font-font-weight: 400;
+  --very-big-font-letter-spacing: 0px;
+  --very-big-font-line-height: normal;
+}
