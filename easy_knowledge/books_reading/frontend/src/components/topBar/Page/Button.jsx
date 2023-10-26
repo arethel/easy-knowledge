@@ -1,24 +1,18 @@
-import React, { useState } from "react";
+import React from "react";
 import "./style.css";
 
 
 export const Button = (props) => {
     
-    const [isHovered, setIsHovered] = useState(false);
-    const handleMouseEnter = () => {
-        setIsHovered(true);
-    };
-    const handleMouseLeave = () => {
-        setIsHovered(false);
-    };
-
-const overlapGroupClass = isHovered ? 'overlap-group-hovered' : 'overlap-group';
-
+    const handleClick = (e) => {
+        e.stopPropagation();
+        if (props.onClick) {
+          props.onClick(e);
+        }
+      };
     
     return (
-        <div className={overlapGroupClass}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}>
+        <div className='overlap-group' onClick={handleClick}>
             <div className="text-wrapper-3">{props.string}</div>
         </div>
     )

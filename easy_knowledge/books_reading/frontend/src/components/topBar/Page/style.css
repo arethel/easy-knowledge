@@ -1,14 +1,39 @@
 .page {
-  background-color: var(--collection-1-block2);
+  user-select: none;
+  background-color: rgba(0, 0, 0, 0);
   border-radius: 12px;
-  height: 132px;
+  height: 34px;
   overflow: hidden;
   position: relative;
   width: 192px;
+  transition: all 0.3s ease;
 }
 
-.page .text-wrapper {
-  color: #ffffff;
+.page.active-page {
+  background-color: var(--collection-1-block2);
+}
+
+.page:hover {
+  background-color: var(--collection-1-block2);
+}
+
+.page-buttons{
+  width: 192px;
+  height: 34px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+}
+
+.page.expanded {
+  height: 132px;
+}
+
+.page .book-name {
+  color: var(--collection-1-font-2);
   font-family: var(--main-font-font-family);
   font-size: var(--main-font-font-size);
   font-style: var(--main-font-font-style);
@@ -18,21 +43,54 @@
   line-height: var(--main-font-line-height);
   position: absolute;
   top: 3px;
+  cursor: pointer;
 }
 
-.page .icon-horizontal {
-  height: 5px;
-  left: 13px;
+.under-icon-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 25px;
+  height: 25px;
+  background-color: rgba(0, 0, 0, 0);
+  border-radius: 50%;
+  cursor: pointer;
   position: absolute;
-  top: 17px;
+  top: 50%;
+  transform: translateY(-50%);
+  visibility: hidden;
+  opacity: 0.0;
+  transition: all 0.3s ease;
+}
+
+.page.active-page .under-icon-circle{
+  visibility: visible;
+  opacity: 1.0;
+}
+
+.under-icon-circle:hover {
+  background-color: var(--collection-1-bg);
+}
+
+.under-icon-circle.dots{
+  left: 8px;
+}
+
+.under-icon-circle.cross{
+  right: 8px;
+}
+
+.icon{
+  cursor: pointer;
+}
+
+.icon.dots{
+  height: 5px;
   width: 17px;
 }
 
-.page .icon-cross {
+.icon.cross {
   height: 15px;
-  left: 169px;
-  position: absolute;
-  top: 12px;
   width: 15px;
 }
 
@@ -81,7 +139,7 @@
   width: 185px;
 }
 
-.page .overlap-group,.page .overlap-group-hovered{
+.page .overlap-group{
   background-color: rgba(45, 52, 62, 0);
   border-radius: 12px;
   height: 31px;
@@ -92,9 +150,10 @@
   align-items: center;
   cursor: pointer;
   user-select: none;
+  transition: all 0.1s ease;
 }
 
-.page .overlap-group-hovered {
+.page .overlap-group:hover {
   background-color: var(--collection-1-bg);
 }
 
