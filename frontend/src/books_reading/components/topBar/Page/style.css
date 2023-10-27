@@ -82,6 +82,7 @@
 
 .icon{
   cursor: pointer;
+  pointer-events: none;
 }
 
 .icon.dots{

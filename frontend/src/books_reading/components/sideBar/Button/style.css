@@ -1,0 +1,44 @@
+.button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--collection-1-blocks);
+    border-radius: 12px;
+    height: 38px;
+    width: 185px;
+    margin: 10px;
+    position: relative;
+}
+
+.button.prev-folder {
+    background-color: var(--collection-1-bg);
+}
+
+.text {
+    color: var(--collection-1-font-2);
+    font-family: var(--main-font-font-family);
+    font-size: var(--main-font-font-size);
+    font-style: var(--main-font-font-style);
+    font-weight: var(--main-font-font-weight);
+    letter-spacing: var(--main-font-letter-spacing);
+    line-height: var(--main-font-line-height);
+}
+
+.text.prev-folder {
+    color: var(--collection-1-font-1);
+    font-family: var(--smaller-font-font-family);
+    font-size: var(--smaller-font-font-size);
+    font-style: var(--smaller-font-font-style);
+    font-weight: var(--smaller-font-font-weight);
+    letter-spacing: var(--smaller-font-letter-spacing);
+    line-height: var(--smaller-font-line-height);
+}
+
+.side-bar .icon-horizontal {
+    right: 15px;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 7px;
+    width: 24px;
+  }

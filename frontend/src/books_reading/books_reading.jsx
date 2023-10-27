@@ -1,22 +1,23 @@
 import React from "react";
-import ReactDOMClient from "react-dom/client";
 
 import { TopBar } from "./components/topBar/TopBar.jsx";
 import { SideBar } from "./components/sideBar/SideBar.jsx";
 
-const pagesDictionary = {
-    Page1: 'Page1 Title',
-    Page2: 'Page2 Title',
-    Page3: 'Page3 Title',
-    Page4: 'Page4 Title',
-    // ... add more pages as needed
+import "./style.css";
+
+const booksDictionary = {
+    Book1: 'Book1 Title',
+    Book2: 'Book2 Title',
+    Book3: 'Book3 Title',
+    Book4: 'Book4 Title',
   };
 
 export const BooksReading = () => {
     return (
-        <div>
-            <TopBar pagesDictionary={pagesDictionary} />
-            {/* <SideBar /> */}
+      <div className="bg">
+          <SideBar booksDictionary={booksDictionary} />
+          <TopBar booksDictionary={booksDictionary} />
+            
         </div>
       );
 }

@@ -2,12 +2,12 @@ import React, { useState, } from "react";
 import { Page } from "./Page/Page.jsx";
 import "./style.css";
 
-export const TopBar = ({pagesDictionary}) => {
+export const TopBar = ({booksDictionary}) => {
   const [openedProps, setProps] = useState(null);
   const [activePage, setActivePage] = useState(null);
 
   const openProps = (bookName) => {
-    openedProps === bookName ? setProps(null) : setProps(bookName);
+    if (openedProps === bookName) setProps(null); else {if (activePage === bookName) setProps(bookName);}
   };
 
   const activatePage = (bookName) => {
@@ -16,7 +16,7 @@ export const TopBar = ({pagesDictionary}) => {
 
   return (
     <div className="top-bar">
-      {Object.keys(pagesDictionary).map(bookName => (
+      {Object.keys(booksDictionary).map(bookName => (
         <Page 
           key={bookName}
           bookName={bookName}
