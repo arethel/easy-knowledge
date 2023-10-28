@@ -1,0 +1,11 @@
+.top-bar {
+  width: 100%;
+  background-color: var(--collection-1-blocks);
+  display: flex;
+  padding: 2px;
+  height: 44px;
+}
+
+.top-bar .page{
+  margin: 3px;
+}

@@ -1,0 +1,206 @@
+.side-bar {
+  background-color: var(--collection-1-bg);
+  height: 1080px;
+  width: 205px;
+}
+
+.side-bar .overlap-group {
+  border-radius: 5px;
+  height: 1080px;
+  position: relative;
+}
+
+.side-bar .BG {
+  background-color: var(--collection-1-blocks);
+  border-radius: 5px;
+  height: 1080px;
+  left: 0;
+  opacity: 0.5;
+  position: absolute;
+  top: 0;
+  width: 205px;
+}
+
+.side-bar .books {
+  height: 283px;
+  left: 10px;
+  position: absolute;
+  top: 58px;
+  width: 186px;
+}
+
+.side-bar .book {
+  border-radius: 12px;
+  height: 38px;
+  left: 1px;
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  width: 185px;
+}
+
+.side-bar .text-wrapper {
+  color: var(--collection-1-font-2);
+  font-family: var(--main-font-font-family);
+  font-size: var(--main-font-font-size);
+  font-style: var(--main-font-font-style);
+  font-weight: var(--main-font-font-weight);
+  left: 61px;
+  letter-spacing: var(--main-font-letter-spacing);
+  line-height: var(--main-font-line-height);
+  position: absolute;
+  top: 3px;
+}
+
+.side-bar .div-wrapper {
+  border-radius: 12px;
+  height: 38px;
+  left: 0;
+  overflow: hidden;
+  position: absolute;
+  top: 49px;
+  width: 185px;
+}
+
+.side-bar .div {
+  color: var(--collection-1-font-2);
+  font-family: var(--main-font-font-family);
+  font-size: var(--main-font-font-size);
+  font-style: var(--main-font-font-style);
+  font-weight: var(--main-font-font-weight);
+  left: 60px;
+  letter-spacing: var(--main-font-letter-spacing);
+  line-height: var(--main-font-line-height);
+  position: absolute;
+  top: 3px;
+}
+
+.side-bar .book-2 {
+  border-radius: 12px;
+  height: 38px;
+  left: 0;
+  overflow: hidden;
+  position: absolute;
+  top: 98px;
+  width: 185px;
+}
+
+.side-bar .text-wrapper-2 {
+  color: var(--collection-1-font-2);
+  font-family: var(--main-font-font-family);
+  font-size: var(--main-font-font-size);
+  font-style: var(--main-font-font-style);
+  font-weight: var(--main-font-font-weight);
+  left: 59px;
+  letter-spacing: var(--main-font-letter-spacing);
+  line-height: var(--main-font-line-height);
+  position: absolute;
+  top: 3px;
+}
+
+.side-bar .book-3 {
+  border-radius: 12px;
+  height: 38px;
+  left: 0;
+  overflow: hidden;
+  position: absolute;
+  top: 147px;
+  width: 185px;
+}
+
+.side-bar .book-4 {
+  background-color: var(--collection-1-blocks);
+  border-radius: 12px;
+  height: 38px;
+  left: 1px;
+  overflow: hidden;
+  position: absolute;
+  top: 196px;
+  width: 185px;
+}
+
+.side-bar .text-wrapper-3 {
+  color: var(--collection-1-font-2);
+  font-family: var(--main-font-font-family);
+  font-size: var(--main-font-font-size);
+  font-style: var(--main-font-font-style);
+  font-weight: var(--main-font-font-weight);
+  left: 60px;
+  letter-spacing: var(--main-font-letter-spacing);
+  line-height: var(--main-font-line-height);
+  position: absolute;
+  top: 5px;
+}
+
+.side-bar .icon-horizontal {
+  height: 7px;
+  left: 150px;
+  position: absolute;
+  top: 16px;
+  width: 24px;
+}
+
+.side-bar .add-book {
+  height: 38px;
+  left: 1px;
+  position: absolute;
+  top: 245px;
+  width: 185px;
+}
+
+.side-bar .home-button {
+  border-radius: 12px;
+  height: 45px;
+  left: 16px;
+  overflow: hidden;
+  position: absolute;
+  bottom: 80px;
+  width: 175px;
+}
+
+.side-bar .text-wrapper-4 {
+  color: var(--collection-1-font-1);
+  font-family: var(--smaller-font-font-family);
+  font-size: var(--smaller-font-font-size);
+  font-style: var(--smaller-font-font-style);
+  font-weight: var(--smaller-font-font-weight);
+  left: 50px;
+  letter-spacing: var(--smaller-font-letter-spacing);
+  line-height: var(--smaller-font-line-height);
+  position: absolute;
+  top: 10px;
+  white-space: nowrap;
+}
+
+.side-bar .icon-user {
+  height: 20px;
+  left: 28px;
+  position: absolute;
+  top: 10px;
+  width: 18px;
+}
+
+.side-bar .prev-folder {
+  background-color: var(--collection-1-bg);
+  border-radius: 12px;
+  height: 38px;
+  left: 10px;
+  overflow: hidden;
+  position: absolute;
+  top: 8px;
+  width: 185px;
+}
+
+.side-bar .prev-folder-2 {
+  color: var(--collection-1-font-1);
+  font-family: var(--smaller-font-font-family);
+  font-size: var(--smaller-font-font-size);
+  font-style: var(--smaller-font-font-style);
+  font-weight: var(--smaller-font-font-weight);
+  left: 32px;
+  letter-spacing: var(--smaller-font-letter-spacing);
+  line-height: var(--smaller-font-line-height);
+  position: absolute;
+  top: 6px;
+  white-space: nowrap;
+}
