@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import "./style.css";
-import { Button } from "./Button.jsx"
-import { Icon } from "./Icons.jsx"
+import { Button } from "../../reusableComponents/button/Button.jsx"
+import { Icon } from "../../reusableComponents/icons/Icons.jsx"
 
 export const Page = ({ bookName, isProps, onProps, isActive, onActivate }) => {
 

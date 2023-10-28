@@ -1,0 +1,29 @@
+.overlap-group {
+    background-color: rgba(45, 52, 62, 0);
+    border-radius: 12px;
+    height: 29px;
+    margin-bottom: 4px;
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.1s ease;
+}
+
+.overlap-group:hover {
+    background-color: var(--collection-1-bg);
+}
+
+.text-wrapper-3 {
+    color: var(--collection-1-font-1);
+    font-family: var(--smaller-font-font-family);
+    font-size: var(--smaller-font-font-size);
+    font-style: var(--smaller-font-font-style);
+    font-weight: var(--smaller-font-font-weight);
+    letter-spacing: var(--smaller-font-letter-spacing);
+    line-height: var(--smaller-font-line-height);
+    white-space: nowrap;
+}

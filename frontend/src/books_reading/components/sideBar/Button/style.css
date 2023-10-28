@@ -1,17 +1,45 @@
 .button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--collection-1-blocks);
+    background-color: rgba(0, 0, 0, 0);
     border-radius: 12px;
     height: 38px;
     width: 185px;
     margin: 10px;
     position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    user-select: none;
+    overflow: hidden;
 }
 
-.button.prev-folder {
+.button.expanded {
+    height: 142px;
+    background-color: var(--collection-1-blocks);
+}
+
+.button.expanded .under-icon-circle{
+    visibility: visible;
+    opacity: 1.0;
+}
+
+.button:hover .under-icon-circle {
+    visibility: visible;
+    opacity: 1.0;
+}
+
+.button:hover {
+    background-color: var(--collection-1-blocks);
+}
+
+.button.prev-folder:hover {
     background-color: var(--collection-1-bg);
+}
+
+.book {
+    display: flex;
+    position: relative;
+    height: 38px;
+    align-items: center;
+    justify-content: center;
 }
 
 .text {
@@ -34,11 +62,13 @@
     line-height: var(--smaller-font-line-height);
 }
 
-.side-bar .icon-horizontal {
-    right: 15px;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    height: 7px;
-    width: 24px;
-  }
+.props {
+    padding: 4px;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.button .overlap-group:hover {
+    background-color: var(--collection-1-block2);
+}
