@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'books_reading.apps.BooksReadingConfig',
+    'main_page.apps.MainPageConfig',
 ]
 
 MIDDLEWARE = [
