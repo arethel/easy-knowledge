@@ -1,16 +1,30 @@
 import React, { useState, } from "react";
-import { ReactComponent as AddBookIcon } from '../images/add-book.svg';
-import { ReactComponent as UserIcon } from '../images/user.svg';
+import { ReactComponent as AddBookIcon } from '../../../images/add-book.svg';
+import { ReactComponent as UserIcon } from '../../../images/user.svg';
 import "./style.css";
 
 import { BookButton } from "./Button/BookButton.jsx";
-import { Button } from "../reusableComponents/button/Button.jsx"
+import { Dropdown } from '../reusableComponents/dropdown/Dropdown.jsx';
 
 export const SideBar = ({ booksDictionary }) => {
   const [openedProps, setProps] = useState(null);
   
   const openProps = (bookName) => {
     if (openedProps === bookName) setProps(null); else {setProps(bookName);}
+  };
+  
+  const options = ['Option 1', 'Option 2', 'Option 3'];
+  const [selectedOption, setSelectedOption] = useState(null);
+
+  const handleSelect = (option) => {
+    setSelectedOption(option);
+    switch (selectedOption) {
+      case 'Option 1':
+        console.log('Option 1');
+        break;
+      default:
+        console.log('Default');
+    }
   };
   
   return (
@@ -31,12 +45,16 @@ export const SideBar = ({ booksDictionary }) => {
         </div>
       </div>
       <div className="user-button">
-        <Button string={
-          <div className="button-content">
-            <UserIcon className='icon-user'/>
-            <div className="text-wrapper-4">Username</div>
-          </div>
-        } />
+        <Dropdown
+          options={options}
+          onSelect={handleSelect}
+          mainText={
+            <div className="button-content">
+              <UserIcon className='icon-user' />
+              <div className="username">Username</div>
+            </div>
+          }
+        />
       </div>
       
     </div>

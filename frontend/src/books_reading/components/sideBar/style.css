@@ -24,7 +24,7 @@
   fill: var(--collection-1-font-1);
 }
 
-.side-bar .text-wrapper-4 {
+.side-bar .username {
   color: var(--collection-1-font-1);
   font-family: var(--smaller-font-font-family);
   font-size: var(--smaller-font-font-size);
@@ -51,11 +51,6 @@
   width: 100%;
   display: flex;
   align-items: center;
-}
-
-.user-button .overlap-group{
-  border-radius: 8px;
-  height: 35px;
 }
 
 .button-content {

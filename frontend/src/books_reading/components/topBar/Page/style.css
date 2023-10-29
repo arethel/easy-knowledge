@@ -98,3 +98,8 @@
 .icon .cross{
   fill: var(--collection-1-font-1);
 }
+
+.page:hover .cross-div {
+  visibility: visible;
+  opacity: 1.0;
+}

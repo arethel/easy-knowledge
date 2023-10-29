@@ -1,0 +1,75 @@
+.paragraph {
+    position: relative;
+    display: block;
+    padding: 20px;
+}
+
+.paragraph-bg {
+    background-color: var(--collection-1-block2);
+    border-radius: 12px;
+    box-shadow: 12px 15px 4px #00000040;
+    left: 0;
+    opacity: 0.5;
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    z-index: -1;
+}
+
+.paragraph-text {
+    color: var(--collection-1-font-2);
+    font-family: var(--main-font-font-family);
+    font-size: var(--main-font-font-size);
+    font-style: var(--main-font-font-style);
+    font-weight: var(--main-font-font-weight);
+    letter-spacing: var(--main-font-letter-spacing);
+    line-height: var(--main-font-line-height);
+    text-align: justify;
+    display: block;
+    margin: 10px;
+    user-select: text;
+}
+
+.main-text {
+    color: var(--collection-1-font-2);
+    font-family: var(--big-font-font-family);
+    font-size: var(--big-font-font-size);
+    font-style: var(--big-font-font-style);
+    font-weight: var(--big-font-font-weight);
+    letter-spacing: var(--big-font-letter-spacing);
+    line-height: var(--big-font-line-height);
+    display: block;
+    margin: 10px
+}
+
+.paragraph-props{
+    height: 40px;
+    width: 100%;
+}
+
+.icon-star {
+    height: 29px;
+    left: 1044px;
+    position: absolute;
+    top: 210px;
+    width: 30px;
+}
+
+.icon-question-mark {
+    height: 44px;
+    left: 991px;
+    position: absolute;
+    top: 202px;
+    width: 44px;
+}
+
+.icon-horizontal {
+    height: 7px;
+    left: 958px;
+    position: absolute;
+    top: 221px;
+    width: 24px;
+}
+
+

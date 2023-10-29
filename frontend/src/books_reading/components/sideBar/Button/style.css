@@ -34,7 +34,7 @@
     background-color: var(--collection-1-bg);
 }
 
-.book {
+.book-file {
     display: flex;
     position: relative;
     height: 38px;

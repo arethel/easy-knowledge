@@ -2,6 +2,8 @@ import React from "react";
 
 import { TopBar } from "./components/topBar/TopBar.jsx";
 import { SideBar } from "./components/sideBar/SideBar.jsx";
+import { Logo } from "./components/logo/Logo.jsx";
+import { Book } from "./components/currentBook/Book.jsx";
 
 import "./style.css";
 
@@ -14,10 +16,16 @@ const booksDictionary = {
 
 export const BooksReading = () => {
     return (
-      <div className="bg">
-          <SideBar booksDictionary={booksDictionary} />
+      <div className="book-page-container">
+        <SideBar booksDictionary={booksDictionary} />
+        <div className="main-container">
           <TopBar booksDictionary={booksDictionary} />
-            
+          <div className="book-area">
+            <Logo />
+            <Book />
+          </div>
         </div>
+        <div className="bg"></div>
+      </div>
       );
 }
