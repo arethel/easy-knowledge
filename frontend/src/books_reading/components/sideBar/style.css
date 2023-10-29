@@ -20,7 +20,7 @@
   width: 100%;
 }
 
-.side-bar .add-book .st0{
+.side-bar .add-book .plus{
   fill: var(--collection-1-font-1);
 }
 
@@ -39,6 +39,11 @@
   height: auto;
   width: 18px;
   margin-right: 10px;
+  fill: var(--collection-1-font-1);
+}
+
+.side-bar .user{
+  fill: var(--collection-1-font-1);
 }
 
 .user-button {

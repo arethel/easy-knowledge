@@ -72,3 +72,7 @@
 .button .overlap-group:hover {
     background-color: var(--collection-1-block2);
 }
+
+.button .dots{
+    fill: var(--collection-1-font-1);
+}

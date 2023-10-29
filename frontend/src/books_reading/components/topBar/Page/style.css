@@ -90,3 +90,11 @@
   top: 7px;
   width: 185px;
 }
+
+.icon .dots{
+  fill: var(--collection-1-font-1);
+}
+
+.icon .cross{
+  fill: var(--collection-1-font-1);
+}

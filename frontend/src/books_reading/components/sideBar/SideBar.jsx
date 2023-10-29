@@ -1,5 +1,6 @@
 import React, { useState, } from "react";
-import { ReactComponent as AddBookIcon } from './img/add-book.svg';
+import { ReactComponent as AddBookIcon } from '../images/add-book.svg';
+import { ReactComponent as UserIcon } from '../images/user.svg';
 import "./style.css";
 
 import { BookButton } from "./Button/BookButton.jsx";
@@ -32,7 +33,7 @@ export const SideBar = ({ booksDictionary }) => {
       <div className="user-button">
         <Button string={
           <div className="button-content">
-            <img className="icon-user" alt="Icon user" src={require("./img/icon-user.png")} />
+            <UserIcon className='icon-user'/>
             <div className="text-wrapper-4">Username</div>
           </div>
         } />

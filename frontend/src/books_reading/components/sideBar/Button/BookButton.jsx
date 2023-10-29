@@ -1,6 +1,7 @@
 import React from "react";
 import { Icon } from "../../reusableComponents/icons/Icons.jsx"
 import { Button } from "../../reusableComponents/button/Button.jsx"
+import { ReactComponent as Dots } from '../../images/dots.svg';
 import "./style.css";
 
 export const BookButton = ({className='', buttonText, onProps, isProps, propsBtn = true, imgSrc = null}) => {
@@ -13,7 +14,7 @@ export const BookButton = ({className='', buttonText, onProps, isProps, propsBtn
                         <Icon name="dots"
                             className="icon-horizontal"
                             onClick={(e) => { e.stopPropagation(); onProps(); }}
-                            src={require("../img/icon-horizontal-ellipsis.png")} /> :
+                            src={<Dots className='icon dots'/>} /> :
                         null}
                         <div className={"text " + className}>{buttonText}</div>
                     </div> :
