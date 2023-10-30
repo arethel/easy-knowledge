@@ -1,0 +1,38 @@
+.pages-count {
+    right: 20px;
+    position: absolute;
+    bottom: 20px;
+    height: 40px;
+    width: 100px;
+    align-items: center;
+    justify-content: center;
+}
+
+.pages-bg {
+    background-color: var(--collection-1-block2);
+    border-radius: 12px;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    opacity: 0.5;
+}
+
+.pages-count-container{
+    position: relative;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pages-text {
+    color: var(--collection-1-font-1);
+    font-family: var(--main-font-font-family);
+    font-size: var(--main-font-font-size);
+    font-style: var(--main-font-font-style);
+    font-weight: var(--main-font-font-weight);
+    letter-spacing: var(--main-font-letter-spacing);
+    line-height: var(--main-font-line-height);
+    display: flex;
+}

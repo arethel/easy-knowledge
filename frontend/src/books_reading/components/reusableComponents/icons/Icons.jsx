@@ -11,8 +11,8 @@ export const Icon = (props) => {
     };
     
     return (
-        <div className={'under-icon-circle '+props.name} onClick={handleClick}>
-            <img className={"icon "+props.name} alt={"Icon "+props.name} src={props.src} />
-        </div>
+      <div className={'under-icon-circle ' + props.name + ' ' + props.className} onClick={handleClick}>
+        {props.src}
+      </div>
     )
 }

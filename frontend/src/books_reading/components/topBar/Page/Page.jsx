@@ -1,7 +1,10 @@
 import React, { useEffect } from "react";
 import "./style.css";
-import { Button } from "./Button.jsx"
-import { Icon } from "./Icons.jsx"
+import { Button } from "../../reusableComponents/button/Button.jsx"
+import { Icon } from "../../reusableComponents/icons/Icons.jsx"
+
+import { ReactComponent as Dots } from '../../../../images/dots.svg';
+import { ReactComponent as Cross } from '../../../../images/cross.svg';
 
 export const Page = ({ bookName, isProps, onProps, isActive, onActivate }) => {
 
@@ -21,8 +24,8 @@ export const Page = ({ bookName, isProps, onProps, isActive, onActivate }) => {
     <div className={`page ${isProps ? 'expanded' : ''} ${isActive ? 'active-page' : ''}`} onClick={onActivate}>
       <div className="page-buttons">
         <div className="book-name">{bookName}</div>
-        <Icon name="dots" onClick={(e) => { e.stopPropagation(); onProps(); }} src={require("../img/icon-horizontal-ellipsis.png")} />
-        <Icon name="cross" onClick={(e) => { e.stopPropagation(); }} src={require("../img/icon-cross.png")} />
+        <Icon name="dots" onClick={(e) => { e.stopPropagation(); onProps(); }} src={<Dots className='icon dots'/>} />
+        <Icon name="cross" className='cross-div' onClick={(e) => { e.stopPropagation(); }} src={<Cross className='icon cross'/>} />
       </div>
       <div className="props">
         <Button string="Chapter" />

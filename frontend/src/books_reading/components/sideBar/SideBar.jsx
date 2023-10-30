@@ -1,39 +1,62 @@
-import React from "react";
-import { ReactComponent as AddBookIcon } from './img/add-book.svg';
+import React, { useState, } from "react";
+import { ReactComponent as AddBookIcon } from '../../../images/add-book.svg';
+import { ReactComponent as UserIcon } from '../../../images/user.svg';
 import "./style.css";
 
-export const SideBar = () => {
+import { BookButton } from "./Button/BookButton.jsx";
+import { Dropdown } from '../reusableComponents/dropdown/Dropdown.jsx';
+
+export const SideBar = ({ booksDictionary }) => {
+  const [openedProps, setProps] = useState(null);
+  
+  const openProps = (bookName) => {
+    if (openedProps === bookName) setProps(null); else {setProps(bookName);}
+  };
+  
+  const options = ['Option 1', 'Option 2', 'Option 3'];
+  const [selectedOption, setSelectedOption] = useState(null);
+
+  const handleSelect = (option) => {
+    setSelectedOption(option);
+    switch (selectedOption) {
+      case 'Option 1':
+        console.log('Option 1');
+        break;
+      default:
+        console.log('Default');
+    }
+  };
+  
   return (
     <div className="side-bar">
-      <div className="overlap-group">
-        <div className="BG" />
+      <div className="BG" />
+      <div>
+        <BookButton className={'prev-folder'} buttonText={<div>&lt; Prev folder</div>} propsBtn={false}/>
         <div className="books">
-          <div className="book">
-            <div className="text-wrapper">Book1</div>
-          </div>
-          <div className="div-wrapper">
-            <div className="div">Book2</div>
-          </div>
-          <div className="book-2">
-            <div className="text-wrapper-2">Book3</div>
-          </div>
-          <div className="book-3">
-            <div className="div">Book4</div>
-          </div>
-          <div className="book-4">
-            <div className="text-wrapper-3">Book5</div>
-            <img className="icon-horizontal" alt="Icon horizontal" src={require("./img/icon-horizontal-ellipsis.png")} />
-          </div>
-          <AddBookIcon className="add-book" alt="Add book" />
-        </div>
-        <div className="home-button">
-          <div className="text-wrapper-4">Username</div>
-          <img className="icon-user" alt="Icon user" src={require("./img/icon-user.png")} />
-        </div>
-        <div className="prev-folder">
-          <div className="prev-folder-2">&lt; Prev folder</div>
+          {Object.keys(booksDictionary).map(bookName => (
+            <BookButton
+              key={bookName}
+              className={bookName}
+              buttonText={bookName}
+              onProps={() => openProps(bookName)}
+              isProps={openedProps === bookName} />
+          ))}
+          <BookButton imgSrc={<AddBookIcon className="add-book" alt="Add book" />} />
         </div>
       </div>
+      <div className="user-button">
+        <Dropdown
+          options={options}
+          onSelect={handleSelect}
+          mainText={
+            <div className="button-content">
+              <UserIcon className='icon-user' />
+              <div className="username">Username</div>
+            </div>
+          }
+        />
+      </div>
+      
     </div>
   );
 };

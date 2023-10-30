@@ -29,7 +29,7 @@
 }
 
 .page.expanded {
-  height: 132px;
+  height: 140px;
 }
 
 .page .book-name {
@@ -46,56 +46,8 @@
   cursor: pointer;
 }
 
-.under-icon-circle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 25px;
-  height: 25px;
-  background-color: rgba(0, 0, 0, 0);
-  border-radius: 50%;
-  cursor: pointer;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  visibility: hidden;
-  opacity: 0.0;
-  transition: all 0.3s ease;
-}
-
-.page.active-page .under-icon-circle{
-  visibility: visible;
-  opacity: 1.0;
-}
-
-.under-icon-circle:hover {
-  background-color: var(--collection-1-bg);
-}
-
-.under-icon-circle.dots{
-  left: 8px;
-}
-
-.under-icon-circle.cross{
-  right: 8px;
-}
-
-.icon{
-  cursor: pointer;
-}
-
-.icon.dots{
-  height: 5px;
-  width: 17px;
-}
-
-.icon.cross {
-  height: 15px;
-  width: 15px;
-}
-
 .page .props {
-  height: 92px;
+  height: 100%;
   left: 5px;
   overflow: hidden;
   position: absolute;
@@ -139,32 +91,15 @@
   width: 185px;
 }
 
-.page .overlap-group{
-  background-color: rgba(45, 52, 62, 0);
-  border-radius: 12px;
-  height: 31px;
-  position: relative;
-  width: 183px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  user-select: none;
-  transition: all 0.1s ease;
+.icon .dots{
+  fill: var(--collection-1-font-1);
 }
 
-.page .overlap-group:hover {
-  background-color: var(--collection-1-bg);
+.icon .cross{
+  fill: var(--collection-1-font-1);
 }
 
-.page .text-wrapper-3 {
-  color: var(--collection-1-font-1);
-  font-family: var(--smaller-font-font-family);
-  font-size: var(--smaller-font-font-size);
-  font-style: var(--smaller-font-font-style);
-  font-weight: var(--smaller-font-font-weight);
-  letter-spacing: var(--smaller-font-letter-spacing);
-  line-height: var(--smaller-font-line-height);
-  position: absolute;
-  white-space: nowrap;
+.page:hover .cross-div {
+  visibility: visible;
+  opacity: 1.0;
 }
