@@ -1,7 +1,7 @@
 .paragraph {
     position: relative;
     display: block;
-    padding: 20px;
+    padding: 10px;
 }
 
 .paragraph-bg {
@@ -28,6 +28,7 @@
     text-align: justify;
     display: block;
     margin: 10px;
+    margin-bottom: 4px;
     user-select: text;
 }
 
@@ -43,33 +44,16 @@
     margin: 10px
 }
 
-.paragraph-props{
+.paragraph-props-container{
+    display: flex;
+    flex-direction: row;
+    align-items: right;
+    justify-content: flex-end;
     height: 40px;
-    width: 100%;
+    opacity: 0.3;
+    transition: all 0.3s;
 }
 
-.icon-star {
-    height: 29px;
-    left: 1044px;
-    position: absolute;
-    top: 210px;
-    width: 30px;
+.paragraph:hover .paragraph-props-container{
+    opacity: 1;
 }
-
-.icon-question-mark {
-    height: 44px;
-    left: 991px;
-    position: absolute;
-    top: 202px;
-    width: 44px;
-}
-
-.icon-horizontal {
-    height: 7px;
-    left: 958px;
-    position: absolute;
-    top: 221px;
-    width: 24px;
-}
-
-

@@ -1,0 +1,13 @@
+.svg-button-container{
+    cursor: pointer;
+    user-select: none;
+}
+
+.svg-button-container .svg{
+    transition: all 0.2s ease;
+}
+
+.gold .svg{
+    fill: var(--collection-1-gold);
+}
+
