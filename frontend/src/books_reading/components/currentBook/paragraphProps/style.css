@@ -5,10 +5,6 @@
     align-items: center;
 }
 
-.svg-button-container:not(.gold):not(.fill0):hover .svg {
-    fill: var(--collection-1-font-2);
-}
-
 .paragraph-props .star {
     height: 29px;
     width: 30px;

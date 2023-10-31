@@ -1,22 +1,18 @@
-.logo {
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    display: flex;
-    width: 100%;
-    user-select: none;
-    align-items: center;
-    justify-content: center;
-    z-index: -1;
-}
-
-.logo-container{
+.book .new-chapter {
     position: relative;
     display: flex;
+    padding: 10px;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
 }
 
-.logo .loge-text {
+.book .new-chapter-bg{
+    background-color: var(--collection-1-blocks);
+}
+
+.book .new-chapter-text {
+    display: flex;
     color: var(--collection-1-font-1);
     font-family: var(--very-big-font-font-family);
     font-size: var(--very-big-font-font-size);
@@ -24,12 +20,4 @@
     font-weight: var(--very-big-font-font-weight);
     letter-spacing: var(--very-big-font-letter-spacing);
     line-height: var(--very-big-font-line-height);
-    opacity: 0.5;
-}
-
-.logo .easy-knowledge-logo {
-    height: 78px;
-    opacity: 0.5;
-    width: 86px;
-    margin-right: 15px;
 }

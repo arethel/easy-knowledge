@@ -3,6 +3,8 @@ import "./style.css";
 
 import { PagesCount } from "./pagesCount/PagesCount.jsx";
 import { Paragraph } from "./paragraph/Paragraph.jsx";
+import { EndOfParagraph } from "./endOfParagraph/EndOfParagraph.jsx";
+import { NewChapter } from "./newChapter/NewChapter";
 
 export const Book = () => {
     return (
@@ -17,12 +19,18 @@ export const Book = () => {
                 which have a welsadfgasdgsagdasgdfasl-defined nucleus. Each cell carries
                 out sp, such as metabolism,
                 reproduction, and reasfdgasfgasfgasfgafgasponding to external stimuli  sadfsdagfsafgsafgasfg.  `} />
+                <Paragraph mainText={'Cell Structure and Function:'} text={
+                `Biology explores the fundamental unit of life, the
+                cell. Cells are the building blocks of all living
+                organisms and can vary in size and complexity. They
+                are classified into two main categories: prokaryotic
+                cells, lacking a true nucleus, and eukaryotic cells,
+                which have a welsadfgasdgsagdasgdfasl-defined nucleus. Each cell carries
+                out sp, such as metabolism,
+                reproduction, and reasfdgasfgasfgasfgafgasponding to external stimuli  sadfsdagfsafgsafgasfg.  `} />
+                <EndOfParagraph/>
+                <NewChapter text='New chapter'/>
                 
-                <div className="new-chapter">
-                    <div className="overlap">
-                        <div className="text-wrapper-2">New chapter</div>
-                    </div>
-                </div>
                 
                 <Paragraph mainText={''} text={
                 `Ecology studies the relationships between organisms

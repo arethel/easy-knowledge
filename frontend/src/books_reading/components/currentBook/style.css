@@ -15,83 +15,17 @@
     top: 0px; */
 }
 
-.book .paragraph {
+.book .book-element {
     margin-bottom: 20px;
 }
 
-.book .new-chapter {
-    height: 87px;
-    left: 0;
-    position: absolute;
-    top: 577px;
-    /* width: 1089px; */
-}
-
-.book .overlap {
-    background-color: var(--collection-1-blocks);
+.book .element-bg {
     border-radius: 12px;
     box-shadow: 12px 15px 4px #00000040;
-    height: 87px;
-    position: relative;
-    width: 1087px;
-}
-
-.book .text-wrapper-2 {
-    color: var(--collection-1-font-1);
-    font-family: var(--very-big-font-font-family);
-    font-size: var(--very-big-font-font-size);
-    font-style: var(--very-big-font-font-style);
-    font-weight: var(--very-big-font-font-weight);
-    left: 350px;
-    letter-spacing: var(--very-big-font-letter-spacing);
-    line-height: var(--very-big-font-line-height);
-    position: absolute;
-    top: 5px;
-}
-
-.book .overlap-wrapper {
-    height: 159px;
-    left: 0;
-    position: absolute;
-    top: 279px;
-    width: 1089px;
-}
-
-.book .overlap-2 {
-    border-radius: 12px;
-    height: 159px;
-    position: relative;
-    width: 1087px;
-}
-
-.book .icon-star-2 {
-    height: 31px;
-    left: 1043px;
-    position: absolute;
-    top: 116px;
-    width: 32px;
-}
-
-.book .icon-question-mark-3 {
-    height: 44px;
-    left: 991px;
-    position: absolute;
-    top: 109px;
-    width: 44px;
-}
-
-.book .icon-horizontal-2 {
-    height: 7px;
-    left: 958px;
-    position: absolute;
-    top: 128px;
-    width: 24px;
-}
-
-.book .overlap-group-wrapper {
-    height: 253px;
     left: 0;
     position: absolute;
     top: 0;
-    width: 1091px;
+    height: 100%;
+    width: 100%;
+    z-index: -1;
 }

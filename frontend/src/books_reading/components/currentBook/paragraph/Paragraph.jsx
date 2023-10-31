@@ -5,13 +5,13 @@ import "./style.css";
 
 export const Paragraph = ({mainText, text}) => {
     return (
-        <div className="paragraph">
+        <div className="book-element paragraph">
             <div className="main-text">{mainText}</div>
             <p className="paragraph-text">{text}</p>
             <div className="paragraph-props-container">
                 <ParagraphProps />
             </div>
-            <div className="paragraph-bg" />
+            <div className="element-bg paragraph-bg" />
         </div>
     );
     
