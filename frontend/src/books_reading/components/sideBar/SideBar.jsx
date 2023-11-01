@@ -29,7 +29,7 @@ export const SideBar = ({ booksDictionary }) => {
   
   return (
     <div className="side-bar">
-      <div className="BG" />
+      <div className="BG" id='side-bar'/>
       <div>
         <BookButton className={'prev-folder'} buttonText={<div>&lt; Prev folder</div>} propsBtn={false}/>
         <div className="books">

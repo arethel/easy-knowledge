@@ -15,7 +15,7 @@ export const TopBar = ({booksDictionary}) => {
   };
 
   return (
-    <div className="top-bar">
+    <div className="top-bar" id='top-bar'>
       {Object.keys(booksDictionary).map(bookName => (
         <Page 
           key={bookName}

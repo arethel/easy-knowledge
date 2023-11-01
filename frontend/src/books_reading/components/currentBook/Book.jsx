@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./style.css";
 
 import { PagesCount } from "./pagesCount/PagesCount.jsx";
@@ -7,9 +7,39 @@ import { EndOfParagraph } from "./endOfParagraph/EndOfParagraph.jsx";
 import { NewChapter } from "./newChapter/NewChapter";
 
 export const Book = () => {
+    
+    const [constantHeight, setConstantHeight] = useState("960px");
+    const sideId = "side-bar";
+    const topId = "top-bar";
+    const resizeObserver = useRef(null);
+
+    useEffect(() => {
+        const elementToWatch = document.getElementById(sideId);
+        const elementToWatch2 = document.getElementById(topId);
+
+        if (elementToWatch && elementToWatch2) {
+            resizeObserver.current = new ResizeObserver((entries) => {
+                for (let entry of entries) {
+                    const height1 = entry.contentRect.height;
+                    const height2 = elementToWatch2.clientHeight;
+                    const newHeight = `${height1 - height2}px`;
+                    setConstantHeight(newHeight);
+                }
+            });
+
+            resizeObserver.current.observe(elementToWatch);
+        }
+
+        return () => {
+            if (resizeObserver.current) {
+                resizeObserver.current.disconnect();
+            }
+        };
+    }, [sideId, topId]);
+    
     return (
-        <div className="book">
-            <div className="paragraphs">
+        <div className="book" >
+            <div className="paragraphs" style={{ height: constantHeight }}>
                 <Paragraph mainText={'Cell Structure and Function:'} text={
                 `Biology explores the fundamental unit of life, the
                 cell. Cells are the building blocks of all living
