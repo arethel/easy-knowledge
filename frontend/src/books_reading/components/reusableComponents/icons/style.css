@@ -39,9 +39,11 @@
 .icon.dots {
     height: 5px;
     width: 17px;
+    display: flex;
 }
 
 .icon.cross {
     height: 15px;
     width: 15px;
+    display: flex;
 }

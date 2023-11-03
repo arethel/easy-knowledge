@@ -1,0 +1,65 @@
+.settings {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+    z-index: 2;
+}
+
+.settings .settings-container{
+    position: relative;
+    display: flex;
+    height: 380px;
+    width: 662px;
+}
+
+.settings .shadow {
+    background-color: var(--collection-1-bg);
+    height: 100%;
+    opacity: 0.5;
+    position: absolute;
+    width: 100%;
+}
+
+.settings .bg {
+    background-color: var(--collection-1-block2);
+    border-radius: 15px;
+    box-shadow: 11px 10px 4px #00000040;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    z-index: 3;
+}
+
+.settings .settings-cross.under-icon-circle {
+    height: 30px;
+    right: 0px;
+    position: absolute;
+    top: 0px;
+    transform: translateY(0%);
+    margin: 10px;
+    width: 30px;
+    visibility: visible;
+    opacity: 1.0;
+    justify-content: center;
+    align-items: center;
+}
+
+.settings .svg-container {
+    height: 18px;
+    width: 18px;
+    display: flex;
+}
+
+.settings .img {
+    height: 312px;
+    left: 222px;
+    position: absolute;
+    top: 38px;
+    width: 2px;
+}

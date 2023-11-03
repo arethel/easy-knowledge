@@ -4,6 +4,7 @@ import { TopBar } from "./components/topBar/TopBar.jsx";
 import { SideBar } from "./components/sideBar/SideBar.jsx";
 import { Logo } from "./components/logo/Logo.jsx";
 import { Book } from "./components/currentBook/Book.jsx";
+import { Settings } from "./components/settings/Settings.jsx";
 
 import "./style.css";
 
@@ -25,6 +26,7 @@ export const BooksReading = () => {
             <Book />
           </div>
         </div>
+        <Settings />
         <div className="bg"></div>
       </div>
       );

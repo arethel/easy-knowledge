@@ -17,7 +17,7 @@
     background-color: var(--collection-1-bg);
 }
 
-.text-wrapper-3 {
+.button-text {
     color: var(--collection-1-font-1);
     font-family: var(--smaller-font-font-family);
     font-size: var(--smaller-font-font-size);

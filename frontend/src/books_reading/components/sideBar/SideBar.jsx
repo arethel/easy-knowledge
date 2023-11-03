@@ -13,14 +13,21 @@ export const SideBar = ({ booksDictionary }) => {
     if (openedProps === bookName) setProps(null); else {setProps(bookName);}
   };
   
-  const options = ['Option 1', 'Option 2', 'Option 3'];
+  const options = ['Account', 'Settings', 'Log out'];
   const [selectedOption, setSelectedOption] = useState(null);
 
   const handleSelect = (option) => {
     setSelectedOption(option);
-    switch (selectedOption) {
-      case 'Option 1':
-        console.log('Option 1');
+    console.log(selectedOption);
+    switch (option) {
+      case options[0]:
+        console.log(options[0]);
+        break;
+      case options[1]:
+        console.log(options[1]);
+        break;
+      case options[2]:
+        console.log(options[2]);
         break;
       default:
         console.log('Default');
