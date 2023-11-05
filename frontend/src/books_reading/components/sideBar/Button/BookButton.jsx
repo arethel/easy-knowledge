@@ -4,10 +4,11 @@ import { Button } from "../../reusableComponents/button/Button.jsx"
 import { ReactComponent as Dots } from '../../../../images/dots.svg';
 import "./style.css";
 
-export const BookButton = ({className='', buttonText, onProps, isProps, propsBtn = true, imgSrc = null}) => {
+export const BookButton = ({ className = '', buttonText, onClick, onProps, isProps, onShare, onDelete, shouldHide=false, propsBtn = true, imgSrc = null }) => {
+    
     return (
-        <div className={`button ${isProps ? 'expanded' : ''} ${className}`}>
-            <div className='book-file'>
+        <div className={`button ${isProps ? 'expanded' : ''} ${className}  ${shouldHide ? 'hide' : ''}`}>
+            <div className='book-file' onClick={() => { onClick(); }}>
                 {imgSrc===null ?
                     <div>
                         {propsBtn ?
@@ -24,9 +25,9 @@ export const BookButton = ({className='', buttonText, onProps, isProps, propsBtn
             </div>
             {propsBtn ?
                 <div className="props">
-                    <Button string="Chapter" />
-                    <Button string="Share" />
-                    <Button string="Delete" />
+                    {/* <Button string="Chapter" /> */}
+                    {/* <Button string="Share" onClick={(e) => { e.stopPropagation(); onShare(); }}/> */}
+                    <Button string="Delete" onClick={(e) => { e.stopPropagation(); onDelete(); }}/>
                 </div> :
                 null
             }

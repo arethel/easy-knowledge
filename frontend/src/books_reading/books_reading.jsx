@@ -8,29 +8,49 @@ import { Settings } from "./components/settings/Settings.jsx";
 
 import "./style.css";
 
-const booksDictionary = {
+const openedBooks_init = {
     Book1: 'Book1 Title',
     Book2: 'Book2 Title',
     Book3: 'Book3 Title',
     Book4: 'Book4 Title',
-  };
+    selected: 'Book1',
+};
+
+const booksInFolder_init = {
+    Book1: 'Book1 Title',
+    Book2: 'Book2 Title',
+    Book3: 'Book3 Title',
+    Book4: 'Book4 Title',
+};
 
 export const BooksReading = () => {
   
-    const [active, setActive] = useState(false);
+  const [active, setActive] = useState(false);
   
-    return (
-      <div className="book-page-container">
-        <SideBar booksDictionary={booksDictionary} settingsSetActive={ setActive }/>
-        <div className="main-container">
-          <TopBar booksDictionary={booksDictionary} />
-          <div className="book-area">
-            <Logo />
-            <Book />
-          </div>
+  const [openedBooks, setOpenedBooks] = useState(openedBooks_init);
+  const [booksInFolder, setBooksInFolder] = useState(booksInFolder_init);
+  
+  return (
+    <div className="book-page-container">
+      <SideBar
+        booksDictionary={booksInFolder}
+        setBooksDictionary={setBooksInFolder}
+        settingsSetActive={setActive}
+        pagesDictionary={openedBooks}
+        setPagesDictionary={setOpenedBooks}
+      />
+      <div className="main-container">
+        <TopBar
+          booksDictionary={openedBooks}
+          setBooksDictionary={setOpenedBooks}
+        />
+        <div className="book-area">
+          <Logo />
+          <Book />
         </div>
-        <Settings active={active} setActive={ setActive } />
-        <div className="bg"></div>
       </div>
-      );
+      <Settings active={active} setActive={ setActive } />
+      <div className="bg"></div>
+    </div>
+  );
 }
