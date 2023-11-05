@@ -6,7 +6,7 @@ import "./style.css";
 import { BookButton } from "./Button/BookButton.jsx";
 import { Dropdown } from '../reusableComponents/dropdown/Dropdown.jsx';
 
-export const SideBar = ({ booksDictionary }) => {
+export const SideBar = ({ booksDictionary, settingsSetActive }) => {
   const [openedProps, setProps] = useState(null);
   
   const openProps = (bookName) => {
@@ -24,7 +24,7 @@ export const SideBar = ({ booksDictionary }) => {
         console.log(options[0]);
         break;
       case options[1]:
-        console.log(options[1]);
+        settingsSetActive(true);
         break;
       case options[2]:
         console.log(options[2]);

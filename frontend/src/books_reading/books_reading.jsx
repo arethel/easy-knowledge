@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { TopBar } from "./components/topBar/TopBar.jsx";
 import { SideBar } from "./components/sideBar/SideBar.jsx";
@@ -16,9 +16,12 @@ const booksDictionary = {
   };
 
 export const BooksReading = () => {
+  
+    const [active, setActive] = useState(false);
+  
     return (
       <div className="book-page-container">
-        <SideBar booksDictionary={booksDictionary} />
+        <SideBar booksDictionary={booksDictionary} settingsSetActive={ setActive }/>
         <div className="main-container">
           <TopBar booksDictionary={booksDictionary} />
           <div className="book-area">
@@ -26,7 +29,7 @@ export const BooksReading = () => {
             <Book />
           </div>
         </div>
-        <Settings />
+        <Settings active={active} setActive={ setActive } />
         <div className="bg"></div>
       </div>
       );

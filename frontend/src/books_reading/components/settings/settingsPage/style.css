@@ -15,12 +15,11 @@
     margin-bottom: 10px;
 }
 
-.settings .row .separating-line {
-    position: absolute;
+.settings-page .separating-line {
     bottom: 0px;
-    width: 100%;
+    width: 95%;
     border: 0;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 2px solid var(--collection-1-blocks);
 }
 
 .settings .setting-name {

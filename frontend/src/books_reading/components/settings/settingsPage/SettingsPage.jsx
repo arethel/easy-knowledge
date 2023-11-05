@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import "./style.css";
 
 import { Dropdown } from '../../reusableComponents/dropdown/Dropdown.jsx';
@@ -18,8 +18,9 @@ export const SettingsPage = ({ settingsDict, onUpdateSettingsDict }) => {
     return (
         <div className="settings-page">
             {Object.keys(settingsDict[settingsDict.selected]).map((settingName, index) => (
+                <div key={settingName}>
                 
-                <div className={`row`} key={settingName}>
+                <div className={`row`} >
                     <div className="setting-name">{settingName}</div>
                     <div className="dropdown-container">
                         <Dropdown
@@ -29,6 +30,8 @@ export const SettingsPage = ({ settingsDict, onUpdateSettingsDict }) => {
                             mainTextChange={true}
                             
                         />
+                    </div>
+                    
                     </div>
                     {index < Object.keys(settingsDict[settingsDict.selected]).length - 1 && <hr className="separating-line"/>}
                 </div>
