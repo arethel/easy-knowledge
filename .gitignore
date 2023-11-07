@@ -3,6 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# output folder and files
+utils/pdf_processing/output/*
+*.pdf
+
 # C extensions
 *.so
 
