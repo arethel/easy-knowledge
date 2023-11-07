@@ -1,0 +1,131 @@
+body {
+    margin: 0;
+    background-color: var(--collection-1-bg);
+}
+
+.logo-container{
+    position: relative;
+    display: flex;
+}
+
+.logo {
+    height: 100%;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    width: 100%;
+    user-select: none;
+    align-items: center;
+    justify-content: center;
+    z-index: -2;
+}
+
+.logo .logo-text {
+    color: var(--collection-1-font-1);
+    font-family: var(--very-big-font-font-family);
+    font-size: var(--very-big-font-font-size);
+    font-style: var(--very-big-font-font-style);
+    font-weight: var(--very-big-font-font-weight);
+    letter-spacing: var(--very-big-font-letter-spacing);
+    line-height: var(--very-big-font-line-height);
+    opacity: 0.5;
+}
+
+.logo .easy-knowledge-logo {
+    height: 78px;
+    opacity: 0.5;
+    width: 86px;
+    margin-right: 15px;
+}
+  
+.icon {
+    font-size: 24px;
+    cursor: pointer;
+}
+  
+.icon.dots{
+    height: 8px;
+    width: 16px;
+    padding-bottom: 3px;
+}
+
+.trashbin-icon {
+    margin-left: auto;
+}
+
+.icon.pencil {
+    height: 15px;
+    width: 15px;
+}
+
+.icon.trashbin {
+    height: 15px;
+    width: 15px;
+}
+
+.page-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+  
+.create-section-button:hover {
+    background-color: #45a049;
+}
+  
+.custom-text {
+    color: var(--collection-1-font-2);
+    font-family: var(--main-font-font-family, "Inter-Regular", Helvetica);
+    font-size: var(--main-font-font-size, 22px);
+    font-style: var(--main-font-font-style, normal);
+    font-weight: var(--main-font-font-weight, 400);
+    letter-spacing: var(--main-font-letter-spacing, 0px);
+    line-height: var(--main-font-line-height, normal);
+    margin-left: 20px;
+}
+
+.topbar {
+    color: var(--collection-1-font-2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    padding: 10px 20px;
+}
+
+.line {
+    height: 1px;
+    background-color: #ccc;
+    margin: 10px 20px;
+    border-radius: 5px;
+}
+
+.main-divider {
+    background-color: #ccc;
+    margin: 10px 20px;
+    border-radius: 5px;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    margin-right: 60px; 
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.username {
+    font-size: 16px;
+}

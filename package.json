@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@mui/base": "^5.0.0-beta.21",
+    "@mui/styles": "^5.14.16"
+  }
+}

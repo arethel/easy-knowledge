@@ -1,0 +1,22 @@
+body {
+  background-color: var(--collection-1-bg) !important;
+}
+
+.google-logo {
+  height: 24px;
+  width: 24px;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--collection-1-font-1);
+  -webkit-box-shadow: 0 0 0px 1000px var(--collection-1-bg) inset;
+}
+
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--collection-1-font-1);
+  -webkit-box-shadow: 0 0 0px 1000px var(--collection-1-bg) inset;
+}

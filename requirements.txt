@@ -4,3 +4,6 @@ tiktoken
 django
 djangorestframework
 crispy-bootstrap5
+PyPDF2
+PyMuPDF
+pillow

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "../../../public/style.css";
+import "./style.css";
 
 const Button = ({ string, icon }) => {
   return (

@@ -1,0 +1,127 @@
+
+.vertical-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 5px;
+    padding: 10px;
+    border-radius: 20px;
+}
+
+.vertical-container:hover {
+    background-color: var(--collection-1-block2);
+    transition: all 0.3s ease;
+}
+
+.vertical-container:hover .icons-container {
+    visibility: visible;
+}
+
+.vertical-line {
+    width: 0.1px;
+    background-color: #ccc;
+    margin: 18px 10px;
+    height: 240px;
+}
+  
+.vertical-rectangle {
+    width: 140px;
+    height: 200px;
+    background-color: var(--collection-1-font-1);
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+}
+
+input[type=text] {
+    color: var(--collection-1-font-2);
+    font-family: var(--main-font-font-family, "Inter-Regular", Helvetica);
+    font-size: var(--main-font-font-size, 22px);
+    font-style: var(--main-font-font-style, normal);
+    font-weight: var(--main-font-font-weight, 400);
+    letter-spacing: var(--main-font-letter-spacing, 0px);
+    line-height: var(--main-font-line-height, normal);
+    background-color: var(--collection-1-bg);
+    margin-left: 20px;
+    border: 1px solid #ff0000 !important;
+}
+
+.section-name-container {
+    padding-bottom: 3px;
+    display:flex;
+    align-items: center;
+}
+
+.create-section-button {
+    padding: 10px 20px;
+    border: none;
+    margin-left: 40px;
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.custom-container {
+    position: flex;
+    width: calc(100% - 100px);
+    margin: 10px 50px; 
+}
+  
+.custom-rectangle {
+    position: flex;
+    top: 30px; 
+    left: 0;
+    width: 100%;
+    height: 70%;
+    min-height: 150px;
+    background-color: rgba(var(--collection-1-blocks-no-a), 0.96);
+    border-radius: 20px; 
+    flex-direction: row;
+    align-items: flex-start;
+    display: flex;
+    padding: 10px;
+    overflow: auto;
+}
+
+.book-cover {
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+}
+  
+.name-text {
+    color: var(--collection-1-font-2);
+    font-family: var(--smaller-font-font-family);
+    font-size: var(--smaller-font-font-size);
+    font-style: var(--smaller-font-font-style);
+    font-weight: var(--smaller-font-font-weight);
+    letter-spacing: var(--smaller-font-letter-spacing);
+    line-height: var(--smaller-font-line-height);
+    margin-top: 10px;
+    font-size: 16px;
+}
+
+.add-book {
+    margin-top: 25px;
+}
+
+.plus-image {
+    max-width: 100px;
+    max-height: 100px;
+}
+  
+.icons-container {
+    display: flex;
+    justify-content: space-around;
+    width: 100px;
+    visibility: hidden;
+}
