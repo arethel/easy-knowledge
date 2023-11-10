@@ -9,6 +9,12 @@
   transition: all 0.3s ease;
 }
 
+.top-bar .page.hide {
+  opacity: 0.0;
+  width: 0px;
+  margin: 0px;
+}
+
 .page.active-page {
   background-color: var(--collection-1-block2);
 }
@@ -22,14 +28,15 @@
   height: 34px;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
   position: relative;
   cursor: pointer;
 }
 
 .page.expanded {
-  height: 140px;
+  /* height: 140px; */
+  height: 73px;
 }
 
 .page .book-name {
@@ -38,12 +45,10 @@
   font-size: var(--main-font-font-size);
   font-style: var(--main-font-font-style);
   font-weight: var(--main-font-font-weight);
-  left: 64px;
   letter-spacing: var(--main-font-letter-spacing);
   line-height: var(--main-font-line-height);
-  position: absolute;
-  top: 3px;
   cursor: pointer;
+  display: flex;
 }
 
 .page .props {

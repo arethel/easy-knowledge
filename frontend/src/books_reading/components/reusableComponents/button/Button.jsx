@@ -13,7 +13,7 @@ export const Button = (props) => {
     
     return (
         <div className='overlap-group' onClick={handleClick}>
-            <div className="text-wrapper-3">{props.string}</div>
+            <div className="button-text">{props.string}</div>
         </div>
     )
 }

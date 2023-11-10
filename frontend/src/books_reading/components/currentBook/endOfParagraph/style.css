@@ -1,0 +1,63 @@
+.book .end-of-paragraph {
+    position: relative;
+    display: flex;
+    padding: 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+.book .end-of-paragraph-bg{
+    background-color: var(--collection-1-blocks);
+}
+
+.book .buttons {
+    display: flex;
+}
+
+.end-of-paragraph .button-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin: 0px 20px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.book .end-of-paragraph .star {
+    height: 49px;
+    width: 51px;
+    display: flex;
+    margin-right: 20px;
+}
+
+.book .end-of-paragraph-text {
+    color: var(--collection-1-font-1);
+    font-family: var(--main-font-font-family);
+    font-size: var(--bigger-font-font-size);
+    font-style: var(--main-font-font-style);
+    font-weight: var(--main-font-font-weight);
+    letter-spacing: var(--main-font-letter-spacing);
+    line-height: var(--main-font-line-height);
+    display: flex;
+    transition: all 0.3s;
+}
+
+.book .button-container.gold .end-of-paragraph-text{
+    color: var(--collection-1-gold);
+}
+
+.end-of-paragraph .button-container:not(.gold):hover .end-of-paragraph-text {
+    color: var(--collection-1-font-2);
+}
+
+.end-of-paragraph .button-container:not(.gold):hover .svg {
+    fill: var(--collection-1-font-2);
+}
+
+.book .end-of-paragraph .question {
+    height: 73px;
+    width: 73px;
+    display: flex;
+    margin-right: 0px;
+}

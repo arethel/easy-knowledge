@@ -1,0 +1,24 @@
+.book .new-chapter {
+    position: relative;
+    display: flex;
+    padding: 10px;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+    margin-top: 30px;
+}
+
+.book .new-chapter-bg{
+    background-color: var(--collection-1-blocks);
+}
+
+.book .new-chapter-text {
+    display: flex;
+    color: var(--collection-1-font-1);
+    font-family: var(--very-big-font-font-family);
+    font-size: var(--very-big-font-font-size);
+    font-style: var(--very-big-font-font-style);
+    font-weight: var(--very-big-font-font-weight);
+    letter-spacing: var(--very-big-font-letter-spacing);
+    line-height: var(--very-big-font-line-height);
+}

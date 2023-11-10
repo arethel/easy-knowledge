@@ -1,0 +1,100 @@
+.paragraph-props{
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.paragraph-props .star {
+    height: 29px;
+    width: 30px;
+    margin: 10px;
+    fill: var(--collection-1-font-1);
+}
+
+.paragraph-props .star-filled {
+    height: 29px;
+    width: 30px;
+    margin: 10px;
+}
+
+.paragraph-props .question {
+    height: 44px;
+    width: 44px;
+    fill: var(--collection-1-font-1);
+}
+
+.paragraph-props .ai {
+    height: 35px;
+    width: 35px;
+    margin: 5px;
+    fill: var(--collection-1-font-1);
+}
+
+.paragraph-props .dots {
+    height: 7px;
+    width: 24px;
+    margin: 10px;
+    margin-right: 7.5px;
+    margin-top: 17px;
+    fill: var(--collection-1-font-1);
+}
+
+.paragraph-props-container-pos{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 190px;
+    position: relative;
+    justify-content: flex-end;
+}
+
+.paragraph-ext-props-container {
+    background-color: rgba(0, 0, 0, 0.0);
+    border-radius: 12px;
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    transition: all 0.3s;
+    user-select: none;
+    justify-content: flex-end;
+    display: flex;
+}
+
+.paragraph-ext-props-container:hover{
+    background-color: var(--collection-1-blocks);
+}
+
+.paragraph-ext-props-container.expanded {
+    width: 100%;
+    background-color: var(--collection-1-blocks);
+}
+
+.paragraph-ext-props-container .properties{
+    /* position: absolute; */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    /* right: 45px; */
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+.paragraph-ext-props-container .property {
+    color: var(--collection-1-font-1);
+    font-family: var(--main-font-font-family);
+    font-size: var(--main-font-font-size);
+    font-style: var(--main-font-font-style);
+    font-weight: var(--main-font-font-weight);
+    letter-spacing: var(--main-font-letter-spacing);
+    line-height: var(--main-font-line-height);
+    overflow: hidden;
+    cursor: pointer;
+    white-space: nowrap;
+}
