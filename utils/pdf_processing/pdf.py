@@ -159,8 +159,7 @@ def extract_paragraphs_from_page(pdf_path, page_number):
     pdf = fitz.open(pdf_path)
     text_blocks = pdf[page_number].get_text("blocks")
     # print(f"paragraphs: {len(text_blocks)}")
-    cal = [block[4] for block in text_blocks if block[4]]
-    print(cal)
+    cal = [block[4].replace('\n', ' ').replace('-\n', ' ') for block in text_blocks if block[4]]
     return cal
 
 
