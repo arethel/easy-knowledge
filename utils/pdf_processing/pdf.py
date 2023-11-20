@@ -154,13 +154,65 @@ def generate_xhtml_content(elements):
 
     return content
 
+def paragraph_pretier(paragraph):
+    paragraph = paragraph.replace('\n', ' ').replace('-\n', ' ')
+    return paragraph
 
-def extract_paragraphs_from_page(pdf_path, page_number):
+def process_page(page):
+    page_content = []
+    for block in page:
+        if block[4] and not '<image:' in block[4]:
+            page_content.append(block[4])
+    return page_content
+
+def p_ended(content):
+    content_ = paragraph_pretier(content).replace(' ', '').replace('-', '')
+    if content_[-1] in ['.', '!', '?']:
+        return True
+    return False
+
+def unite_divided_paragraphs(page):
+    content = []
+    for block in page:
+        if len(content)==0:
+            content.append(block)
+        else:
+            if p_ended(content[-1]):
+                content.append(block)
+            else:
+                content[-1] += block
+    return content
+
+def extract_paragraphs_from_page(pdf_path, page1, page2):
     pdf = fitz.open(pdf_path)
-    text_blocks = pdf[page_number].get_text("blocks")
-    # print(f"paragraphs: {len(text_blocks)}")
-    cal = [block[4].replace('\n', ' ').replace('-\n', ' ') for block in text_blocks if block[4]]
-    return cal
+    
+    pages = []
+    for p_num in range(page1, page2+1):
+        page = process_page(pdf[p_num].get_text("blocks"))
+        page = unite_divided_paragraphs(page)
+        if p_num-1>=0:
+            if len(pages)==0:
+                ext_p = process_page(pdf[page1-1].get_text("blocks"))[-1]
+            else:
+                ext_p = pages[-1][-1]
+            
+            if not ext_p[-1] in ['.']:
+                print(ext_p, page[0])
+                page[0] = ext_p + page[0]
+                if len(pages)>0:
+                    pages[-1].pop()
+        content = []
+        for block in page:
+            content.append(paragraph_pretier(block))
+        pages.append(content)
+    
+    end_page = pages[-1]
+    if page2+1<len(pdf):
+        ext_p = process_page(pdf[page2+1].get_text("blocks"))[0]
+        if not end_page[-1][-1] in ['.']:
+            end_page[-1] = paragraph_pretier(end_page[-1] + ext_p)
+    
+    return pages
 
 
 if __name__ == '__main__':

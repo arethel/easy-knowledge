@@ -1,5 +1,5 @@
 from pathlib import Path
-from pdf_processing.pdf import extract_paragraphs_from_page
+from pdf_processing.pdf import extract_paragraphs_from_page, p_ended, unite_divided_paragraphs
 import os
 
 lang_folder = Path(os.path.dirname(os.path.realpath(__file__))) / 'dataset_processing' / 'dataset_data'
@@ -8,4 +8,8 @@ books = {lang.name: [book for book in lang.iterdir() if book.is_file()] for lang
 
 # print(books['en'][0])
 
-print(extract_paragraphs_from_page(books['en'][0], 101))
+# print(unite_divided_paragraphs(['a.', 'b']))
+
+for p in extract_paragraphs_from_page(books['en'][0], 101, 101)[0]:
+    print(p)
+    print('---')
