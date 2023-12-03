@@ -1,5 +1,5 @@
 import os
-import PIL.Image
+from PIL import Image
 import io
 import requests
 import PyPDF2
@@ -7,6 +7,8 @@ import fitz
 import hashlib
 import pdfplumber
 from ebooklib import epub
+from collections import Counter
+import pytesseract
 
 def get_image_hash(image_data):
     return hashlib.md5(image_data).hexdigest()
@@ -26,7 +28,7 @@ def get_all_images(pdf_path, output_images_folder):
                 continue
             else:
                 saved_images.add(image_hash)
-            img = PIL.Image.open(io.BytesIO(image_data))
+            img = Image.open(io.BytesIO(image_data))
             extension = base_img["ext"]
             if not os.path.exists(output_images_folder):
                 os.makedirs(output_images_folder)
@@ -55,15 +57,6 @@ def extract_metadata(pdf_path):
     return information
 
 
-def extract_text_from_pdf_pdfplumber(pdf_path, output_txt_path):
-    with pdfplumber.open(pdf_path) as pdf:
-        text_content = ""
-        for page in pdf.pages:
-            text_content += page.extract_text() + '\n'
-    with open(output_txt_path, "w", encoding="utf-8") as txt_file:
-        txt_file.write(text_content)
-
-
 def extract_text_from_pdf_pymupdf(pdf_path, output_txt_path):
     text_content = ""
     pdf = fitz.open(pdf_path)
@@ -71,16 +64,6 @@ def extract_text_from_pdf_pymupdf(pdf_path, output_txt_path):
         page = pdf[page_num]
         text_content += page.get_text() + '\n'
     pdf.close()
-    with open(output_txt_path, "w", encoding="utf-8") as txt_file:
-        txt_file.write(text_content)
-
-
-def extract_text_from_pdf_pypdf2(pdf_path, output_txt_path):
-    with open(pdf_path, "rb") as file:
-        pdf_reader = PyPDF2.PdfReader(file)
-        text_content = ""
-        for page in pdf_reader.pages:
-            text_content += page.extract_text() + '\n'
     with open(output_txt_path, "w", encoding="utf-8") as txt_file:
         txt_file.write(text_content)
 
@@ -93,7 +76,7 @@ def transform_pdf_to_epub(pdf_path, epub_path):
     book.set_language('en')
     #print(pdf_document.get_toc())
 
-    for page_number in range(len(pdf_document)-535):
+    for page_number in range(26, 30):#len(pdf_document)-535):
         page = pdf_document.load_page(page_number)
         #print(f"page: {type(page)}")
 
@@ -112,21 +95,94 @@ def transform_pdf_to_epub(pdf_path, epub_path):
     epub_file_name = epub_path
     epub.write_epub(epub_file_name, book)
 
+def show_image(item, title="", output_folder="./output/pages_images"):
+    """Display a pixmap.
+
+    Just to display Pixmap image of "item" - ignore the man behind the curtain.
+
+    Args:
+        item: any PyMuPDF object having a "get_pixmap" method.
+        title: a string to be used as image title
+
+    Generates an RGB Pixmap from item using a constant DPI and using matplotlib
+    to show it inline of the notebook.
+    """
+    DPI = 150  # use this resolution
+    import numpy as np
+    import matplotlib.pyplot as plt
+
+    # %matplotlib inline
+    pix = item.get_pixmap(dpi=DPI)
+    img = np.ndarray([pix.h, pix.w, 3], dtype=np.uint8, buffer=pix.samples_mv)
+    plt.figure(dpi=DPI)  # set the figure's DPI
+    plt.title(title)  # set title of image
+    plt.axis('off')
+    plt.imshow(img, extent=(0, pix.w * 72 / DPI, pix.h * 72 / DPI, 0))
+    if not os.path.exists(output_folder):
+        os.makedirs(output_folder)
+    output_file_path = os.path.join(output_folder, f"page_{item.number}.png")
+    plt.savefig(output_file_path)
+
+def count_words(sentence, separators=["\n", " "]):
+    for sep in separators:
+        sentence = sentence.replace(sep, " ")
+    words = sentence.split(" ")
+    return len(words)
+
+
+def preprocess_text(text, page_rect):
+    content = []
+    for block in text:
+        block = list(block)
+        if count_words(block[4]) < 8 or len(block[4].replace(' ', '')) < 30 or block[2] - block[0] < 5 :
+            continue
+        if len(content) == 0:
+            content.append(block)
+        else:
+            if block[2] > page_rect[1]:
+                block[2] = page_rect[1]
+            if not (5 < abs(block[0] - content[-1][0]) < 10 and (-1 < block[0] - page_rect[0] < 1 or len(content[-1][4]) > 60)):
+                content.append(block)
+            else:
+                content[-1][4] += block[4]
+                content[-1][0] = min(block[0], content[-1][0])
+                content[-1][2] = max(block[2], content[-1][2])
+                content[-1][3] = block[3]
+    return content
+
+def get_most_common_x(page):
+    text_blocks = page.get_text("blocks")
+    x_counts_left = Counter(int(block[0]) for block in text_blocks)
+    x_counts_right = Counter(int(block[2]) for block in text_blocks)
+    
+    most_common_x_left = x_counts_left.most_common(1)[0][0]
+    most_common_x_right = x_counts_right.most_common(1)[0][0]
+    return most_common_x_left, most_common_x_right
+
 
 def process_page(page):
     elements = []
     text = page.get_text("blocks")
     #print(text[:15])
-    print(text)
+    #print(text)
+    # table_finder = page.find_tables()
+    # if table_finder.tables:
+    #     for table in table_finder.tables:
+    #         print(f"page {page.number + 1}: {table.bbox}")
+    page_rect = get_most_common_x(page)
+    preprocessed_text = preprocess_text(text, page_rect)
+    for paragraph in preprocessed_text:
+        page.draw_rect(paragraph[:4], color=fitz.pdfcolor["green"])
+    page.draw_rect((page_rect[0], 0, page_rect[1], page.rect[3]), color=fitz.pdfcolor["red"])
+    show_image(page)
     
-    print(f"paragraphs: {len(text)}")
-    # Iterate through paragraphs and add them as elements
-    for element_number, paragraph in enumerate(text):
+    #print(f"paragraphs: {len(text)}")
+    for element_number, paragraph in enumerate(preprocessed_text):
         elements.append({
             'page': page.number,
             'type': 'paragraph',
             'order': element_number,
-            'content': text
+            'content': paragraph
         })
     return elements
 
@@ -158,7 +214,7 @@ def paragraph_pretier(paragraph):
     paragraph = paragraph.replace('\n', ' ').replace('-\n', ' ')
     return paragraph
 
-def process_page(page):
+def process_page_text(page):
     page_content = []
     for block in page:
         if block[4] and not '<image:' in block[4]:
@@ -167,7 +223,7 @@ def process_page(page):
 
 def p_ended(content):
     content_ = paragraph_pretier(content).replace(' ', '').replace('-', '')
-    if content_[-1] in ['.', '!', '?']:
+    if content_[-1] in '.?!':
         return True
     return False
 
@@ -188,11 +244,11 @@ def extract_paragraphs_from_page(pdf_path, page1, page2):
     
     pages = []
     for p_num in range(page1, page2+1):
-        page = process_page(pdf[p_num].get_text("blocks"))
+        page = process_page_text(pdf[p_num].get_text("blocks"))
         page = unite_divided_paragraphs(page)
         if p_num-1>=0:
             if len(pages)==0:
-                ext_p = process_page(pdf[page1-1].get_text("blocks"))[-1]
+                ext_p = process_page_text(pdf[page1-1].get_text("blocks"))[-1]
             else:
                 ext_p = pages[-1][-1]
             
@@ -208,7 +264,7 @@ def extract_paragraphs_from_page(pdf_path, page1, page2):
     
     end_page = pages[-1]
     if page2+1<len(pdf):
-        ext_p = process_page(pdf[page2+1].get_text("blocks"))[0]
+        ext_p = process_page_text(pdf[page2+1].get_text("blocks"))[0]
         if not end_page[-1][-1] in ['.']:
             end_page[-1] = paragraph_pretier(end_page[-1] + ext_p)
     
@@ -216,7 +272,7 @@ def extract_paragraphs_from_page(pdf_path, page1, page2):
 
 
 if __name__ == '__main__':
-    pdf_path = "BartoSutton.pdf"
+    pdf_path = "ISLRv2.pdf"
     output_txt_path = "./output/output_text.txt"
     output_txt_path1 = "./output/output_text1.txt"
     output_txt_path2 = "./output/output_text2.txt"
@@ -231,5 +287,5 @@ if __name__ == '__main__':
     epub_path = 'output/output_book.epub'
     dest_file = './output/output.json'
     # pdf_to_epub(pdf_path, epub_path)
-    #transform_pdf_to_epub(pdf_path, epub_path)
-    extract_paragraphs_from_page(pdf_path, 13)
+    transform_pdf_to_epub(pdf_path, epub_path)
+    #extract_paragraphs_from_page(pdf_path, 13)
