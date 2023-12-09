@@ -8,7 +8,6 @@ import hashlib
 import pdfplumber
 from ebooklib import epub
 from collections import Counter
-import pytesseract
 
 def get_image_hash(image_data):
     return hashlib.md5(image_data).hexdigest()
@@ -67,6 +66,20 @@ def extract_text_from_pdf_pymupdf(pdf_path, output_txt_path):
     with open(output_txt_path, "w", encoding="utf-8") as txt_file:
         txt_file.write(text_content)
 
+def calculate_rotation_from_bbox(bbox):
+    # Extract coordinates from the bbox
+    x0, y0, x1, y1 = bbox
+
+    # Calculate rotation angle based on coordinate differences
+    delta_x = x1 - x0
+    delta_y = y1 - y0
+
+    rotation_angle = 0
+    if delta_x != 0:
+        rotation_angle = -1 * (180 / 3.14159265) * (delta_y / delta_x)
+
+    return rotation_angle
+
 
 def transform_pdf_to_epub(pdf_path, epub_path):
     pdf_document = fitz.open(pdf_path)
@@ -76,7 +89,7 @@ def transform_pdf_to_epub(pdf_path, epub_path):
     book.set_language('en')
     #print(pdf_document.get_toc())
 
-    for page_number in range(26, 30):#len(pdf_document)-535):
+    for page_number in range(28, 35):#len(pdf_document)-535):
         page = pdf_document.load_page(page_number)
         #print(f"page: {type(page)}")
 
@@ -132,48 +145,76 @@ def count_words(sentence, separators=["\n", " "]):
 
 def preprocess_text(text, page_rect):
     content = []
+    intersection_area = 200
     for block in text:
         block = list(block)
-        if count_words(block[4]) < 8 or len(block[4].replace(' ', '')) < 30 or block[2] - block[0] < 5 :
-            continue
+        #print(block)
         if len(content) == 0:
             content.append(block)
+        rotation_angle = calculate_rotation_from_bbox(block[:4])
+        if (count_words(block[4]) < 8 or len(block[4].replace(' ', '')) < 30 or block[2] - block[0] < 5) and p_ended(content[-1][4]):
+            continue
         else:
-            if block[2] > page_rect[1]:
-                block[2] = page_rect[1]
-            if not (5 < abs(block[0] - content[-1][0]) < 10 and (-1 < block[0] - page_rect[0] < 1 or len(content[-1][4]) > 60)):
+            if block[2] > page_rect[2]:
+                block[2] = page_rect[2]
+            is_intersected = fitz.Rect(block[:4]).intersects(content[-1][:4])
+            if  not ((is_intersected and block[1] < content[-1][3] - 6) or block[1] < content[-1][3] - 3) \
+                and not (5 < content[-1][0] - block[0] < 10) \
+                and (-1 < block[0] - page_rect[0] < 1 or len(content[-1][4]) > 60) \
+                and not ((not p_ended(content[-1][4]) or is_intersected) and block[0] > content[-1][0] > page_rect[0] + 3) \
+                and not content[-1][4].strip().endswith("-"):
                 content.append(block)
-            else:
+            
+            if  (5 < content[-1][0] - block[0] < 10 and not (5 < block[1] - content[-1][3])) \
+                or (is_intersected and block[1] < content[-1][3] - 6) \
+                or ((not p_ended(content[-1][4]) or is_intersected) and block[0] > content[-1][0] > page_rect[0] + 3) \
+                or content[-1][4].strip().endswith("-"):
                 content[-1][4] += block[4]
                 content[-1][0] = min(block[0], content[-1][0])
                 content[-1][2] = max(block[2], content[-1][2])
                 content[-1][3] = block[3]
+            else:
+                content.append(block)
+            
+                
     return content
 
-def get_most_common_x(page):
+def get_page_rect(page):
     text_blocks = page.get_text("blocks")
+    blocks = page.get_text("dict", flags=11)["blocks"]
+    # if page.number == 31:
+    #     for block in blocks:
+    #         print(block, '\n')
     x_counts_left = Counter(int(block[0]) for block in text_blocks)
     x_counts_right = Counter(int(block[2]) for block in text_blocks)
     
     most_common_x_left = x_counts_left.most_common(1)[0][0]
     most_common_x_right = x_counts_right.most_common(1)[0][0]
-    return most_common_x_left, most_common_x_right
+    return most_common_x_left, page.rect[1], most_common_x_right, page.rect[3]
 
 
 def process_page(page):
     elements = []
+    page_rect = get_page_rect(page)
+    words = page.get_text("words")
+    for word in words:
+        if word[0] >= page_rect[2]:
+            #for rect in page.search_for(word[4]):
+            if not fitz.Rect(word[:4]).intersects(page_rect):
+                page.add_redact_annot(word[:4])
+            
+    
+    page.apply_redactions()
     text = page.get_text("blocks")
-    #print(text[:15])
-    #print(text)
-    # table_finder = page.find_tables()
-    # if table_finder.tables:
-    #     for table in table_finder.tables:
-    #         print(f"page {page.number + 1}: {table.bbox}")
-    page_rect = get_most_common_x(page)
+    
     preprocessed_text = preprocess_text(text, page_rect)
     for paragraph in preprocessed_text:
         page.draw_rect(paragraph[:4], color=fitz.pdfcolor["green"])
-    page.draw_rect((page_rect[0], 0, page_rect[1], page.rect[3]), color=fitz.pdfcolor["red"])
+    
+    # for word in words:
+    #     page.draw_rect(word[:4], color=fitz.pdfcolor["blue"])
+        
+    page.draw_rect((page_rect[0], page_rect[1], page_rect[2], page_rect[3]), color=fitz.pdfcolor["red"])
     show_image(page)
     
     #print(f"paragraphs: {len(text)}")

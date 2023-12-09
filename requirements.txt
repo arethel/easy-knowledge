@@ -8,4 +8,6 @@ PyPDF2
 PyMuPDF
 pillow
 matplotlib
+pdfplumber
+ebooklib
 numpy
