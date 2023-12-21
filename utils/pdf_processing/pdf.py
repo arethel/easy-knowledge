@@ -161,15 +161,25 @@ def paragraph_pretier(paragraph):
 def process_page(page):
     page_content = []
     for block in page:
-        if block[4] and not '<image:' in block[4]:
+        if block[4] and not drop_p_with_unnecessary_words(block[4]) and len(block[4])>100:
             page_content.append(block[4])
     return page_content
 
 def p_ended(content):
     content_ = paragraph_pretier(content).replace(' ', '').replace('-', '')
+    if len(content_)<2:
+        return False
     if content_[-1] in ['.', '!', '?']:
         return True
     return False
+
+def p_started(content):
+    content_ = paragraph_pretier(content).replace(' ', '').replace('-', '')
+    if len(content_)<2:
+        return False
+    if content_[0].isalpha() and not content_[0].isupper():
+        return False
+    return True
 
 def unite_divided_paragraphs(page):
     content = []
@@ -183,34 +193,34 @@ def unite_divided_paragraphs(page):
                 content[-1] += block
     return content
 
-def extract_paragraphs_from_page(pdf_path, page1, page2):
+drop_words = ['chapter', 'figure', 'table', 'section', 'page', 'reference', 'references', '<image:']
+def drop_p_with_unnecessary_words(content:str):
+    content_ = content[:20].lower().replace(' ', '').replace('-', '')
+    for word in drop_words:
+        if word in content_:
+            return True
+    return False
+
+def get_pdf_len(pdf_path):
     pdf = fitz.open(pdf_path)
+    return len(pdf)
+
+def extract_paragraphs_from_page(pdf_path, page1, page2=None):
+    pdf = fitz.open(pdf_path)
+    
+    if page2 is None:
+        page2 = page1
     
     pages = []
     for p_num in range(page1, page2+1):
         page = process_page(pdf[p_num].get_text("blocks"))
         page = unite_divided_paragraphs(page)
-        if p_num-1>=0:
-            if len(pages)==0:
-                ext_p = process_page(pdf[page1-1].get_text("blocks"))[-1]
-            else:
-                ext_p = pages[-1][-1]
-            
-            if not ext_p[-1] in ['.']:
-                print(ext_p, page[0])
-                page[0] = ext_p + page[0]
-                if len(pages)>0:
-                    pages[-1].pop()
         content = []
         for block in page:
+            if not p_started(block) or not p_ended(block) or len(block)<500:
+                continue
             content.append(paragraph_pretier(block))
         pages.append(content)
-    
-    end_page = pages[-1]
-    if page2+1<len(pdf):
-        ext_p = process_page(pdf[page2+1].get_text("blocks"))[0]
-        if not end_page[-1][-1] in ['.']:
-            end_page[-1] = paragraph_pretier(end_page[-1] + ext_p)
     
     return pages
 
