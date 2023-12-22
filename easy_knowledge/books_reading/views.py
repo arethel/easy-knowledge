@@ -20,23 +20,17 @@ def book(request):
         file_obj = Book.objects.get(user=username, title=title)
         file_path = file_obj.book_file.path
         return FileResponse(open(file_path, 'rb'))
-        data = {
-            'username': username,
-            "key1": "value1",
-            "key2": "value2",
-            "key3": "value3"
-        }
-        return JsonResponse(data)
     
     elif request.method == 'POST':
-    
-        if request.method == 'POST' and request.FILES['file']:
+        if request.FILES['file']:
             uploaded_file = request.FILES['file']
             
             username = request.user.username
             title = request.POST.get('title')
             new_file = Book(user = username, title = title, book_file = uploaded_file)
             new_file.save()
+            
+            #ToDo: Book processing
             
             return render(request, 'upload_success.html')
         return render(request, 'upload_form.html')
