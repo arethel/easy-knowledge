@@ -39,9 +39,12 @@ INSTALLED_APPS = [
     'books_reading.apps.BooksReadingConfig',
     'main_page.apps.MainPageConfig',
     'users.apps.UsersConfig',
+    'rest_framework',
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -119,7 +122,7 @@ USE_TZ = True
 import os
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR.parent, 'frontend/build/static'),
+    # os.path.join(BASE_DIR.parent, 'frontend/build/static'),
 ]
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -127,3 +130,10 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'users.User'
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+
+LOGIN_URL = '/login'
