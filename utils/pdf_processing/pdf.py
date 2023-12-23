@@ -1,6 +1,8 @@
 import os
 from PIL import Image
 import io
+import cv2
+import numpy as np
 import requests
 import PyPDF2
 import fitz
@@ -16,9 +18,17 @@ def get_all_images(pdf_path, output_images_folder):
     pdf = fitz.open(pdf_path)
     counter = 1
     saved_images = set()
+    # my_page = pdf[28]
+    # img_matrix = my_page.get_pixmap(matrix=fitz.Matrix(1, 1), clip=[0, 0, 360, 150])
+    # img_array = img_matrix.tobytes()
+    # img_cv2 = cv2.imdecode(
+    #     np.frombuffer(img_array, dtype=np.uint8),
+    #     flags=cv2.IMREAD_COLOR
+    # )
+    # cv2.imwrite(f"{output_images_folder}/my_imageeeeee.png", img_cv2)
     for i in range(len(pdf)):
         page = pdf[i]
-        images = page.get_images()
+        images = page.get_images(full=True)
         for image in images:
             base_img = pdf.extract_image(image[0])
             image_data = base_img["image"]
@@ -31,7 +41,7 @@ def get_all_images(pdf_path, output_images_folder):
             extension = base_img["ext"]
             if not os.path.exists(output_images_folder):
                 os.makedirs(output_images_folder)
-            img.save(open(f"{output_images_folder}/image{counter}.{extension}", "wb"))
+            img.save(open(f"{output_images_folder}/image{counter}-pg{i}.{extension}", "wb"))
             counter += 1
 
 
@@ -65,20 +75,6 @@ def extract_text_from_pdf_pymupdf(pdf_path, output_txt_path):
     pdf.close()
     with open(output_txt_path, "w", encoding="utf-8") as txt_file:
         txt_file.write(text_content)
-
-def calculate_rotation_from_bbox(bbox):
-    # Extract coordinates from the bbox
-    x0, y0, x1, y1 = bbox
-
-    # Calculate rotation angle based on coordinate differences
-    delta_x = x1 - x0
-    delta_y = y1 - y0
-
-    rotation_angle = 0
-    if delta_x != 0:
-        rotation_angle = -1 * (180 / 3.14159265) * (delta_y / delta_x)
-
-    return rotation_angle
 
 
 def transform_pdf_to_epub(pdf_path, epub_path):
@@ -142,30 +138,40 @@ def count_words(sentence, separators=["\n", " "]):
     words = sentence.split(" ")
     return len(words)
 
-
-def preprocess_text(text, page_rect):
+def preprocess_text(text, page_rect, parag_lines, page):
     content = []
-    intersection_area = 200
-    for block in text:
-        block = list(block)
-        #print(block)
+    text = [list(block) for block in text]
+    
+    for idx, block in enumerate(text):
         if len(content) == 0:
             content.append(block)
-        rotation_angle = calculate_rotation_from_bbox(block[:4])
         if (count_words(block[4]) < 8 or len(block[4].replace(' ', '')) < 30 or block[2] - block[0] < 5) and p_ended(content[-1][4]):
             continue
         else:
             if block[2] > page_rect[2]:
                 block[2] = page_rect[2]
+            counter = 0
+            for line in parag_lines:
+                if fitz.Rect(block[:4]).intersects(line):
+                    counter += 1
+            # code for splitting big paragraph into smalle ones
+            # if counter > 1 and parag_lines[0][1] - block[1] > 8:
+            #     x_y_of_paragpaph = block[2:4]
+            #     block[2:4] = [page_rect[2], parag_lines[0][1] - 0.5]
+            #     block[4] = page.get_textbox(block[:4])
+            #     text.insert(idx + 1, [page_rect[0], parag_lines[0][1], x_y_of_paragpaph[0], x_y_of_paragpaph[1], page.get_textbox([page_rect[0], parag_lines[0][1], x_y_of_paragpaph[0], x_y_of_paragpaph[1]])])
+            # elif counter > 1 or (counter == 1 and len(parag_lines) == 1):
+            #     x_y_of_paragpaph = block[2:4]
+            #     block[:2] = [page_rect[0], parag_lines[0][1]]
+            #     if counter > 1:
+            #         block[2:4] = [page_rect[2], parag_lines[1][1] - 0.5]
+            #     #print(f"{block[:4]}") if page.get_textbox(block[:4]) == "" or page.get_textbox(block[:4]) is None else print()
+            #     block[4] = page.get_textbox(block[:4])
+            #     text.insert(idx + 1, [page_rect[0], parag_lines[0][1], x_y_of_paragpaph[0], x_y_of_paragpaph[1], page.get_textbox([page_rect[0], parag_lines[0][1], x_y_of_paragpaph[0], x_y_of_paragpaph[1]])])
+            #     parag_lines.pop(0)
             is_intersected = fitz.Rect(block[:4]).intersects(content[-1][:4])
-            if  not ((is_intersected and block[1] < content[-1][3] - 6) or block[1] < content[-1][3] - 3) \
-                and not (5 < content[-1][0] - block[0] < 10) \
-                and (-1 < block[0] - page_rect[0] < 1 or len(content[-1][4]) > 60) \
-                and not ((not p_ended(content[-1][4]) or is_intersected) and block[0] > content[-1][0] > page_rect[0] + 3) \
-                and not content[-1][4].strip().endswith("-"):
-                content.append(block)
-            
-            if  (5 < content[-1][0] - block[0] < 10 and not (5 < block[1] - content[-1][3])) \
+                        
+            if  (5 < content[-1][0] - block[0] < 20 and not (5 < block[1] - content[-1][3])) \
                 or (is_intersected and block[1] < content[-1][3] - 6) \
                 or ((not p_ended(content[-1][4]) or is_intersected) and block[0] > content[-1][0] > page_rect[0] + 3) \
                 or content[-1][4].strip().endswith("-"):
@@ -174,50 +180,58 @@ def preprocess_text(text, page_rect):
                 content[-1][2] = max(block[2], content[-1][2])
                 content[-1][3] = block[3]
             else:
-                content.append(block)
-            
-                
+                content.append(block)        
     return content
 
 def get_page_rect(page):
     text_blocks = page.get_text("blocks")
-    blocks = page.get_text("dict", flags=11)["blocks"]
-    # if page.number == 31:
-    #     for block in blocks:
-    #         print(block, '\n')
+    text_blocks = [block for block in text_blocks if not block[4].strip().isnumeric()]
+    # blocks = page.get_text("dict", flags=11)["blocks"]
     x_counts_left = Counter(int(block[0]) for block in text_blocks)
     x_counts_right = Counter(int(block[2]) for block in text_blocks)
+    max_y_down, max_x_right = 0, 0
+    for idx, block in enumerate(text_blocks):
+        if block[2] > max_x_right:
+            max_x_right = block[2]
+        if block[3] > max_y_down:
+            max_y_down = block[3]
     
     most_common_x_left = x_counts_left.most_common(1)[0][0]
     most_common_x_right = x_counts_right.most_common(1)[0][0]
-    return most_common_x_left, page.rect[1], most_common_x_right, page.rect[3]
+    return most_common_x_left, page.rect[1], min(page.rect[2], max_x_right), min(page.rect[3], max_y_down), most_common_x_right
 
 
 def process_page(page):
     elements = []
     page_rect = get_page_rect(page)
     words = page.get_text("words")
-    for word in words:
-        if word[0] >= page_rect[2]:
-            #for rect in page.search_for(word[4]):
-            if not fitz.Rect(word[:4]).intersects(page_rect):
+
+    concatenated_paragraphs = []
+    for idx, word in enumerate(words):
+        if word[0] >= page_rect[4] and page_rect[4] - page_rect[0] > 250:
+            if not fitz.Rect(word[:4]).intersects([page_rect[0], page_rect[1], page_rect[4], page_rect[3]]):
                 page.add_redact_annot(word[:4])
-            
-    
+        if page_rect[0] + 40 > word[0] > page_rect[0] + 10 and words[idx - 1][1] + 3 < word[1] and not word[4].isnumeric() and word[4].isalnum():
+            word_to_place = list(word[:4])
+            word_to_place[1] = (words[idx - 1][1] + word[3]) / 2
+            concatenated_paragraphs.append(word_to_place)
     page.apply_redactions()
+    page_rect = get_page_rect(page)
     text = page.get_text("blocks")
-    
-    preprocessed_text = preprocess_text(text, page_rect)
+
+    if page.number == 28:
+        print(len(concatenated_paragraphs))
+    for elem in concatenated_paragraphs:
+        page.draw_rect(elem, color=fitz.pdfcolor["blue"])
+    preprocessed_text = preprocess_text(text, page_rect[:4], concatenated_paragraphs, page)
     for paragraph in preprocessed_text:
         page.draw_rect(paragraph[:4], color=fitz.pdfcolor["green"])
     
     # for word in words:
     #     page.draw_rect(word[:4], color=fitz.pdfcolor["blue"])
-        
     page.draw_rect((page_rect[0], page_rect[1], page_rect[2], page_rect[3]), color=fitz.pdfcolor["red"])
+
     show_image(page)
-    
-    #print(f"paragraphs: {len(text)}")
     for element_number, paragraph in enumerate(preprocessed_text):
         elements.append({
             'page': page.number,
@@ -240,7 +254,6 @@ def determine_element_type(element):
     else:
         # If there's no text content, it might be an image without text
         return 'image'
-
 
 def generate_xhtml_content(elements):
     # Generate XHTML content based on the list of elements
@@ -313,20 +326,15 @@ def extract_paragraphs_from_page(pdf_path, page1, page2):
 
 
 if __name__ == '__main__':
-    pdf_path = "ISLRv2.pdf"
+    pdf_path = "GRE.pdf"
     output_txt_path = "./output/output_text.txt"
-    output_txt_path1 = "./output/output_text1.txt"
-    output_txt_path2 = "./output/output_text2.txt"
     output_images_folder = "./output/images"
 
     # get_all_images(pdf_path, output_images_folder)
     # extract_metadata(pdf_path)
-    # extract_text_from_pdf_pypdf2(pdf_path, output_txt_path)
-    # extract_text_from_pdf_pymupdf(pdf_path, output_txt_path1)
-    # extract_text_from_pdf_pdfplumber(pdf_path, output_txt_path2)
+    # extract_text_from_pdf_pymupdf(pdf_path, output_txt_path)
 
     epub_path = 'output/output_book.epub'
     dest_file = './output/output.json'
-    # pdf_to_epub(pdf_path, epub_path)
     transform_pdf_to_epub(pdf_path, epub_path)
-    #extract_paragraphs_from_page(pdf_path, 13)
+    # extract_paragraphs_from_page(pdf_path, 13)
