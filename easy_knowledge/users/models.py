@@ -6,3 +6,37 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
+
+class UserSettings(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='settings')
+    
+    receive_notifications = models.BooleanField(default=True)
+    
+    THEME_CHOICES = [
+        ('Dark', 'Dark'),
+        ('Light', 'Light'),
+    ]
+    theme = models.CharField(max_length=20, choices=THEME_CHOICES, default='Dark')
+    
+    LANGUAGE_CHOICES = [
+        ('English', 'English'),
+        ('Spanish', 'Spanish'),
+    ]
+    language = models.CharField(max_length=20, choices=LANGUAGE_CHOICES, default='English')
+    
+    TEXT_SIZE_CHOICES = [
+        ('Small', 'Small'),
+        ('Medium', 'Medium'),
+        ('Large', 'Large'),
+    ]
+    text_size = models.CharField(max_length=20, choices=TEXT_SIZE_CHOICES, default='Medium')
+    
+    TEXT_FONT_CHOICES = [
+        ('Arial', 'Arial'),
+        ('Times New Roman', 'Times New Roman'),
+    ]
+    text_font = models.CharField(max_length=20, choices=TEXT_FONT_CHOICES, default='Arial')
+
+
+    def __str__(self):
+        return f"{self.user.username}'s settings"

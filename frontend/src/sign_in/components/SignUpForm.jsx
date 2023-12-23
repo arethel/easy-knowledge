@@ -147,7 +147,7 @@ const CssFormControl = withStyles({
 
 const defaultTheme = createTheme();
 
-export default function SignInForm() {
+export default function SignInForm( {client}) {
   const [showPassword, setShowPassword] = React.useState(false);
   const classes = useStyles();
 
@@ -167,9 +167,23 @@ export default function SignInForm() {
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
+    
+    //const user_data = {
+    //   email: data.get('email'),
+    //   password: data.get('password'),
+    //   username: data.get('email'),
+    // }
+    const user_data = {
+      email: 'somemaila@gmail.com',
+      username: 'someusernamea',
+      password1: 'somepassword',
+      password2: 'somepassword',
+    }
+    
+    client.post("/api/register/",
+      user_data
+    ).then((response) => {
+      console.log(response);
     });
   };
 

@@ -3,7 +3,7 @@ import openai
 import tiktoken
 
 openai.api_key = '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'
-model = "gpt-3.5-turbo"
+model = "gpt-3.5-turbo-0613"
 
 question_template =  messages = [
     {"role": "system", "content": "Вы являетесь преподавателем, который задает вопросы к параграфу, предоставленному студентом, а в конце говорите ответ. Важно, чтобы вопрос состоял из одного предложения."},
