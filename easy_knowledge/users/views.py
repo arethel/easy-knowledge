@@ -1,28 +1,38 @@
 from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
+from pydantic import Json
 from .forms import UserCreationForm
 from .models import UserSettings
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
+from django.views.decorators.csrf import ensure_csrf_cookie
+import json
+
+@ensure_csrf_cookie
+@require_http_methods(["GET"])
+def csrftoken(request):
+    return JsonResponse({'csrf': True})
 
 def register(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        data = json.loads(request.body)
+        form = UserCreationForm(data)
         if form.is_valid():
             user = form.save()
             user_settings = UserSettings(user=user)
             user_settings.save()
             login(request, user)
-            return redirect('/book')  # Replace 'home' with the name of your homepage URL pattern
+            return redirect('/')  # Replace 'home' with the name of your homepage URL pattern
     else:
         form = UserCreationForm()
-    return render(request, 'registration/register.html', {'form': form})
+    return JsonResponse({'error': 1, 'details': form.errors})
 
 def login_(request):
     if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
+        data = json.loads(request.body)
+        username = data.get('username')
+        password = data.get('password')
         user = authenticate(username=username, password=password)
         if user is not None:
             login(request, user)
@@ -61,6 +71,7 @@ def change_settings(request):
     return JsonResponse({'error': 0})
 
 @require_http_methods(["GET"])
+@ensure_csrf_cookie
 def get_user(request):
     if request.user.is_anonymous:
         return JsonResponse({'error': 1, 'anonymous': True})
@@ -78,3 +89,20 @@ def get_user(request):
         'email': user.email,
         'error': 0,
     })
+
+@require_http_methods(["POST"])
+def change_user_info(request):
+    if request.user.is_anonymous:
+        return JsonResponse({'error': 1, 'anonymous': True})
+    
+    user = request.user
+    data = json.loads(request.body)
+    username = data.get('username')
+    password = data.get('password')
+    if username is not None:
+        user.username = username
+    if password is not None:
+        user.set_password(password)
+    user.save()
+
+    return JsonResponse({'error': 0})
