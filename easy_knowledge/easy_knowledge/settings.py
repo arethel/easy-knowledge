@@ -36,8 +36,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'books_reading.apps.BooksReadingConfig',
-    'main_page.apps.MainPageConfig',
+    'api.apps.ApiConfig',
+    'frontend.apps.FrontendConfig',
     'users.apps.UsersConfig',
     'rest_framework',
     "corsheaders",
@@ -130,7 +130,6 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'users.User'
-BOOK_MODEL = 'books_reading.Book'
 
 CORS_ALLOW_CREDENTIALS = True
 

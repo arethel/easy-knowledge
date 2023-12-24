@@ -1,13 +1,14 @@
 from django.urls import path
-from django.contrib.auth import views as auth_views
 from . import views
 
 urlpatterns = [
-    path('csrftoken/', views.csrftoken, name='csrftoken'),
-    path('register/', views.register, name='register'),
-    path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
-    path('settings/', views.change_settings, name='settings'),
-    path('get-user-data/', views.get_user, name='get-user-data'),
-    path('change-user-info/', views.change_user_info, name='change-user-info'),
+    path('user/', views.User.as_view(), name='user'),
+    path('user/change-username/', views.User.as_view({'post': 'change_username'}), name='change-username'),
+    
+    path('auth/get-user/', views.Authentication.as_view({'get': 'get_user'}), name='get-user'),
+    path('auth/register/', views.Authentication.as_view({'post': 'register'}), name='register'),
+    path('auth/login/', views.Authentication.as_view({'post': 'login'}), name='login'),
+    path('auth/logout/', views.Authentication.as_view({'post': 'logout'}), name='logout'),
+    
+    path('settings/change-settings', views.UserSettings.as_view({'poast': 'change_settings'}), name='settings'),
 ]
