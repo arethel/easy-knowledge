@@ -19,7 +19,7 @@ class ProcessedBook(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     processed_file = models.FileField(upload_to=processed_book_directory_path)
     processed_date = models.DateField(auto_now_add=True)
-    processing_version = models.CharField(max_length=100)
+    processing = models.IntegerField(default=0)
 
 class Section(models.Model):
     section_name = models.CharField(max_length=200, blank=False, null=False, default='Section')

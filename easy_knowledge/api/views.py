@@ -3,20 +3,23 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import authentication, permissions
 from django.shortcuts import get_object_or_404
-from .models import Book
+from .models import Book, ProcessedBook, Section
 
-class Book(APIView):
+class BookView(APIView):
     authentication_classes = [authentication.SessionAuthentication]
     permission_classes = [permissions.IsAuthenticated]
     
     def get(self, request):
         book_id = request.body.get('book_id')
         user = request.user
-        file_obj = Book.objects.get(user=user, id=book_id)
-        if file_obj is None:
+        book = Book.objects.get(user=user, id=book_id)
+        if book is None:
             return Response({"error": "Book not found"}, status=404)
-        file_path = file_obj.book_file.path
-        return FileResponse(open(file_path, 'rb'))
+        if not book.processed:
+            return Response({"error": "Book not processed"}, status=404)
+        processed_book = ProcessedBook.objects.get(book=book)
+        book_path = processed_book.processed_file.path
+        return FileResponse(open(book_path, 'rb'))
     
     def upload_book(self, request):
         section_id = request.body.get('section_id')
@@ -33,8 +36,10 @@ class Book(APIView):
         title = book_file.name
         book = Book(book_file=book_file, user=user, title=title, section=section)
         book.save()
+        processed_book = ProcessedBook(book=book)
+        processed_book.save()
         section.books.add(book)
-        return Response({'error': 0, 'book_id': book.id})
+        return Response({'error': 0, 'book_id': book.id, 'processing': 0})
     
     def change_title(self, request):
         book_id = request.body.get('book_id')
@@ -76,7 +81,7 @@ class Book(APIView):
         section.books.add(book)
         return Response({'error': 0})
 
-class Section(APIView):
+class SectionView(APIView):
     authentication_classes = [authentication.SessionAuthentication]
     permission_classes = [permissions.IsAuthenticated]
     
