@@ -3,6 +3,10 @@ from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
     profile_picture = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
+    max_books = models.IntegerField(default=10)
+    max_sections = models.IntegerField(default=3)
+    max_questions = models.IntegerField(default=20)
+    used_questions = models.IntegerField(default=0)
 
     def __str__(self):
         return self.username

@@ -123,3 +123,19 @@ class Section(APIView):
         sections = Section.objects.filter(user=user)
         sections = [{'section_name': section.section_name, 'section_id': section.id, 'books': section.books} for section in sections]
         return Response({'error': 0, 'sections': sections})
+
+class BookProcessing(APIView):
+    authentication_classes = [authentication.SessionAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def process_book(self, request):
+        book_id = request.body.get('book_id')
+        user = request.user
+        if book_id is None:
+            return Response({'error': 1, 'details': 'No book id provided'})
+        book = get_object_or_404(Book, id=book_id, user=user)
+        if book.processed:
+            return Response({'error': 1, 'details': 'Book already processed'})
+        book.processed = True
+        book.save()
+        return Response({'error': 0})
