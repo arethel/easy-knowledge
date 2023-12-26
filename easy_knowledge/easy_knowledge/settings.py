@@ -30,17 +30,19 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'books_reading.apps.BooksReadingConfig',
-    'main_page.apps.MainPageConfig',
+    'api.apps.ApiConfig',
+    'frontend.apps.FrontendConfig',
     'users.apps.UsersConfig',
     'rest_framework',
     "corsheaders",
+    'django_celery_results',
 ]
 
 MIDDLEWARE = [
@@ -72,8 +74,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'easy_knowledge.wsgi.application'
-
+# WSGI_APPLICATION = 'easy_knowledge.wsgi.application'
+ASGI_APPLICATION = "easy_knowledge.asgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -130,7 +132,6 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'users.User'
-BOOK_MODEL = 'books_reading.Book'
 
 CORS_ALLOW_CREDENTIALS = True
 
@@ -161,3 +162,6 @@ CORS_ALLOW_HEADERS = [
 ]
 
 LOGIN_URL = '/login'
+
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_CACHE_BACKEND = 'django-cache'
