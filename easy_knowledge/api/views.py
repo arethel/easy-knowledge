@@ -4,6 +4,8 @@ from rest_framework.response import Response
 from rest_framework import authentication, permissions
 from django.shortcuts import get_object_or_404
 from .models import Book, ProcessedBook, Section
+from .tasks import process_book
+
 
 class BookView(APIView):
     authentication_classes = [authentication.SessionAuthentication]
@@ -39,6 +41,7 @@ class BookView(APIView):
         processed_book = ProcessedBook(book=book)
         processed_book.save()
         section.books.add(book)
+        process_book.delay(book.id)
         return Response({'error': 0, 'book_id': book.id, 'processing': 0})
     
     def change_title(self, request):

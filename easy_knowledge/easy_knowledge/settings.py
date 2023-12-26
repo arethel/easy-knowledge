@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'rest_framework',
     "corsheaders",
+    'django_celery_results',
 ]
 
 MIDDLEWARE = [
@@ -161,3 +162,6 @@ CORS_ALLOW_HEADERS = [
 ]
 
 LOGIN_URL = '/login'
+
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_CACHE_BACKEND = 'django-cache'
