@@ -12,7 +12,7 @@ class Book(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     upload_date = models.DateField(auto_now_add=True)
     book_file = models.FileField(upload_to=book_directory_path)
-    section = models.ForeignKey('Section', on_delete=models.CASCADE, related_name='books', null=True)
+    book_section = models.ForeignKey('Section', on_delete=models.CASCADE, related_name='books', null=True)
     processed = models.BooleanField(default=False)
 
 class ProcessedBook(models.Model):
@@ -25,4 +25,3 @@ class Section(models.Model):
     section_name = models.CharField(max_length=200, blank=False, null=False, default='Section')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     creation_date = models.DateField(auto_now_add=True)
-    books = models.ManyToManyField(Book, related_name='sections')

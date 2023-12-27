@@ -1,15 +1,15 @@
 from django.contrib.auth import login, logout, authenticate
 from .forms import UserCreationForm
-from .models import UserSettings
+from .models import UserSettings, UserLimitations
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_protect
 from django.utils.decorators import method_decorator
 import json
-from rest_framework.views import APIView
+from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import authentication, permissions
 from django.shortcuts import get_object_or_404
 
-class User(APIView):
+class User(viewsets.ViewSet):
     authentication_classes = [authentication.SessionAuthentication]
     permission_classes = [permissions.IsAuthenticated]
     
@@ -30,7 +30,7 @@ class User(APIView):
         user.save()
         return Response({'error': 0})
 
-class Authentication(APIView):
+class Authentication(viewsets.ViewSet):
     authentication_classes = [authentication.SessionAuthentication]
     
     @method_decorator(ensure_csrf_cookie)
@@ -56,6 +56,8 @@ class Authentication(APIView):
             user = form.save()
             user_settings = UserSettings(user=user)
             user_settings.save()
+            user_limitations = UserLimitations(user=user)
+            user_limitations.save()
             login(request, user)
             return Response({'error': 0})
         else:
@@ -76,7 +78,7 @@ class Authentication(APIView):
         logout(request)
         return Response({'error': 0})
 
-class UserSettings(APIView):
+class UserSettingsView(viewsets.ViewSet):
     authentication_classes = [authentication.SessionAuthentication]
     permission_classes = [permissions.IsAuthenticated]
     
@@ -84,7 +86,7 @@ class UserSettings(APIView):
         user = request.user
         settings_instance = get_object_or_404(UserSettings, user=user)
 
-        settings_instance.receive_notifications = request.POST.get('receive_notifications', settings_instance.receive_notifications)
+        settings_instance.receive_notifications = request.body.get('receive_notifications', settings_instance.receive_notifications)
 
         theme_choice = request.POST.get('theme')
         if theme_choice in dict(UserSettings.THEME_CHOICES):

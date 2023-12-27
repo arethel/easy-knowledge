@@ -3,13 +3,21 @@ from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
     profile_picture = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
+    
+    def __str__(self):
+        return self.username
+
+class UserLimitations(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='limitations')
+    
     max_books = models.IntegerField(default=10)
     max_sections = models.IntegerField(default=3)
     max_questions = models.IntegerField(default=20)
     used_questions = models.IntegerField(default=0)
-
+    last_update_questions = models.DateField(auto_now_add=True)
+    
     def __str__(self):
-        return self.username
+        return f"{self.user.username}'s limitations"
 
 class UserSettings(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='settings')

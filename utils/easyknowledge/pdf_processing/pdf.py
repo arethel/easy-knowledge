@@ -11,7 +11,7 @@ import fitz
 import hashlib
 import matplotlib.pyplot as plt
 from ebooklib import epub
-from pdf_utils import p_ended, count_words, get_page_rect
+from .pdf_utils import p_ended, count_words, get_page_rect
 
 class EpubReader:
     def __init__(self, epub_filename):
@@ -228,10 +228,10 @@ class PDFReader:
         return elements
 
 if __name__ == '__main__':
-    pdf_path = "ISLRv2.pdf"
+    pdf_path = "utils\dataset_processing\dataset_data\en\ml.pdf"
     output_txt_path = "./output/output_text.txt"
     output_images_folder = "./output/images"
-    epub_path = 'output/output_book.epub'
+    epub_path = 'utils\dataset_processing\dataset_data\processed/en_ml.epub'
 
     pdf_book = PDFReader(pdf_path)
     #pdf_book.get_all_images(output_images_folder)
@@ -239,5 +239,6 @@ if __name__ == '__main__':
     
     for progress in pdf_book.to_epub(epub_path):
         percentage = int(progress * 100)
+        print(percentage, "%")
     book = EpubReader(epub_path)
     print(book.get_by_page(29))
