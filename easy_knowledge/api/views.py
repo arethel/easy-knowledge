@@ -1,13 +1,14 @@
 from django.http import FileResponse
-from rest_framework.views import APIView
+from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import authentication, permissions
 from django.shortcuts import get_object_or_404
 from .models import Book, ProcessedBook, Section
+from users.models import UserSettings, UserLimitations
 from .tasks import process_book
 
 
-class BookView(APIView):
+class BookView(viewsets.ViewSet):
     authentication_classes = [authentication.SessionAuthentication]
     permission_classes = [permissions.IsAuthenticated]
     
@@ -36,11 +37,10 @@ class BookView(APIView):
             return Response({'error': 1, 'details': 'No book file provided'})
         section = get_object_or_404(Section, id=section_id, user=user)
         title = book_file.name
-        book = Book(book_file=book_file, user=user, title=title, section=section)
+        book = Book(book_file=book_file, user=user, title=title, book_section=section)
         book.save()
         processed_book = ProcessedBook(book=book)
         processed_book.save()
-        section.books.add(book)
         process_book.delay(book.id)
         return Response({'error': 0, 'book_id': book.id, 'processing': 0})
     
@@ -75,16 +75,15 @@ class BookView(APIView):
         if section_id is None:
             return Response({'error': 1, 'details': 'No section id provided'})
         book = get_object_or_404(Book, id=book_id, user=user)
-        last_section = book.section
+        last_section = book.book_section
         last_section.books.remove(book)
         
         section = get_object_or_404(Section, id=section_id, user=user)
-        book.section = section
+        book.book_section = section
         book.save()
-        section.books.add(book)
         return Response({'error': 0})
 
-class SectionView(APIView):
+class SectionView(viewsets.ViewSet):
     authentication_classes = [authentication.SessionAuthentication]
     permission_classes = [permissions.IsAuthenticated]
     
@@ -124,15 +123,16 @@ class SectionView(APIView):
         section = Section.objects.get(user=user, id=section_id)
         if section is None:
             return Response({"error": "Section not found"}, status=404)
-        return Response({"section_name": section.section_name, "books": section.books})
+        books = Book.objects.filter(book_section=section)
+        return Response({"section_name": section.section_name, "books": books})
     
     def get_all_sections(self, request):
         user = request.user
         sections = Section.objects.filter(user=user)
-        sections = [{'section_name': section.section_name, 'section_id': section.id, 'books': section.books} for section in sections]
+        sections = [{'section_name': section.section_name, 'section_id': section.id, 'books': Book.objects.filter(book_section=section)} for section in sections]
         return Response({'error': 0, 'sections': sections})
 
-class BookProcessing(APIView):
+class BookProcessing(viewsets.ViewSet):
     authentication_classes = [authentication.SessionAuthentication]
     permission_classes = [permissions.IsAuthenticated]
     
