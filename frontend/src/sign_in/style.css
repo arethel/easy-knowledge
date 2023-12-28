@@ -1,5 +1,13 @@
 .main-container {
+  display: grid;
+  grid-template-columns: 3fr 5fr;
+}
+
+.side-image-container {
   display: flex;
+  flex: 1;
+  position: relative;
+  overflow: hidden;
 }
 
 .side-text {
@@ -11,7 +19,6 @@
 }
 
 .sign-in-container {
-  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -83,14 +90,6 @@
   margin-left: 20px;
 }
 
-.side-image-container {
-  display: flex;
-  flex: 1;
-  position: relative;
-  overflow: hidden;
-  max-width: 40%;
-}
-
 .side-image {
   position: absolute;
   width: 100%;
@@ -136,5 +135,14 @@
   .smartphone-container,
   .smartphone {
     display: none;
+  }
+  .main-container {
+    display: block flex;
+  } 
+  .sign-in-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }

@@ -198,7 +198,7 @@ export default function SignInForm() {
             Sign in
           </Typography>
           <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-            <CssTextField
+            {/* <CssTextField
               margin="normal"
               required
               fullWidth
@@ -207,7 +207,18 @@ export default function SignInForm() {
               name="email"
               autoComplete="email"
               autoFocus
-            />
+            /> */}
+             <CssFormControl margin="normal" fullWidth variant="outlined">
+              <InputLabel required htmlFor="email">Email Address</InputLabel>
+              <OutlinedInput
+                required
+                id="email"
+                name="email"
+                autoComplete="email"
+                label="Email Address"
+                autoFocus
+              />
+            </CssFormControl>
             <CssFormControl margin="normal" fullWidth variant="outlined">
               <InputLabel required htmlFor="password">Password</InputLabel>
               <OutlinedInput
