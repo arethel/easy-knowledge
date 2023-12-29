@@ -2,6 +2,8 @@ import os
 from PIL import Image
 import io
 import timeit
+from tqdm import tqdm
+import time
 import shutil
 import re
 import numpy as np
@@ -116,6 +118,11 @@ class PDFReader:
         book.set_language('en')
         #print(self.pdf.get_toc())
 
+        total_pages = len(self.pdf)
+        progress_bar = tqdm(total=total_pages, desc="Converting to EPUB", unit="page")
+        
+        start_time = time.time()
+
         for page_number in range(len(self.pdf)):
             page = self.pdf.load_page(page_number)
 
@@ -135,8 +142,15 @@ class PDFReader:
                 book.add_item(chapter)
                 book.spine.append(chapter)
             
-            progress = (page_number + 1) / len(self.pdf)
-            yield progress
+            progress_bar.update(1)
+            progress = progress_bar.n / total_pages
+            elapsed_time = time.time() - start_time
+            time_per_page = elapsed_time / progress if progress > 0 else 0
+            remaining_time = (1 - progress) * time_per_page
+
+            yield progress, remaining_time
+        
+        progress_bar.close()
 
         book.add_item(epub.EpubNcx())
         book.add_item(epub.EpubNav())
@@ -263,8 +277,9 @@ if __name__ == '__main__':
     #pdf_book.get_all_images(output_images_folder)
     #pdf_book.extract_full_text(output_txt_path)
     
-    for progress in pdf_book.to_epub(epub_path):
+    for progress, remaining_time in pdf_book.to_epub(epub_path):
         percentage = int(progress * 100)
-        print(percentage, "%")
+        print(f"{percentage}% - Expected time left: {remaining_time:.2f} seconds")
+    
     book = EpubReader(epub_path)
     print(book.get_by_page(29))
