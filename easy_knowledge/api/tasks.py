@@ -1,6 +1,8 @@
 from celery import shared_task
-from easyknowledge.pdf_processing.pdf import PDFReader
-from .models import Book, ProcessedBook, processed_book_directory_path
+from easyknowledge.pdf_processing.pdf import PDFReader, EpubReader
+from easyknowledge.gpt.gpt import create_question
+from easyknowledge.user_utils.utils import create_test
+from .models import *
 from datetime import datetime
 import time
 
@@ -27,4 +29,37 @@ def process_book(book_id):
     
     book.processed = True
     book.save()
+
+@shared_task(queue = 'qa', ignore_result=True)
+def mark_for_qa(book_path, qa_info):
+    epub_book = EpubReader(book_path)
+    page = qa_info['page']
+    block = qa_info['block']
+    epub_page = epub_book.get_by_page(page)
+    epub_block = epub_page[block]
+    if epub_block['type'] == 'text':
+        epub_book.mark_for_qa(page, block)
+
+gpt_rate_limit = 500
+@shared_task(queue = 'generate_qa', ignore_result=True, rate_limit=f'{gpt_rate_limit}/m')
+def generate_qa(qa: QA, book_path, page, block, content):
+    qa = create_question(content)
+    epub_book = EpubReader(book_path)
+    epub_book.add_qa(page, block, qa)
+    qa.generated = True
+    qa.save()
+    
+@shared_task(queue = 'create_test')
+def create_test_c(book, qa_count):
+    book_path = book.processed_file.path
+    epub_book = EpubReader(book_path)
+    test = create_test(epub_book, qa_count)
+    test_len = len(test)
+    test = Test.objects.create(book=book, qa_count=test_len)
+    for i in range(test_len):
+        qa, created = QA.objects.get_or_create(page=test[i]['page'], block=test[i]['block'], book=book)
+        test.qa.add(qa)
+        if not qa.generated:
+            generate_qa.delay(qa, book_path, test[i]['page'], test[i]['block'], test[i]['content'])
+    return test
     

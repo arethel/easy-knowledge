@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from datetime import datetime
 
 class User(AbstractUser):
     profile_picture = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
@@ -15,6 +16,13 @@ class UserLimitations(models.Model):
     max_questions = models.IntegerField(default=20)
     used_questions = models.IntegerField(default=0)
     last_update_questions = models.DateField(auto_now_add=True)
+    
+    def get_available_questions(self):
+        if self.last_update_questions != datetime.now().date():
+            self.used_questions = 0
+            self.last_update_questions = datetime.now().date()
+            self.save()
+        return self.max_questions - self.used_questions
     
     def __str__(self):
         return f"{self.user.username}'s limitations"
