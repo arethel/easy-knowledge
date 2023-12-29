@@ -31,7 +31,7 @@ const Index = () => {
         const fetchUserData = async () => {
         try {
             const response = await client.get("/api/get-user-data");
-            if (response.data.error==0) {
+            if (response.data.error === 0) {
                 setIsAuthenticated(true);
                 setUserData(response.data);
             }

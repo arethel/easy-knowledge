@@ -27,7 +27,7 @@ export const MainPage = () => {
     const newSection = {
       id: newSectionId,
       booksList: [],
-      text: `New Section ${newSectionId}`,
+      text: `New Section`,
     };
     setIdCounter(prevCounter => prevCounter + 1);
     setSections([...sections, newSection]);
@@ -39,7 +39,7 @@ export const MainPage = () => {
   };
 
   useEffect(() => {
-    if (sectionsContainerRef.current) {
+    if (sectionsContainerRef.current && sectionsContainerRef.current.lastChild) {
       const newSection = sectionsContainerRef.current.lastChild;
       const topPos = newSection.offsetTop + newSection.offsetHeight;
       window.scrollTo({ top: topPos, behavior: 'smooth' });

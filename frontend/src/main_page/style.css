@@ -56,13 +56,13 @@ body {
 }
 
 .icon.pencil {
-    height: 15px;
-    width: 15px;
+    height: 20px;
+    width: 20px;
 }
 
 .icon.trashbin {
-    height: 15px;
-    width: 15px;
+    height: 20px;
+    width: 20px;
 }
 
 .page-container {
@@ -93,6 +93,7 @@ body {
     align-items: center;
     padding: 10px;
     padding: 10px 20px;
+    margin-right: 30px;
 }
 
 .line {

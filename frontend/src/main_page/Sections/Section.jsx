@@ -27,8 +27,16 @@ export const Section = ({ booksList, text, sectionId, handleDeleteSection}) => {
     setBooks(prevBooks => [...prevBooks, newBook]);
   };
 
+  const moveBookInsideSection = (sourceIndex, destinationIndex) => {
+    const updatedBooks = [...books];
+    const [movedBook] = updatedBooks.splice(sourceIndex, 1);
+    updatedBooks.splice(destinationIndex, 0, movedBook);
+
+    setBooks(updatedBooks);
+  };
+
   const handleDelete = () => {
-    const isConfirmed = window.confirm(`Are you sure you want to delete ${text}?`);
+    const isConfirmed = window.confirm(`Are you sure you want to delete '${text}' Section?`);
     if (isConfirmed) {
       handleDeleteSection(sectionId);
     }
@@ -38,7 +46,7 @@ export const Section = ({ booksList, text, sectionId, handleDeleteSection}) => {
     <div className="custom-container">
       <div className="section-header">
         <EditableText initialText={text} />
-        <span className="trashbin-icon" onClick={handleDelete}>
+        <span className="trashbin-icon section-icon" onClick={handleDelete}>
           <Icon name="trashbin" src={require("../../images/icon-trashbin.png")}/>
         </span>
       </div>
@@ -49,6 +57,9 @@ export const Section = ({ booksList, text, sectionId, handleDeleteSection}) => {
               key={book.id}
               book={book}
               removeBook={removeBook}
+              sectionId={sectionId}
+              index={index}
+              moveBookInsideSection={moveBookInsideSection}
             />
             <VerticalLine />
             {/* {index !== books.length - 1 && <VerticalLine />} */}

@@ -9,7 +9,7 @@ import "./style.css";
 
 export const SignIn = ({ client, isSignIn=false }) => {
     return (
-        <div className="main-container">
+        <div className="main-container-sign-in">
             <div className="side-image-container">
                 <div className="side-image">
                     <SideImage className="bg-image" />
