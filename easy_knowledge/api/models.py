@@ -25,3 +25,15 @@ class Section(models.Model):
     section_name = models.CharField(max_length=200, blank=False, null=False, default='Section')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     creation_date = models.DateField(auto_now_add=True)
+
+class QA(models.Model):
+    page = models.IntegerField()
+    block = models.IntegerField()
+    generated = models.BooleanField(default=False)
+    book = models.ForeignKey(ProcessedBook, on_delete=models.CASCADE)
+
+class Test(models.Model):
+    book = models.ForeignKey(ProcessedBook, on_delete=models.CASCADE)
+    creation_date = models.DateField(auto_now_add=True)
+    qa_count = models.IntegerField(default=0)
+    qa = models.ManyToManyField(QA)

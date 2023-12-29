@@ -4,9 +4,8 @@ from rest_framework.response import Response
 from rest_framework import authentication, permissions
 from django.shortcuts import get_object_or_404
 from .models import Book, ProcessedBook, Section
-from users.models import UserSettings, UserLimitations
-from .tasks import process_book
-
+from users.models import *
+from .tasks import *
 
 class BookView(viewsets.ViewSet):
     authentication_classes = [authentication.SessionAuthentication]
@@ -82,13 +81,41 @@ class BookView(viewsets.ViewSet):
         book.book_section = section
         book.save()
         return Response({'error': 0})
+    
+    def get_images(self, request):
+        book_id = request.body.get('book_id')
+        user = request.user
+        if book_id is None:
+            return Response({'error': 1, 'details': 'No book id provided'})
+        book = get_object_or_404(Book, id=book_id, user=user)
+        if not book.processed:
+            return Response({'error': 1, 'details': 'Book not processed'})
+        processed_book = ProcessedBook.objects.get(book=book)
+        
+        #some code to get images
+        images = processed_book.processed_file.name
+        return Response({'error': 0, 'images': images})
+    
+    def generate_qa(self, request):
+        book_id = request.body.get('book_id')
+        user = request.user
+        if book_id is None:
+            return Response({'error': 1, 'details': 'No book id provided'})
+        book = get_object_or_404(Book, id=book_id, user=user)
+        if not book.processed:
+            return Response({'error': 1, 'details': 'Book not processed'})
+        processed_book = ProcessedBook.objects.get(book=book)
+        
+        #some code to generate qa
+        qa = processed_book.processed_file.name
+        return Response({'error': 0, 'qa': qa})
 
 class SectionView(viewsets.ViewSet):
     authentication_classes = [authentication.SessionAuthentication]
     permission_classes = [permissions.IsAuthenticated]
     
     def change_section(self, request):
-        section_id = request.body.get('section_id')
+        section_id = request.body.get('section_+++++ id')
         section_name = request.body.get('section_name')
         user = request.user
         if section_id is None:
@@ -147,3 +174,53 @@ class BookProcessing(viewsets.ViewSet):
         book.processed = True
         book.save()
         return Response({'error': 0})
+    
+    def mark_for_qa(self, request):
+        book_id = request.body.get('book_id')
+        qa_info = request.body.get('qa_info')
+        user = request.user
+        if book_id is None:
+            return Response({'error': 1, 'details': 'No book id provided'})
+        if qa_info is None:
+            return Response({'error': 1, 'details': 'No qa info provided'})
+        book = get_object_or_404(Book, id=book_id, user=user)
+        if not book.processed:
+            return Response({'error': 1, 'details': 'Book not processed'})
+        processed_book = ProcessedBook.objects.get(book=book)
+        book_path = processed_book.processed_file.path
+        mark_for_qa.delay(book_path, qa_info)
+        return Response({'error': 0})
+    
+    def create_test(self, request):
+        book_id = request.body.get('book_id')
+        user = request.user
+        if book_id is None:
+            return Response({'error': 1, 'details': 'No book id provided'})
+        book = get_object_or_404(Book, id=book_id, user=user)
+        if not book.processed:
+            return Response({'error': 1, 'details': 'Book not processed'})
+        qa_count = request.body.get('qa_count')
+        if qa_count is None:
+            return Response({'error': 1, 'details': 'No qa count provided'})
+        processed_book = ProcessedBook.objects.get(book=book)
+        book_path = processed_book.processed_file.path
+        user_limitations = UserLimitations.objects.get(user=user)
+        available_qa = user_limitations.get_available_questions()
+        if available_qa < qa_count:
+            return Response({'error': 2, 'details': 'Not enough questions available', 
+                             'available_qa': available_qa, 
+                             'users_daily_limit': user_limitations.max_questions})
+        result = create_test_c.delay(book, qa_count)
+        test = result.get()
+        return Response({'error': 0, 'test_id': test.id})
+    
+    #end this
+    def get_test(self, request):
+        test_id = request.body.get('test_id')
+        user = request.user
+        if test_id is None:
+            return Response({'error': 1, 'details': 'No test id provided'})
+        test = get_object_or_404(Test, id=test_id, book__user=user)
+        qa = test.qa.all()
+        qa = [{'page': qa[i].page, 'block': qa[i].block} for i in range(len(qa))]
+        return Response({'error': 0, 'qa': qa})

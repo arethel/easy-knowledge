@@ -11,7 +11,7 @@ import fitz
 import hashlib
 import matplotlib.pyplot as plt
 from ebooklib import epub
-from .pdf_utils import p_ended, count_words, get_page_rect
+from pdf_utils import p_ended, count_words, get_page_rect
 
 class EpubReader:
     def __init__(self, epub_filename):
