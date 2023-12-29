@@ -36,10 +36,61 @@ class EpubReader:
                             "page": data[0].strip(),
                             "type": data[1].strip(),
                             "order": data[2].strip(),
-                            "content": data[3].strip()
+                            "is_qa_flag": data[3].strip(),
+                            "qa_content": data[4].strip(),
+                            "content": data[5].strip()
                         })
-
         return elements
+
+    def get_paragraph_by_qa(self):
+        qa_contents = []
+        sep = '-separator-'
+
+        for item in self.book.items:
+            if isinstance(item, epub.EpubHtml):
+                data = item.get_body_content().decode("utf-8")
+                data = re.findall(r'<p>(.*?)</p>', data, re.DOTALL)
+                if data:
+                    current_is_qa_flag = int(data[0].split(sep)[3].strip())
+                    current_content = data[0].split(sep)[5].strip()
+
+                    if current_is_qa_flag == 1:
+                        qa_contents.append(current_content)
+        return qa_contents
+
+    def add_questions_answers(self, page_number, order, qa_content):
+        new_book = epub.EpubBook()
+        new_book.set_title(self.book.get_metadata('DC', 'title')[0][0])
+        new_book.set_language(self.book.get_metadata('DC', 'language')[0][0])
+
+        executed = False
+        for item in self.book.items:
+            if isinstance(item, epub.EpubHtml):
+                data = item.get_body_content().decode("utf-8")
+                data = re.findall(r'<p>(.*?)</p>', data, re.DOTALL)
+                if data:
+                    sep = '-separator-'
+                    current_page_number = int(data[0].split(sep)[0].strip())
+                    current_type = data[0].split(sep)[1].strip()
+                    current_order = int(data[0].split(sep)[2].strip())
+                    current_content = data[0].split(sep)[5].strip()
+
+                    if current_page_number == page_number and current_order == order:
+                        is_qa_flag = 1
+                        new_content = f'{page_number}{sep}{current_type}{sep}{order}{sep}{is_qa_flag}{sep}{qa_content}{sep}{current_content}'
+                        new_item = epub.EpubHtml(title=item.title, file_name=item.file_name, lang='en', content=new_content.encode("utf-8"))
+                        new_book.add_item(new_item)
+                        executed = True
+                    else:
+                        new_book.add_item(item)
+        if executed:
+            new_book.add_item(epub.EpubNcx())
+            new_book.add_item(epub.EpubNav())
+            epub_file_name = self.epub_filename
+            epub.write_epub(epub_file_name, new_book)
+            self.book = epub.read_epub(self.epub_filename)
+        else:
+            print("Error: page number or order not found")
 
 class PDFReader:
     def __init__(self, pdf_filename):
@@ -137,8 +188,8 @@ class PDFReader:
             # book.spine.append(chapter)
             for idx, element in enumerate(elements):
                 chapter = epub.EpubHtml(title=f'Chapter {page_number}', file_name=f'chapter_{page_number}_{idx}.xhtml', lang='en')
-                separator = '-separator-'
-                chapter.content = f'{element["page"]}{separator}{element["type"]}{separator}{element["order"]}{separator}{element["content"]}'
+                sep = '-separator-'
+                chapter.content = f'{element["page"]}{sep}{element["type"]}{sep}{element["order"]}{sep}{element["is_qa_flag"]}{sep}{element["qa_content"]}{sep}{element["content"]}'
                 book.add_item(chapter)
                 book.spine.append(chapter)
             
@@ -263,6 +314,8 @@ class PDFReader:
                 'page': page.number,
                 'type': type,
                 'order': block[5],
+                'is_qa_flag': 0,
+                'qa_content': '',
                 'content': content
             })
         return elements
@@ -283,3 +336,6 @@ if __name__ == '__main__':
     
     book = EpubReader(epub_path)
     print(book.get_by_page(29))
+    book.add_questions_answers(29, 1, "What is the meaning of life?")
+    print(book.get_by_page(29))
+    print(book.get_paragraph_by_qa())
