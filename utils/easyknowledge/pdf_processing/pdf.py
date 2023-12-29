@@ -2,7 +2,7 @@ import os
 from PIL import Image
 import io
 import timeit
-import cv2
+import shutil
 import re
 import numpy as np
 import requests
@@ -11,7 +11,7 @@ import fitz
 import hashlib
 import matplotlib.pyplot as plt
 from ebooklib import epub
-from .pdf_utils import p_ended, count_words, get_page_rect
+from pdf_utils import p_ended, count_words, get_page_rect
 
 class EpubReader:
     def __init__(self, epub_filename):
@@ -47,9 +47,7 @@ class PDFReader:
     def __len__(self):
         return len(self.pdf)
 
-    def get_all_images(self, output_images_folder="./output/images"):
-        counter = 1
-        saved_images = set()
+    def get_all_images(self, output_images_folder="./output/images", quality=95):
         # my_page = pdf[28]
         # img_matrix = my_page.get_pixmap(matrix=fitz.Matrix(1, 1), clip=[0, 0, 360, 150])
         # img_array = img_matrix.tobytes()
@@ -58,22 +56,50 @@ class PDFReader:
         #     flags=cv2.IMREAD_COLOR
         # )
         # cv2.imwrite(f"{output_images_folder}/my_imageeeeee.png", img_cv2)
+        shutil.rmtree(output_images_folder, ignore_errors=True)
+        counter = 1
+        saved_images = set()
+
         for i in range(len(self.pdf)):
             page = self.pdf[i]
-            images = page.get_images(full=True)
+            images = page.get_images()
+
             for image in images:
                 base_img = self.pdf.extract_image(image[0])
+                extension = base_img["ext"]
                 image_data = base_img["image"]
                 image_hash = hashlib.md5(image_data).hexdigest()
+
                 if image_hash in saved_images or len(image_data) < 1024:
                     continue
                 else:
                     saved_images.add(image_hash)
+
                 img = Image.open(io.BytesIO(image_data))
-                extension = base_img["ext"]
+                width, height = img.size
+                if width / height > 10 or height / width > 10:
+                    continue
+
+
                 if not os.path.exists(output_images_folder):
                     os.makedirs(output_images_folder)
-                img.save(open(f"{output_images_folder}/image{counter}-pg{i}.{extension}", "wb"))
+
+                image_filename = f"image{counter}-pg-{i+1}.{extension}"
+                image_filepath = os.path.join(output_images_folder, image_filename)
+
+                img.save(open(image_filepath, "wb"),
+                    format=extension,
+                    quality=quality,
+                )
+
+                file_size = os.path.getsize(image_filepath)
+                new_image_filename = f"{image_filename}-{file_size}B.{extension}"
+                new_image_filepath = os.path.join(output_images_folder, new_image_filename)
+                if file_size < 5000:
+                    os.remove(image_filepath)
+                else:
+                    os.rename(image_filepath, new_image_filepath)
+                
                 counter += 1
         
     def extract_full_text(self, output_txt_path="./output/output_text.txt"):
@@ -90,7 +116,7 @@ class PDFReader:
         book.set_language('en')
         #print(self.pdf.get_toc())
 
-        for page_number in range(28, 31):#range(len(self.pdf)):
+        for page_number in range(len(self.pdf)):
             page = self.pdf.load_page(page_number)
 
             chapter = epub.EpubHtml(title=f'Chapter {page_number + 1}', file_name=f'chapter_{page_number + 1}.xhtml', lang='en')
@@ -168,7 +194,7 @@ class PDFReader:
                     content.append(block)        
         return content
     
-    def show_image(self, page, title="", output_folder="./output/pages_images"):
+    def show_image(self, page, title="", output_folder="../../dataset_processing/output/pages_images"):
         DPI = 150 
         # %matplotlib inline
         pix = page.get_pixmap(dpi=DPI)
@@ -228,10 +254,10 @@ class PDFReader:
         return elements
 
 if __name__ == '__main__':
-    pdf_path = "utils\dataset_processing\dataset_data\en\ml.pdf"
-    output_txt_path = "./output/output_text.txt"
-    output_images_folder = "./output/images"
-    epub_path = 'utils\dataset_processing\dataset_data\processed/en_ml.epub'
+    pdf_path = "../../dataset_processing/ISLRv2.pdf"
+    output_txt_path = "../../dataset_processing/output/output_text.txt"
+    output_images_folder = "../../dataset_processing/output/images"
+    epub_path = '../../dataset_processing/output/book.epub'
 
     pdf_book = PDFReader(pdf_path)
     #pdf_book.get_all_images(output_images_folder)
