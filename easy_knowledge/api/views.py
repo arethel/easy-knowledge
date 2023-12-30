@@ -187,9 +187,21 @@ class BookProcessing(viewsets.ViewSet):
         if not book.processed:
             return Response({'error': 1, 'details': 'Book not processed'})
         processed_book = ProcessedBook.objects.get(book=book)
-        book_path = processed_book.processed_file.path
-        mark_for_qa.delay(book_path, qa_info)
+        mark_for_qa.delay(processed_book, qa_info)
         return Response({'error': 0})
+    
+    def get_marked_for_qa(self, request):
+        book_id = request.body.get('book_id')
+        user = request.user
+        if book_id is None:
+            return Response({'error': 1, 'details': 'No book id provided'})
+        book = get_object_or_404(Book, id=book_id, user=user)
+        if not book.processed:
+            return Response({'error': 1, 'details': 'Book not processed'})
+        processed_book = ProcessedBook.objects.get(book=book)
+        qa = QA.objects.filter(book=processed_book, use=True)
+        qa = [{'page': qa_.page, 'block': qa_.block} for qa_ in qa]
+        return Response({'error': 0, 'qa': qa})
     
     def create_test(self, request):
         book_id = request.body.get('book_id')
@@ -214,13 +226,25 @@ class BookProcessing(viewsets.ViewSet):
         test = result.get()
         return Response({'error': 0, 'test_id': test.id})
     
-    #end this
     def get_test(self, request):
         test_id = request.body.get('test_id')
         user = request.user
         if test_id is None:
             return Response({'error': 1, 'details': 'No test id provided'})
         test = get_object_or_404(Test, id=test_id, book__user=user)
+        book = test.book
+        epub_book = EpubReader(book.processed_file.path)
         qa = test.qa.all()
-        qa = [{'page': qa[i].page, 'block': qa[i].block} for i in range(len(qa))]
-        return Response({'error': 0, 'qa': qa})
+        test_data = []
+        for qa_ in qa:
+            qa_data = {'page': qa_.page, 'block': qa_.block}
+            if qa_.generated:
+                qa_data['qa'] = epub_book.get_qa(qa_.page, qa_.block)
+            test_data.append(qa_data)
+        return Response({'error': 0, 'qa': test_data})
+    
+    def get_limitations_info(self, request):
+        user = request.user
+        user_limitations = UserLimitations.objects.get(user=user)
+        return Response({'error': 0, 'available_qa': user_limitations.get_available_questions(), 
+                         'users_daily_limit': user_limitations.max_questions})

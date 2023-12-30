@@ -30,6 +30,7 @@ class QA(models.Model):
     page = models.IntegerField()
     block = models.IntegerField()
     generated = models.BooleanField(default=False)
+    use = models.BooleanField(default=False)
     book = models.ForeignKey(ProcessedBook, on_delete=models.CASCADE)
 
 class Test(models.Model):
@@ -37,3 +38,11 @@ class Test(models.Model):
     creation_date = models.DateField(auto_now_add=True)
     qa_count = models.IntegerField(default=0)
     qa = models.ManyToManyField(QA)
+    is_ready = models.BooleanField(default=False)
+    
+    def get_progress(self):
+        progress = int(self.qa.filter(generated=True).count() / self.qa_count * 100)
+        if progress == 100:
+            self.is_ready = True
+            self.save()
+        return progress
