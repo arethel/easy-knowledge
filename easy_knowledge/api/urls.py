@@ -17,4 +17,11 @@ urlpatterns = [
     path('qa/test/', views.BookProcessing.as_view({'get': 'get_test', 'post': 'create_test'}), name='test'),
     
     path('limit/', views.BookProcessing.as_view({'get': 'get_limitations_info'}), name='limit'),
+    
+    path('opened-books/', views.BookUserInfo.as_view({'get': 'get_opened_books_info', 'post': 'open_book'}), name='opened-books'),
+    path('opened-books/close/', views.BookUserInfo.as_view({'post': 'close_book'}), name='close-book'),
+    path('opened-books/change/', views.BookUserInfo.as_view({'post': 'change_book'}), name='change-book'),
+    path('opened-books/leave-section/', views.BookUserInfo.as_view({'post': 'leave_section'}), name='leave-section'),
+    path('opened-books/open-section/', views.BookUserInfo.as_view({'post': 'open_section'}), name='open-section'),
+    
 ]

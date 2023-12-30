@@ -46,3 +46,9 @@ class Test(models.Model):
             self.is_ready = True
             self.save()
         return progress
+
+class OpenedBooks(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    books = models.ManyToManyField(Book)
+    last_section = models.ForeignKey(Section, null=True, default=None, on_delete=models.SET_NULL)
+    last_book = models.ForeignKey(Book, null=True, default=None, on_delete=models.SET_NULL)

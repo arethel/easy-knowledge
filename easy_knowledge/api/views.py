@@ -1,11 +1,94 @@
+from sys import last_traceback
 from django.http import FileResponse
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import authentication, permissions
 from django.shortcuts import get_object_or_404
-from .models import Book, ProcessedBook, Section
+from .models import *
 from users.models import *
 from .tasks import *
+
+class BookUserInfo(viewsets.ViewSet):
+    authentication_classes = [authentication.SessionAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def open_section(self, request):
+        section_id = request.body.get('section_id')
+        user = request.user
+        if section_id is None:
+            return Response({'error': 1, 'details': 'No section id provided'})
+        section = get_object_or_404(Section, id=section_id, user=user)
+        opened_books, created = OpenedBooks.objects.get_or_create(user=user)
+        opened_books.last_section = section
+        opened_books.save()
+        return Response({'error': 0})
+    
+    def leave_section(self, request):
+        section_id = request.body.get('section_id')
+        user = request.user
+        if section_id is None:
+            return Response({'error': 1, 'details': 'No section id provided'})
+        opened_books, created = OpenedBooks.objects.get_or_create(user=user)
+        if not opened_books.last_section is None and section_id == opened_books.last_section.id:
+            opened_books.last_section = None
+        return Response({'error': 0})
+    
+    def change_book(self, request):
+        book_id = request.body.get('book_id')
+        user = request.user
+        if book_id is None:
+            return Response({'error': 1, 'details': 'No book id provided'})
+        book = get_object_or_404(Book, id=book_id, user=user)
+        opened_books, created = OpenedBooks.objects.get_or_create(user=user)
+        if book not in opened_books.books.all():
+            opened_books.books.add(book)
+        opened_books.last_book = book
+        opened_books.save()
+        return Response({'error': 0})
+    
+    def close_book(self, request):
+        book_id = request.body.get('book_id')
+        user = request.user
+        if book_id is None:
+            return Response({'error': 1, 'details': 'No book id provided'})
+        book = get_object_or_404(Book, id=book_id, user=user)
+        opened_books, created = OpenedBooks.objects.get_or_create(user=user)
+        if book in opened_books.books.all():
+            opened_books.books.remove(book)
+            if opened_books.last_book == book:
+                if len(opened_books.books.all()) > 0:
+                    opened_books.last_book = opened_books.books.last()
+                else:
+                    opened_books.last_book = None
+            opened_books.save()
+        return Response({'error': 0})
+    
+    def open_book(self, request):
+        book_id = request.body.get('book_id')
+        user = request.user
+        if book_id is None:
+            return Response({'error': 1, 'details': 'No book id provided'})
+        book = get_object_or_404(Book, id=book_id, user=user)
+        opened_books, created = OpenedBooks.objects.get_or_create(user=user)
+        if book not in opened_books.books.all():
+            opened_books.books.add(book)
+        opened_books.last_section = book.book_section
+        opened_books.last_book = book
+        opened_books.save()
+        return Response({'error': 0})
+    
+    def get_opened_books_info(self, request):
+        user = request.user
+        opened_books, created = OpenedBooks.objects.get_or_create(user=user)
+        books = opened_books.books.all()
+        books = [{'book_id': book.id, 'title': book.title} for book in books]
+        last_section = 0
+        last_book = 0
+        if opened_books.last_section is not None:
+            last_section = opened_books.last_section.id
+        if opened_books.last_book is not None:
+            last_book = opened_books.last_book.id
+        return Response({'error': 0, 'books': books, 'last_section': last_section, 'last_book': last_book})
 
 class BookView(viewsets.ViewSet):
     authentication_classes = [authentication.SessionAuthentication]
