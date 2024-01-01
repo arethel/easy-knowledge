@@ -5,6 +5,7 @@ import Divider from '@mui/material/Divider';
 import { Logo } from "./Logo.jsx";
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
+import { MySettings } from './Settings/MySettings';
 import './style.css'
 
 const booksList = [
@@ -21,6 +22,7 @@ export const MainPage = () => {
     { id: 2, booksList, text: 'Design' },
   ]);
   const [idCounter, setIdCounter] = useState(sections.length);
+  const [showSettings, setShowSettings] = useState(false);
 
   const handleCreateSection = () => {
     const newSectionId = idCounter + 1;
@@ -49,7 +51,7 @@ export const MainPage = () => {
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="container">
-        <TopBar handleCreateSection={handleCreateSection}/>
+        <TopBar handleCreateSection={handleCreateSection} setShowSettings={setShowSettings}/>
         <Divider variant="middle" className="main-divider" />
         <Logo />
         <div ref={sectionsContainerRef}> 
@@ -62,6 +64,7 @@ export const MainPage = () => {
               handleDeleteSection={handleDeleteSection} />
           ))}
         </div>
+        <MySettings active={showSettings} setActive={setShowSettings}/>
       </div>
     </DndProvider>
   );

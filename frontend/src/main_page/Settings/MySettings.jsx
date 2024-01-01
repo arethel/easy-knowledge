@@ -46,7 +46,10 @@ export const MySettings = ({ active, setActive }) => {
         const handleClickOutside = (event) => {
             if (
             settingsContainerRef.current &&
-            !settingsContainerRef.current.contains(event.target)
+            !settingsContainerRef.current.contains(event.target) &&
+            !event.target.classList.contains('MuiMenuItem-root') &&
+            !event.target.classList.contains('MuiSvgIcon-root') &&
+            !event.target.classList.contains('MuiListItemIcon-root')
             ) {
             closeSettings();
             }

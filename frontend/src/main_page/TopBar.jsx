@@ -1,12 +1,12 @@
 import React from "react";
 import { AccountMenu } from "./AccountMenu";
 
-export const TopBar = ({ handleCreateSection }) => {
+export const TopBar = ({ handleCreateSection, setShowSettings }) => {
     return (
         <div className="topbar">
             <button className="create-section-button" onClick={handleCreateSection}>
                 Create New Section
             </button>
-            <AccountMenu username={"John Doe"}/>
+            <AccountMenu username={"John Doe"} setShowSettings={setShowSettings} />
         </div>
 );}

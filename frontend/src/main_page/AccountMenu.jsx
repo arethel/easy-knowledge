@@ -11,39 +11,39 @@ import Tooltip from '@mui/material/Tooltip';
 import PersonAdd from '@mui/icons-material/PersonAdd';
 import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
-import { MySettings } from './Settings/MySettings';
 
-export const AccountMenu = ({ username }) => {
+export const AccountMenu = ({ username, setShowSettings }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const [showSettings, setShowSettings] = React.useState(false);
+  
   const open = Boolean(anchorEl);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
-    setShowSettings(true);
   };
 
   const handleClose = () => {
     setAnchorEl(null);
-    setShowSettings(false);
+  };
+
+  const handleClickSettings = () => {
+    setShowSettings(true);
+    setAnchorEl(null);
   };
 
   return (
     <React.Fragment>
       <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
-        <Tooltip title="Account settings">
-          <IconButton
-            onClick={handleClick}
-            size="small"
-            sx={{ ml: 2 }}
-            aria-controls={open ? 'account-menu' : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? 'true' : undefined}
-          >
-            <Avatar sx={{ width: 32, height: 32, mr: 1 }}>{username.charAt(0)}</Avatar>
-            <Typography variant="body0" style={{ color: 'var(--collection-1-font-1)' }}>{username}</Typography>
-          </IconButton>
-        </Tooltip>
+        <IconButton
+          onClick={handleClick}
+          size="small"
+          sx={{ ml: 2 }}
+          aria-controls={open ? 'account-menu' : undefined}
+          aria-haspopup="true"
+          aria-expanded={open ? 'true' : undefined}
+        >
+          <Avatar sx={{ width: 32, height: 32, mr: 1 }}>{username.charAt(0)}</Avatar>
+          <Typography variant="body0" style={{ color: 'var(--collection-1-font-1)' }}>{username}</Typography>
+        </IconButton>
       </Box>
       <Menu
         anchorEl={anchorEl}
@@ -58,6 +58,7 @@ export const AccountMenu = ({ username }) => {
             bgcolor: 'var(--collection-1-font-3)',
             filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
             mt: 1.5,
+            borderRadius: 3,
             '& .MuiAvatar-root': {
               width: 32,
               height: 32,
@@ -81,7 +82,7 @@ export const AccountMenu = ({ username }) => {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem onClick={handleClose}>
+        <MenuItem onClick={handleClickSettings}>
           <ListItemIcon>
             <Settings fontSize="small" />
           </ListItemIcon>
