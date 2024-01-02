@@ -1,7 +1,8 @@
 from django.http import FileResponse
 from rest_framework import viewsets
 from rest_framework.response import Response
-from rest_framework import authentication, permissions
+from rest_framework import authentication, permissions, status
+from django.http.response import JsonResponse
 from django.shortcuts import get_object_or_404
 from .models import Book, ProcessedBook, Section
 from users.models import *
@@ -12,7 +13,7 @@ class BookView(viewsets.ViewSet):
     permission_classes = [permissions.IsAuthenticated]
     
     def get(self, request):
-        book_id = request.body.get('book_id')
+        book_id = request.data.get('book_id')
         user = request.user
         book = Book.objects.get(user=user, id=book_id)
         if book is None:
@@ -24,7 +25,7 @@ class BookView(viewsets.ViewSet):
         return FileResponse(open(book_path, 'rb'))
     
     def upload_book(self, request):
-        section_id = request.body.get('section_id')
+        section_id = request.data.get('section_id')
         if section_id is None:
             return Response({'error': 1, 'details': 'No section id provided'})
         
@@ -44,8 +45,8 @@ class BookView(viewsets.ViewSet):
         return Response({'error': 0, 'book_id': book.id, 'processing': 0})
     
     def change_title(self, request):
-        book_id = request.body.get('book_id')
-        title = request.body.get('title')
+        book_id = request.data.get('book_id')
+        title = request.data.get('title')
         user = request.user
         if book_id is None:
             return Response({'error': 1, 'details': 'No book id provided'})
@@ -57,7 +58,7 @@ class BookView(viewsets.ViewSet):
         return Response({'error': 0})
     
     def delete_book(self, request):
-        book_id = request.body.get('book_id')
+        book_id = request.data.get('book_id')
         user = request.user
         if book_id is None:
             return Response({'error': 1, 'details': 'No book id provided'})
@@ -66,8 +67,8 @@ class BookView(viewsets.ViewSet):
         return Response({'error': 0})
     
     def change_section(self, request):
-        book_id = request.body.get('book_id')
-        section_id = request.body.get('section_id')
+        book_id = request.data.get('book_id')
+        section_id = request.data.get('section_id')
         user = request.user
         if book_id is None:
             return Response({'error': 1, 'details': 'No book id provided'})
@@ -83,7 +84,7 @@ class BookView(viewsets.ViewSet):
         return Response({'error': 0})
     
     def get_images(self, request):
-        book_id = request.body.get('book_id')
+        book_id = request.data.get('book_id')
         user = request.user
         if book_id is None:
             return Response({'error': 1, 'details': 'No book id provided'})
@@ -97,7 +98,7 @@ class BookView(viewsets.ViewSet):
         return Response({'error': 0, 'images': images})
     
     def generate_qa(self, request):
-        book_id = request.body.get('book_id')
+        book_id = request.data.get('book_id')
         user = request.user
         if book_id is None:
             return Response({'error': 1, 'details': 'No book id provided'})
@@ -115,8 +116,8 @@ class SectionView(viewsets.ViewSet):
     permission_classes = [permissions.IsAuthenticated]
     
     def change_section(self, request):
-        section_id = request.body.get('section_+++++ id')
-        section_name = request.body.get('section_name')
+        section_id = request.data.get('section_id')
+        section_name = request.data.get('section_name')
         user = request.user
         if section_id is None:
             return Response({'error': 1, 'details': 'No section id provided'})
@@ -127,7 +128,7 @@ class SectionView(viewsets.ViewSet):
         return Response({'error': 0})
     
     def create_section(self, request):
-        section_name = request.body.get('section_name')
+        section_name = request.data.get('section_name')
         user = request.user
         if section_name is None:
             return Response({'error': 1, 'details': 'No section name provided'})
@@ -136,7 +137,7 @@ class SectionView(viewsets.ViewSet):
         return Response({'error': 0, 'section_name': section_name, 'section_id': section.id})
     
     def delete_section(self, request):
-        section_id = request.body.get('section_id')
+        section_id = request.data.get('section_id')
         user = request.user
         if section_id is None:
             return Response({'error': 1, 'details': 'No section id provided'})
@@ -145,7 +146,7 @@ class SectionView(viewsets.ViewSet):
         return Response({'error': 0})
     
     def get(self, request):
-        section_id = request.body.get('section_id')
+        section_id = request.data.get('section_id')
         user = request.user
         section = Section.objects.get(user=user, id=section_id)
         if section is None:
@@ -164,7 +165,7 @@ class BookProcessing(viewsets.ViewSet):
     permission_classes = [permissions.IsAuthenticated]
     
     def process_book(self, request):
-        book_id = request.body.get('book_id')
+        book_id = request.data.get('book_id')
         user = request.user
         if book_id is None:
             return Response({'error': 1, 'details': 'No book id provided'})
@@ -176,8 +177,8 @@ class BookProcessing(viewsets.ViewSet):
         return Response({'error': 0})
     
     def mark_for_qa(self, request):
-        book_id = request.body.get('book_id')
-        qa_info = request.body.get('qa_info')
+        book_id = request.data.get('book_id')
+        qa_info = request.data.get('qa_info')
         user = request.user
         if book_id is None:
             return Response({'error': 1, 'details': 'No book id provided'})
@@ -192,14 +193,14 @@ class BookProcessing(viewsets.ViewSet):
         return Response({'error': 0})
     
     def create_test(self, request):
-        book_id = request.body.get('book_id')
+        book_id = request.data.get('book_id')
         user = request.user
         if book_id is None:
             return Response({'error': 1, 'details': 'No book id provided'})
         book = get_object_or_404(Book, id=book_id, user=user)
         if not book.processed:
             return Response({'error': 1, 'details': 'Book not processed'})
-        qa_count = request.body.get('qa_count')
+        qa_count = request.data.get('qa_count')
         if qa_count is None:
             return Response({'error': 1, 'details': 'No qa count provided'})
         processed_book = ProcessedBook.objects.get(book=book)
@@ -216,7 +217,7 @@ class BookProcessing(viewsets.ViewSet):
     
     #end this
     def get_test(self, request):
-        test_id = request.body.get('test_id')
+        test_id = request.data.get('test_id')
         user = request.user
         if test_id is None:
             return Response({'error': 1, 'details': 'No test id provided'})
