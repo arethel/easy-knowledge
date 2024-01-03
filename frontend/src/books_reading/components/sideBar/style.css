@@ -21,8 +21,9 @@
   width: 100%;
 }
 
-.side-bar .add-book .plus{
+.side-bar .add-book-icon .plus{
   fill: var(--collection-1-font-1);
+  display: flex;
 }
 
 .side-bar .username {

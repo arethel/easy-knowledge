@@ -6,7 +6,7 @@ import "./style.css";
 import { BookButton } from "./Button/BookButton.jsx";
 import { Dropdown } from '../reusableComponents/dropdown/Dropdown.jsx';
 
-export const SideBar = ({ booksDictionary, setBooksDictionary, settingsSetActive, pagesDictionary, setPagesDictionary }) => {
+export const SideBar = ({ booksDictionary, setBooksDictionary, settingsSetActive, pagesDictionary, setPagesDictionary, setTestsPanel, setBook_id }) => {
   const [openedProps, setProps] = useState(null);
   
   const openProps = (bookName) => {
@@ -65,6 +65,11 @@ export const SideBar = ({ booksDictionary, setBooksDictionary, settingsSetActive
     setPagesDictionary(newPagesDictionary);
   };
   
+  const openTests = (book_id) => {
+    setBook_id(book_id);
+    setTestsPanel(true);
+  }
+  
   return (
     <div className="side-bar">
       <div className="BG" id='side-bar'/>
@@ -81,17 +86,18 @@ export const SideBar = ({ booksDictionary, setBooksDictionary, settingsSetActive
             return <BookButton
               key={bookName}
               className={bookName}
-              buttonText={bookName}
+              buttonText={booksDictionary[bookName].title}
               onProps={() => openProps(bookName)}
               onClick={() => { openBook(bookName) }}
               isProps={openedProps === bookName}
               onShare={() => { console.log('Share') }}
               onDelete={() => { deleteBook(bookName) }}
               shouldHide={shouldHide}
+              onTests={(e) => openTests(bookName)}
             />
           })}
           <BookButton
-            imgSrc={<AddBookIcon className="add-book" alt="Add book" />}
+            imgSrc={<AddBookIcon className="add-book-icon" alt="Add book" />}
             onClick={() => { console.log("add-book") }}
           />
         </div>
