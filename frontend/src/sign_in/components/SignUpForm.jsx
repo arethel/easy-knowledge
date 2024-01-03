@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { useNavigate  } from "react-router-dom";
+
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -20,6 +22,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { makeStyles, withStyles } from '@mui/styles';
+
 import { ReactComponent as GoogleLogo } from '../../images/google-logo.svg';
 import "./style.css";
 
@@ -147,7 +150,7 @@ const CssFormControl = withStyles({
 
 const defaultTheme = createTheme();
 
-export default function SignInForm( {client}) {
+export default function SignUpForm({ client }) {
   const [showPassword, setShowPassword] = React.useState(false);
   const classes = useStyles();
 
@@ -164,27 +167,29 @@ export default function SignInForm( {client}) {
     );
   }
 
-  const handleSubmit = (event) => {
+  const navigate = useNavigate();
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    
-    //const user_data = {
-    //   email: data.get('email'),
-    //   password: data.get('password'),
-    //   username: data.get('email'),
-    // }
-    const user_data = {
-      email: 'somemaila@gmail.com',
-      username: 'someusernamea',
-      password1: 'somepassword',
-      password2: 'somepassword',
+    const formData = new FormData(event.target);
+  
+    try {
+      const response = await client.post("http://127.0.0.1:3030/users/auth/register/", {
+        username: formData.get("email"),
+        email: formData.get("email"),
+        password1: formData.get("password"),
+        password2: formData.get("confirm-password"),
+      });
+  
+      if (response.data.error === 0) {
+        console.log("Registration successful");
+        navigate('/main')
+      } else {
+        console.error("Registration failed:", response.data.details);
+      }
+    } catch (error) {
+      console.error("Error during registration:", error);
     }
-    
-    client.post("/api/register/",
-      user_data
-    ).then((response) => {
-      console.log(response);
-    });
   };
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -296,7 +301,7 @@ export default function SignInForm( {client}) {
             </Button>
             <Grid container>
               <Grid item>
-                <Link className={classes.link} href="#" variant="body2">
+                <Link className={classes.link} href="/sign-in" variant="body2">
                   {"Have an account? Sign In"}
                 </Link>
               </Grid>

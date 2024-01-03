@@ -1,4 +1,3 @@
-from sys import last_traceback
 from django.http import FileResponse
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -19,7 +18,7 @@ class BookUserInfo(viewsets.ViewSet):
         if section_id is None:
             return Response({'error': 1, 'details': 'No section id provided'})
         section = get_object_or_404(Section, id=section_id, user=user)
-        opened_books, created = OpenedBooks.objects.get_or_create(user=user)
+        opened_books, created = OpenedBook.objects.get_or_create(user=user)
         opened_books.last_section = section
         opened_books.save()
         return Response({'error': 0})
@@ -29,7 +28,7 @@ class BookUserInfo(viewsets.ViewSet):
         user = request.user
         if section_id is None:
             return Response({'error': 1, 'details': 'No section id provided'})
-        opened_books, created = OpenedBooks.objects.get_or_create(user=user)
+        opened_books, created = OpenedBook.objects.get_or_create(user=user)
         if not opened_books.last_section is None and section_id == opened_books.last_section.id:
             opened_books.last_section = None
         return Response({'error': 0})
@@ -40,7 +39,7 @@ class BookUserInfo(viewsets.ViewSet):
         if book_id is None:
             return Response({'error': 1, 'details': 'No book id provided'})
         book = get_object_or_404(Book, id=book_id, user=user)
-        opened_books, created = OpenedBooks.objects.get_or_create(user=user)
+        opened_books, created = OpenedBook.objects.get_or_create(user=user)
         if book not in opened_books.books.all():
             opened_books.books.add(book)
         opened_books.last_book = book
@@ -53,7 +52,7 @@ class BookUserInfo(viewsets.ViewSet):
         if book_id is None:
             return Response({'error': 1, 'details': 'No book id provided'})
         book = get_object_or_404(Book, id=book_id, user=user)
-        opened_books, created = OpenedBooks.objects.get_or_create(user=user)
+        opened_books, created = OpenedBook.objects.get_or_create(user=user)
         if book in opened_books.books.all():
             opened_books.books.remove(book)
             if opened_books.last_book == book:
@@ -70,7 +69,7 @@ class BookUserInfo(viewsets.ViewSet):
         if book_id is None:
             return Response({'error': 1, 'details': 'No book id provided'})
         book = get_object_or_404(Book, id=book_id, user=user)
-        opened_books, created = OpenedBooks.objects.get_or_create(user=user)
+        opened_books, created = OpenedBook.objects.get_or_create(user=user)
         if book not in opened_books.books.all():
             opened_books.books.add(book)
         opened_books.last_section = book.book_section
@@ -80,7 +79,7 @@ class BookUserInfo(viewsets.ViewSet):
     
     def get_opened_books_info(self, request):
         user = request.user
-        opened_books, created = OpenedBooks.objects.get_or_create(user=user)
+        opened_books, created = OpenedBook.objects.get_or_create(user=user)
         books = opened_books.books.all()
         books = [{'book_id': book.id, 'title': book.title} for book in books]
         last_section = 0

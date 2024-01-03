@@ -7,6 +7,11 @@ class User(AbstractUser):
     
     def __str__(self):
         return self.username
+    
+    class Meta:
+        db_table = 'user'
+        verbose_name = 'User'
+        verbose_name_plural = 'Users'
 
 class UserLimitations(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='limitations')
@@ -26,6 +31,11 @@ class UserLimitations(models.Model):
     
     def __str__(self):
         return f"{self.user.username}'s limitations"
+
+    class Meta:
+        db_table = 'user_limitation'
+        verbose_name = 'User Limitations'
+        verbose_name_plural = 'User Limitations'
 
 class UserSettings(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='settings')
@@ -60,3 +70,8 @@ class UserSettings(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'s settings"
+    
+    class Meta:
+        db_table = 'user_setting'
+        verbose_name = 'User Settings'
+        verbose_name_plural = 'User Settings'

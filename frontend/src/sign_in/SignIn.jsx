@@ -7,7 +7,7 @@ import { ReactComponent as SideImage } from '../images/sun-tornado.svg';
 
 import "./style.css";
 
-export const SignIn = ({ client, isSignIn=false }) => {
+export const SignIn = ({ client, isSignIn=false, setIsAuthenticated }) => {
     return (
         <div className="main-container-sign-in">
             <div className="side-image-container">
@@ -30,7 +30,7 @@ export const SignIn = ({ client, isSignIn=false }) => {
                 </div>
             </div>
             <div className="sign-in-container">
-                { isSignIn ? <SignInForm /> : <SignUpForm client={client} /> }
+                { isSignIn ? <SignInForm client={client} setIsAuthenticated={setIsAuthenticated} /> : <SignUpForm client={client} setIsAuthenticated={setIsAuthenticated}/> }
             </div>
         </div>
     )

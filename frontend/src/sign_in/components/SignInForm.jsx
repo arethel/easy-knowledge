@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { useNavigate  } from "react-router-dom";
+
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -147,9 +149,11 @@ const CssFormControl = withStyles({
 
 const defaultTheme = createTheme();
 
-export default function SignInForm() {
+export default function SignInForm( { client, setIsAuthenticated } ) {
   const [showPassword, setShowPassword] = React.useState(false);
   const classes = useStyles();
+
+  const navigate = useNavigate();
 
   function Copyright(props) {
     return (
@@ -164,13 +168,27 @@ export default function SignInForm() {
     );
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    const formData = new FormData(event.target);
+  
+    try {
+      const response = await client.post("http://127.0.0.1:3030/users/auth/login/", {
+        username: formData.get("email"),
+        email: formData.get("email"),
+        password: formData.get("password"),
+      });
+  
+      if (response.data.error === 0) {
+        console.log("Login successful");
+        setIsAuthenticated(true);
+        navigate('/main')
+      } else {
+        console.error("Login failed:", response.data.details);
+      }
+    } catch (error) {
+      console.error("Error during Login:", error);
+    }
   };
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -262,7 +280,7 @@ export default function SignInForm() {
                 </Link>
               </Grid>
               <Grid item>
-                <Link className={classes.link} href="#" variant="body2">
+                <Link className={classes.link} href="/sign-up" variant="body2">
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>
