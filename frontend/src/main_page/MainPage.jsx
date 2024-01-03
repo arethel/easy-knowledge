@@ -2,10 +2,11 @@ import React, { useState, useRef, useEffect } from "react";
 import { Section } from "./Sections/Section";
 import { TopBar } from "./TopBar";
 import Divider from '@mui/material/Divider';
-import { Logo } from "./Logo.jsx";
+import { Logo } from "./Logo/Logo.jsx";
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { MySettings } from './Settings/MySettings';
+import { AlertDialog } from './AlertDialog.jsx';
 import './style.css'
 
 const booksList = [
@@ -23,6 +24,32 @@ export const MainPage = () => {
   ]);
   const [idCounter, setIdCounter] = useState(sections.length);
   const [showSettings, setShowSettings] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [type, setType] = useState(null); // 'deleteBook' or 'deleteSection'
+
+  const [actionConfirmation, setActionConfirmation] = useState({
+    // type: null, // 'deleteBook' or 'deleteSection'
+    id: null,   // Book or Section ID
+    name: null, // Book or Section name
+  });
+
+  const handleActionConfirmation = (id, name) => {
+    setActionConfirmation({ id, name });
+    setOpen(true);
+  };
+
+  const handleClose = (confirmed) => {
+    setOpen(false);
+    const { id, name } = actionConfirmation;
+
+    if (confirmed) {
+      if (type === 'deleteSection') {
+        handleDeleteSection(id);
+      }
+    }
+
+    setActionConfirmation({ id: null, name: name });
+  };
 
   const handleCreateSection = () => {
     const newSectionId = idCounter + 1;
@@ -52,6 +79,7 @@ export const MainPage = () => {
     <DndProvider backend={HTML5Backend}>
       <div className="container">
         <TopBar handleCreateSection={handleCreateSection} setShowSettings={setShowSettings}/>
+        <AlertDialog open={open} handleClose={handleClose} actionConfirmation={actionConfirmation} type={type}/>
         <Divider variant="middle" className="main-divider" />
         <Logo />
         <div ref={sectionsContainerRef}> 
@@ -61,7 +89,10 @@ export const MainPage = () => {
               sectionId={section.id}
               booksList={section.booksList}
               text={section.text}
-              handleDeleteSection={handleDeleteSection} />
+              handleDeleteSection={handleActionConfirmation}
+              setType={setType}
+              setOpen={setOpen}
+            />
           ))}
         </div>
         <MySettings active={showSettings} setActive={setShowSettings}/>

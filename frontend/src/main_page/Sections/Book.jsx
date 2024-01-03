@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Icon } from "../Icon.jsx";
 import { useDrag, useDrop } from 'react-dnd';
+import DeleteIcon from '@mui/icons-material/Delete';
+import CreateIcon from '@mui/icons-material/Create';
+
 import './style.css';
 
 export const Book = ({ book, sectionId, index, moveBookInsideSection, isProps, onProps, removeBook }) => {
@@ -70,8 +73,10 @@ export const Book = ({ book, sectionId, index, moveBookInsideSection, isProps, o
   const displayContent = (
     <>
       <div className="icons-container">
-        <Icon name="pencil" onClick={handleEditClick} src={require("../../images/icon-pencil.png")} />
-        <Icon name="trashbin" onClick={handleDelete} src={require("../../images/icon-trashbin.png")} />
+        {/* <Icon name="pencil" onClick={handleEditClick} src={require("../../images/icon-pencil.png")} /> */}
+        <CreateIcon name="pencil" style={{ cursor: 'pointer' }} onClick={handleEditClick}/>
+        {/* <Icon name="trashbin" onClick={handleDelete} src={require("../../images/icon-trashbin.png")} /> */}
+        <DeleteIcon name="trashbin" style={{ cursor: 'pointer' }} onClick={handleDelete}/>
       </div>
       <div className="vertical-rectangle">
         <img className="book-cover" src={require("../../images/book1_cover.png")} alt={book.name} />

@@ -3,6 +3,8 @@ openai
 tiktoken
 django
 djangorestframework
+django-cors-headers
+django-celery-results
 crispy-bootstrap5
 PyPDF2
 PyMuPDF
@@ -11,3 +13,7 @@ matplotlib
 pdfplumber
 ebooklib
 numpy
+celery
+daphne
+tools
+channels[daphne]

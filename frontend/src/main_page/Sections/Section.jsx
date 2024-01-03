@@ -3,13 +3,15 @@ import { Book } from "./Book";
 import { AddBook } from "./AddBook";
 import { EditableText } from "./EditableText";
 import { Icon } from "../Icon";
+import DeleteIcon from '@mui/icons-material/Delete';
+
 import "./style.css";
 
 const VerticalLine = () => {
     return <div className="vertical-line"></div>;
 };
 
-export const Section = ({ booksList, text, sectionId, handleDeleteSection}) => {
+export const Section = ({ booksList, text, sectionId, handleDeleteSection, setType, setOpen }) => {
   const [books, setBooks] = useState(booksList);
   const [idCounter, setIdCounter] = useState(booksList.length);
 
@@ -36,18 +38,17 @@ export const Section = ({ booksList, text, sectionId, handleDeleteSection}) => {
   };
 
   const handleDelete = () => {
-    const isConfirmed = window.confirm(`Are you sure you want to delete '${text}' Section?`);
-    if (isConfirmed) {
-      handleDeleteSection(sectionId);
-    }
+    setType('deleteSection');
+    handleDeleteSection(sectionId, text);
   };
 
   return (
     <div className="custom-container">
       <div className="section-header">
         <EditableText initialText={text} />
-        <span className="trashbin-icon section-icon" onClick={handleDelete}>
-          <Icon name="trashbin" src={require("../../images/icon-trashbin.png")}/>
+        <span className="trashbin-icon section-icon">
+          {/* <Icon name="trashbin" src={require("../../images/icon-trashbin.png")}/> */}
+          <DeleteIcon style={{ cursor: 'pointer' }} onClick={handleDelete}/>
         </span>
       </div>
       <div className="custom-rectangle">

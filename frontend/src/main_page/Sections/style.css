@@ -53,6 +53,7 @@ input[type=text] {
     letter-spacing: var(--main-font-letter-spacing, 0px);
     line-height: var(--main-font-line-height, normal);
     background-color: var(--collection-1-bg);
+    border: none;
 }
 
 .section-name-container {
@@ -115,11 +116,12 @@ input[type=text] {
 .name-text input {
     width: 150px;
     padding: 5px;
-    margin-right: 5px;
+    font-size: 16px;
 }
 
 .add-book {
     margin-top: 25px;
+    padding-top: 10px;
 }
 
 .plus-image {
@@ -132,4 +134,9 @@ input[type=text] {
     justify-content: space-around;
     width: 100px;
     visibility: hidden;
+}
+
+.plus-icon {
+    fill: var(--collection-1-blocks);
+    height: 50px;
 }
