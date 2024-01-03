@@ -35,8 +35,10 @@ class Authentication(viewsets.ViewSet):
     
     @method_decorator(ensure_csrf_cookie)
     def get_user(self, request):
+        if not request.user.is_authenticated:
+            return Response({'error': 1})
         user = request.user
-        settings_instance = get_object_or_404(UserSettings, user=user)
+        settings_instance, created = UserSettings.objects.get_or_create(user=user)
 
         return Response({
             'receive_notifications': settings_instance.receive_notifications,
