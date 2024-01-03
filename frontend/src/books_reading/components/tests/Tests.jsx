@@ -1,16 +1,18 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback, forwardRef} from "react";
 import "./style.css";
 import { Icon } from "../reusableComponents/icons/Icons.jsx"
 import { ReactComponent as Cross } from '../../../images/cross.svg';
 import { TestElement } from "./testElement/TestElement.jsx";
 
-export const Tests = ({booksDictionary, book_id=0, active = false, setActive = null}) => {
+const Tests = forwardRef(({booksDictionary, activateTest, setTestId, test, book_id=0, active = false, setActive = null}, ref) => {
     
     const [availableQuestions, setAvailableQuestions] = useState(0);
     const [testsList, setTestsList] = useState([]);
     
     const openTest = (test_id) => {
-        console.log('open test', test_id);
+        setTestId(test_id);
+        activateTest(true);
+        setActive(false);
     };
     
     const closeTests = useCallback(() => {
@@ -24,7 +26,11 @@ export const Tests = ({booksDictionary, book_id=0, active = false, setActive = n
         const fetchTests = async () => {
             try {
                 // const response = await axios.get('/api/tests');
-                setTestsList([{id: 1, elType: 'exist'}, {id: 2, elType: 'in progress'}, {id: 3, elType: 'exist'}]);
+                setTestsList([
+                    { id: 1, elType: 'exist' },
+                    { id: 2, elType: 'in progress' },
+                    { id: 3, elType: 'exist' },
+                ]);
             } catch (error) {
                 console.error('Error fetching tests:', error);
             }
@@ -56,8 +62,8 @@ export const Tests = ({booksDictionary, book_id=0, active = false, setActive = n
     
     return (
         <div className={`tests ${active?'' :'hide'}`}>
-            <div className="BG" />
-            <div className="panel">
+            <div className="BG"/>
+            <div className="panel" ref={testsContainerRef} >
                 <Icon
                     name = 'cross'
                     className="tests-cross"
@@ -84,15 +90,18 @@ export const Tests = ({booksDictionary, book_id=0, active = false, setActive = n
                         < TestElement
                             elType='create'
                         />
-                    </div>
-                    
-                    <div className="questions-div">
-                        <div className="questions-left">
-                            {availableQuestions + ' questions left'}
+                        <div className="questions-div">
+                            <div className="questions-left">
+                                {availableQuestions + ' questions left'}
+                            </div>
                         </div>
                     </div>
+                    
+                    
                 </div>
             </div>
         </div>
     );
-};
+});
+
+export { Tests };

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 
 import { TopBar } from "./components/topBar/TopBar.jsx";
 import { SideBar } from "./components/sideBar/SideBar.jsx";
@@ -6,6 +6,7 @@ import { Logo } from "./components/logo/Logo.jsx";
 import { Book } from "./components/currentBook/Book.jsx";
 import { Settings } from "./components/settings/Settings.jsx";
 import { Tests } from "./components/tests/Tests.jsx";
+import { Test } from "./components/test/Test.jsx";
 
 import "./style.css";
 
@@ -25,12 +26,17 @@ const booksInFolder_init = {
 };
 
 export const BooksReading = () => {
+    const test = useRef(null);
+    const tests = useRef(null);
+
     const [active, setActive] = useState(false);
 
     const [openedBooks, setOpenedBooks] = useState(openedBooks_init);
     const [booksInFolder, setBooksInFolder] = useState(booksInFolder_init);
 
     const [testsPanel, setTestsPanel] = useState(false);
+    const [testPanel, setTestPanel] = useState(false);
+    const [test_id, setTest_id] = useState(0);
     const [book_id, setBook_id] = useState(0);
 
     return (
@@ -58,10 +64,22 @@ export const BooksReading = () => {
             </div>
             <Settings active={active} setActive={setActive} />
             <Tests
+                ref={tests}
+                test={test}
                 booksDictionary={openedBooks}
                 active={testsPanel}
                 book_id={book_id}
                 setActive={setTestsPanel}
+                activateTest={setTestPanel}
+                setTestId={setTest_id}
+            />
+            <Test
+                ref={test}
+                tests={tests}
+                active={testPanel}
+          setActive={setTestPanel}
+          activateTests={setTestsPanel}
+                test_id={test_id}
             />
             <div className="bg"></div>
         </div>
