@@ -13,7 +13,7 @@ class BookUserInfo(viewsets.ViewSet):
     permission_classes = [permissions.IsAuthenticated]
     
     def open_section(self, request):
-        section_id = request.body.get('section_id')
+        section_id = request.data.get('section_id')
         user = request.user
         if section_id is None:
             return Response({'error': 1, 'details': 'No section id provided'})
@@ -24,7 +24,7 @@ class BookUserInfo(viewsets.ViewSet):
         return Response({'error': 0})
     
     def leave_section(self, request):
-        section_id = request.body.get('section_id')
+        section_id = request.data.get('section_id')
         user = request.user
         if section_id is None:
             return Response({'error': 1, 'details': 'No section id provided'})
@@ -34,7 +34,7 @@ class BookUserInfo(viewsets.ViewSet):
         return Response({'error': 0})
     
     def change_book(self, request):
-        book_id = request.body.get('book_id')
+        book_id = request.data.get('book_id')
         user = request.user
         if book_id is None:
             return Response({'error': 1, 'details': 'No book id provided'})
@@ -47,7 +47,7 @@ class BookUserInfo(viewsets.ViewSet):
         return Response({'error': 0})
     
     def close_book(self, request):
-        book_id = request.body.get('book_id')
+        book_id = request.data.get('book_id')
         user = request.user
         if book_id is None:
             return Response({'error': 1, 'details': 'No book id provided'})
@@ -64,7 +64,7 @@ class BookUserInfo(viewsets.ViewSet):
         return Response({'error': 0})
     
     def open_book(self, request):
-        book_id = request.body.get('book_id')
+        book_id = request.data.get('book_id')
         user = request.user
         if book_id is None:
             return Response({'error': 1, 'details': 'No book id provided'})
@@ -113,8 +113,6 @@ class BookView(viewsets.ViewSet):
         
         book_file = request.FILES.get('file')
         user = request.user
-        if section_id is None:
-            return Response({'error': 1, 'details': 'No section id provided'})
         if book_file is None:
             return Response({'error': 1, 'details': 'No book file provided'})
         section = get_object_or_404(Section, id=section_id, user=user)
@@ -239,8 +237,21 @@ class SectionView(viewsets.ViewSet):
     def get_all_sections(self, request):
         user = request.user
         sections = Section.objects.filter(user=user)
-        sections = [{'section_name': section.section_name, 'section_id': section.id, 'books': Book.objects.filter(book_section=section)} for section in sections]
-        return Response({'error': 0, 'sections': sections})
+        section_data = []
+
+        for section in sections:
+            books = Book.objects.filter(book_section=section)
+            books_data = [{'title': book.title} for book in books]
+
+            section_info = {
+                'id': section.id,
+                'section_name': section.section_name,
+                'books': books_data,
+            }
+
+            section_data.append(section_info)
+        #sections = [{'section_name': section.section_name, 'section_id': section.id, 'books': Book.objects.filter(book_section=section)} for section in sections]
+        return Response({'error': 0, 'sections': section_data})
 
 class BookProcessing(viewsets.ViewSet):
     authentication_classes = [authentication.SessionAuthentication]

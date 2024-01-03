@@ -27,16 +27,16 @@ const root = ReactDOMClient.createRoot(app);
 const Index = () => {
     const [userData, setUserData] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [registrationSuccess, setRegistrationSuccess] = useState(false);
     
     useEffect(() => {
         const fetchUserData = async () => {
         try {
-            const response = await client.get("users/auth/get-user");
+            const response = await client.get("/users/auth/get-user");
             if (response.data.error === 0) {
                 console.log('User is authenticated');
                 setIsAuthenticated(true);
                 setUserData(response.data);
+                console.log(response.data);
             }
         } catch (error) {
             console.error("Error fetching user data:", error);
@@ -44,18 +44,13 @@ const Index = () => {
         };
 
         fetchUserData();
-    }, [isAuthenticated]);
-
-    const handleRegistrationSuccess = () => {
-        setRegistrationSuccess(true);
-    };
-
+    }, [isAuthenticated, setIsAuthenticated]);
     
     return (
         <Router>
             <Routes>
-                <Route path="/" element={isAuthenticated ? <Navigate to="/main" /> : <SignIn client={client} onRegistrationSuccess={handleRegistrationSuccess} isSignIn={true} setIsAuthenticated={setIsAuthenticated}/>} />
-                <Route path="/main" element={isAuthenticated ? <MainPage userData={userData} /> : <Navigate to="/" />} />
+                <Route path="/" element={isAuthenticated ? <Navigate to="/main" /> : <SignIn client={client} isSignIn={true} setIsAuthenticated={setIsAuthenticated}/>} />
+                <Route path="/main" element={isAuthenticated ? <MainPage userData={userData} client={client} /> : <Navigate to="/" />} />
                 <Route path="/sign-up" element={<SignIn client={client} isSignIn={false}/>} />
                 <Route path="/sign-in" element={<SignIn client={client} isSignIn={true}/>} />
             </Routes>

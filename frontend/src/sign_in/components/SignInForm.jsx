@@ -23,6 +23,7 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { makeStyles, withStyles } from '@mui/styles';
 import { ReactComponent as GoogleLogo } from '../../images/google-logo.svg';
+import axios from "axios";
 import "./style.css";
 
 const useStyles = makeStyles({
@@ -173,7 +174,7 @@ export default function SignInForm( { client, setIsAuthenticated } ) {
     const formData = new FormData(event.target);
   
     try {
-      const response = await client.post("http://127.0.0.1:3030/users/auth/login/", {
+      const response = await client.post("users/auth/login/", {
         username: formData.get("email"),
         email: formData.get("email"),
         password: formData.get("password"),
