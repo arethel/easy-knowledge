@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback} from "react";
 import { Page } from "./Page/Page.jsx";
 import "./style.css";
 
-export const TopBar = ({ booksDictionary, setBooksDictionary }) => {
+export const TopBar = ({ booksDictionary, setBooksDictionary, setTestsPanel, setBook_id}) => {
   
   const [openedProps, setProps] = useState(null);
   const [activePage, setActivePage] = useState(null);
@@ -65,6 +65,11 @@ export const TopBar = ({ booksDictionary, setBooksDictionary }) => {
     };
   }, [pagesToHide, setBooksDictionary, activatePage, activePage, booksDictionary]);
   
+  const openTests = (book_id) => {
+    setBook_id(book_id);
+    setTestsPanel(true);
+  }
+  
   return (
     <div className="top-bar" id='top-bar'>
       {Object.keys(booksDictionary).map(bookName => {
@@ -72,13 +77,14 @@ export const TopBar = ({ booksDictionary, setBooksDictionary }) => {
         const shouldHide = pagesToHide.includes(bookName);
         return <Page 
           key={bookName}
-          bookName={bookName}
+          bookName={booksDictionary[bookName].title}
           isProps={openedProps === bookName}
           isActive={activePage === bookName}
           onProps={() => openProps(bookName)}
           onActivate={() => activatePage(bookName)}
           onClose={() => { closePage(bookName) }}
           shouldHide={shouldHide}
+          onTests={(e) => openTests(bookName)}
         />
         
       })}

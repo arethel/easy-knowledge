@@ -2,18 +2,18 @@ import React from "react";
 import "./style.css";
 
 
-export const Button = (props) => {
+export const Button = ({onClick, string, boxClasses = '', stringClasses = ''}) => {
     
     const handleClick = (e) => {
         e.stopPropagation();
-        if (props.onClick) {
-          props.onClick(e);
+        if (onClick) {
+          onClick(e);
         }
       };
     
     return (
-        <div className='overlap-group' onClick={handleClick}>
-            <div className="button-text">{props.string}</div>
+        <div className={'overlap-group ' + boxClasses} onClick={handleClick}>
+            <div className={"button-text "+stringClasses}>{string}</div>
         </div>
     )
 }

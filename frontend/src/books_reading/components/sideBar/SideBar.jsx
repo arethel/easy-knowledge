@@ -91,7 +91,7 @@ export const SideBar = ({ booksDictionary, setBooksDictionary, settingsSetActive
             />
           })}
           <BookButton
-            imgSrc={<AddBookIcon className="add-book" alt="Add book" />}
+            imgSrc={<AddBookIcon className="add-book-icon" alt="Add book" />}
             onClick={() => { console.log("add-book") }}
           />
         </div>
