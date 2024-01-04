@@ -5,6 +5,7 @@ import { EditableText } from "./EditableText";
 import { Icon } from "../Icon";
 import DeleteIcon from '@mui/icons-material/Delete';
 import Skeleton from '@mui/material/Skeleton';
+import { MyCircularProgress } from './MyCircularProgress';
 
 import "./style.css";
 
@@ -88,8 +89,15 @@ export const Section = ({ booksList, name, sectionId, handleDeleteSection, setTy
             </React.Fragment>
           ))}
         {loading && (
-            <h1 style={{ margin: '35px' }}>Loading...</h1>
-            //<Skeleton variant="rectangular" height={200} width={200} />
+          <React.Fragment>
+            <div className="vertical-container add-book loading">
+              <div className="vertical-rectangle">
+                <MyCircularProgress />
+              </div>
+            </div>
+            <VerticalLine />
+          </React.Fragment>
+          //<Skeleton variant="rectangular" height={200} width={200} />
         )}
         <AddBook onFileSelect={addNewBook} client={client} sectionId={sectionId} setLoading={setLoading} />
       </div>
