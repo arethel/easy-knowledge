@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 
 # output folder and files
+media/
 utils/*/output/*
 */output/*
 *.pdf
