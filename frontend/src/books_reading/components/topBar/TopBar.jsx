@@ -1,38 +1,74 @@
 import React, { useState, useEffect, useCallback} from "react";
 import { Page } from "./Page/Page.jsx";
+import getBook from '../../../utils/utils.js'
 import "./style.css";
 
-export const TopBar = ({ booksDictionary, setBooksDictionary, setTestsPanel, setBook_id}) => {
+export const TopBar = ({
+  booksDictionary,
+  setBooksDictionary,
+  setTestsPanel,
+  setBook_id,
+  client,
+  setUpdateInfo,
+  updateInfo,
+  loadedEpubs,
+  setLoadedEpubs
+}) => {
   
   const [openedProps, setProps] = useState(null);
   const [activePage, setActivePage] = useState(null);
 
   const openProps = (bookName) => {
-    if (openedProps === bookName) setProps(null); else {if (activePage === bookName) setProps(bookName);}
+    if (openedProps == bookName) setProps(null); else {if (activePage == bookName) setProps(bookName);}
   };
 
+  const changeBookApi = useCallback(async (book_id) => {
+    if (book_id == -1) return null;
+    const response = await client.post("api/opened-books/change/", { 'book_id': book_id });
+    // if (response.data.error === 0) {
+    //   setUpdateInfo(!updateInfo);
+    // }
+    return response;
+  }, [client]);
+  
   const activatePage = useCallback((bookName, nBooksDict=null) => {
-    if (activePage !== bookName) {
+    if (activePage != bookName) {
       setActivePage(bookName);
+      changeBookApi(bookName).then((response) => {
+        if (response !== null && response.data.error === 0 && loadedEpubs[bookName] === undefined) {
+          setBook_id(bookName);
+          getBook(bookName, client, loadedEpubs, setLoadedEpubs)
+        }
+      });
       let booksDictionaryCopy = {};
       if (nBooksDict)
         booksDictionaryCopy = { ...nBooksDict };
       else{
         booksDictionaryCopy = { ...booksDictionary };
       }
-      booksDictionaryCopy.selected = bookName;
+      booksDictionaryCopy.selected = {id:bookName};
       setBooksDictionary(booksDictionaryCopy);
     }
-  },[setActivePage, activePage, booksDictionary, setBooksDictionary]);
+  },[changeBookApi, setActivePage, activePage, booksDictionary, setBooksDictionary]);
   
   useEffect(() => {
-    activatePage(booksDictionary.selected);
+    if (booksDictionary.selected.id !== undefined){
+      activatePage(booksDictionary.selected.id);
+    }
   }, [activatePage, booksDictionary]);
   
   const [pagesToHide, setPagesToHide] = useState([]);
-
+  
+  const closePageApi = async (bookName) => {
+    const response = await client.post("api/opened-books/close/", { book_id: bookName });
+    // if (response.data.error === 0) {
+    //   setUpdateInfo(!updateInfo);
+    // }
+  }
+  
   const closePage = (bookName) => {
     setPagesToHide((prevPagesToHide) => [...prevPagesToHide, bookName]);
+    closePageApi(bookName);
   };
   
   useEffect(() => {
@@ -44,7 +80,7 @@ export const TopBar = ({ booksDictionary, setBooksDictionary, setTestsPanel, set
         delete newBooksDictionary[bookName];
         setBooksDictionary(newBooksDictionary);
         
-        if (activePage === bookName) {
+        if (activePage == bookName) {
           const remainingPages = Object.keys(booksDictionary).filter(
             (name) => name !== 'selected'
           );
@@ -78,8 +114,8 @@ export const TopBar = ({ booksDictionary, setBooksDictionary, setTestsPanel, set
         return <Page 
           key={bookName}
           bookName={booksDictionary[bookName].title}
-          isProps={openedProps === bookName}
-          isActive={activePage === bookName}
+          isProps={openedProps == bookName}
+          isActive={activePage == bookName}
           onProps={() => openProps(bookName)}
           onActivate={() => activatePage(bookName)}
           onClose={() => { closePage(bookName) }}

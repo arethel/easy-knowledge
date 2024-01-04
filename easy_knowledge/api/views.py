@@ -115,9 +115,9 @@ class BookView(viewsets.ViewSet):
     permission_classes = [permissions.IsAuthenticated]
     
     def get(self, request):
-        book_id = request.data.get('book_id')
+        book_id = request.query_params.get('book_id')
         user = request.user
-        book = Book.objects.get(user=user, id=book_id)
+        book = get_object_or_404(Book, id=book_id, user=user)
         if book is None:
             return Response({"error": "Book not found"}, status=404)
         if not book.processed:

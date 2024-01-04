@@ -4,11 +4,16 @@ import { Button } from "../../reusableComponents/button/Button.jsx"
 import { ReactComponent as Dots } from '../../../../images/dots.svg';
 import "./style.css";
 
-export const BookButton = ({ className = '', buttonText, onClick, onProps, isProps, onTests, onShare, onDelete, shouldHide=false, propsBtn = true, imgSrc = null }) => {
+export const BookButton = ({ className = '', buttonText, onClick, onProps, isProps, onTests, onShare, onDelete, shouldHide=false, propsBtn = true, imgSrc = null, work=true}) => {
     
     return (
-        <div className={`button ${isProps ? 'expanded' : ''} ${className}  ${shouldHide ? 'hide' : ''}`}>
-            <div className='book-file' onClick={() => { onClick(); }}>
+        <div className={`button ${isProps ? 'expanded' : ''} ${className}  ${shouldHide ? 'hide' : ''} ${work ? '':'off'}`}>
+            <div className='book-file' onClick={
+                work?
+                    () => { onClick(); }
+                    :
+                    () => {}
+            }>
                 {imgSrc===null ?
                     <div>
                         {propsBtn ?
@@ -23,7 +28,7 @@ export const BookButton = ({ className = '', buttonText, onClick, onProps, isPro
                 }
                 
             </div>
-            {propsBtn ?
+            {propsBtn && work?
                 <div className="props">
                     {/* <Button string="Chapter" /> */}
                     <Button string="Tests" onClick={(e) => { e.stopPropagation(); onTests(); }}/>

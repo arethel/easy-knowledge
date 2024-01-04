@@ -6,7 +6,7 @@ import "./style.css";
 export const Paragraph = ({mainText, text}) => {
     return (
         <div className="book-element paragraph">
-            <div className="main-text">{mainText}</div>
+            {mainText == '' ? null : <div className="main-text">{mainText}</div>}
             <p className="paragraph-text">{text}</p>
             <div className="paragraph-props-container">
                 <ParagraphProps />

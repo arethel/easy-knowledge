@@ -58,5 +58,5 @@ const Index = () => {
     );
 }
 
-root.render(<Index />);
-//root.render(<MainPage />);
+// root.render(<Index />);
+root.render(<BooksReading />);

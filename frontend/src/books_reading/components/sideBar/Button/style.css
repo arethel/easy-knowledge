@@ -12,6 +12,10 @@
     overflow: hidden;
 }
 
+.button.off {
+    opacity: 0.5;
+}
+
 .side-bar .button.hide {
     opacity: 0;
     height: 0px;
