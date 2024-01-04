@@ -32,7 +32,7 @@ const client = axios.create({
     },
 });
 
-export const BooksReading = () => {
+export const BooksReading = ({ userData, newClient }) => {
     
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     

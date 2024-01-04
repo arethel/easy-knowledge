@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import { ReactComponent as AddBookIcon } from '../../images/add-book.svg';
 import "./style.css";
 
-export const AddBook = ({ onFileSelect, client, sectionId }) => {
+export const AddBook = ({ onFileSelect, client, sectionId, setLoading }) => {
     const fileInputRef = useRef();
 
     const handleFileChange = async (event) => {
@@ -13,7 +13,8 @@ export const AddBook = ({ onFileSelect, client, sectionId }) => {
           console.log("section_id", sectionId)
           formData.append("file", file);
           formData.append("section_id", sectionId);
-  
+
+          setLoading(true);
           const response = await client.post("api/book/", formData, {
             headers: {
               "Content-Type": "multipart/form-data",
@@ -22,7 +23,7 @@ export const AddBook = ({ onFileSelect, client, sectionId }) => {
           console.log(response);
           if (response.data.error === 0) {
             console.log("File uploaded successfully")
-            onFileSelect(file);
+            onFileSelect(file, response.data.book_id);
           } else {
             console.error("Failed to upload the file: ", response.data.details);
             alert("Failed to upload the file");

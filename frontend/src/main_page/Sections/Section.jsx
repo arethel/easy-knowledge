@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Book } from "./Book";
 import { AddBook } from "./AddBook";
 import { EditableText } from "./EditableText";
 import { Icon } from "../Icon";
 import DeleteIcon from '@mui/icons-material/Delete';
+import Skeleton from '@mui/material/Skeleton';
 
 import "./style.css";
 
@@ -13,21 +14,20 @@ const VerticalLine = () => {
 
 export const Section = ({ booksList, name, sectionId, handleDeleteSection, setType, client }) => {
   const [books, setBooks] = useState(booksList);
-  console.log(books);
-  const [idCounter, setIdCounter] = useState(books.length);
+  const [loading, setLoading] = useState(false);
 
   const removeBook = (bookId) => {
-      const updatedBooks = books.filter(book => book.id !== bookId);
-      setBooks(updatedBooks);
+    const updatedBooks = books.filter(book => book.id !== bookId);
+    setBooks(updatedBooks);
   };
 
-  const addNewBook = (file) => {
+  const addNewBook = (file, newId) => {
+    setLoading(false);
     console.log(file);
     const newBook = {
-        id: idCounter + 1,
+        id: newId,
         title: file.name.replace(/\.[^/.]+$/, ""),
     };
-    setIdCounter(prevCounter => prevCounter + 1);
     setBooks(prevBooks => [...prevBooks, newBook]);
   };
 
@@ -74,21 +74,24 @@ export const Section = ({ booksList, name, sectionId, handleDeleteSection, setTy
       </div>
       <div className="custom-rectangle">
         {books.map((book, index) => (
-          <React.Fragment key={book.id}>
-            <Book
-              key={book.id}
-              book={book}
-              removeBook={removeBook}
-              sectionId={sectionId}
-              index={index}
-              moveBookInsideSection={moveBookInsideSection}
-              client={client}
-            />
-            <VerticalLine />
-            {/* {index !== books.length - 1 && <VerticalLine />} */}
-          </React.Fragment>
-        ))}
-        <AddBook onFileSelect={addNewBook} client={client} sectionId={sectionId}/>
+            <React.Fragment key={book.id}>
+              <Book
+                key={book.id}
+                book={book}
+                removeBook={removeBook}
+                sectionId={sectionId}
+                index={index}
+                moveBookInsideSection={moveBookInsideSection}
+                client={client}
+              />
+              <VerticalLine />
+            </React.Fragment>
+          ))}
+        {loading && (
+            <h1 style={{ margin: '35px' }}>Loading...</h1>
+            //<Skeleton variant="rectangular" height={200} width={200} />
+        )}
+        <AddBook onFileSelect={addNewBook} client={client} sectionId={sectionId} setLoading={setLoading} />
       </div>
     </div>
   );

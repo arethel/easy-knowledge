@@ -111,7 +111,7 @@ export const Book = ({ book, sectionId, index, moveBookInsideSection, removeBook
 
   return (
     <div
-      className="vertical-container"
+      className='vertical-container'
       ref={(node) => {
         dragRef(dropRef(node));
       }}
