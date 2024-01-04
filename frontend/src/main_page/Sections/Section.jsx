@@ -31,6 +31,25 @@ export const Section = ({ booksList, name, sectionId, handleDeleteSection, setTy
     setBooks(prevBooks => [...prevBooks, newBook]);
   };
 
+  const handleSectionNameChange = async (newName) => {
+    try {
+      const response = await client.post('api/section/change-section/', {
+        section_id: sectionId,
+        section_name: newName,
+      });
+
+      if (response.status === 200) {
+        // Handle the successful update
+      } else {
+        console.error('Failed to update section name');
+        alert('Failed to update section name');
+      }
+    } catch (error) {
+      console.error('Error during the API call', error);
+      alert('Error during the API call');
+    }
+  };
+
   const moveBookInsideSection = (sourceIndex, destinationIndex) => {
     const updatedBooks = [...books];
     const [movedBook] = updatedBooks.splice(sourceIndex, 1);
@@ -47,7 +66,7 @@ export const Section = ({ booksList, name, sectionId, handleDeleteSection, setTy
   return (
     <div className="custom-container">
       <div className="section-header">
-        <EditableText initialText={name} />
+        <EditableText initialText={name} sectionId={sectionId} onTextChange={handleSectionNameChange} />
         <span className="trashbin-icon section-icon">
           {/* <Icon name="trashbin" src={require("../../images/icon-trashbin.png")}/> */}
           <DeleteIcon style={{ cursor: 'pointer' }} onClick={handleDelete}/>

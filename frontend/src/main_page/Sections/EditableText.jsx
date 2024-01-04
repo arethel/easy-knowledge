@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './style.css';
 
-export const EditableText = ({ initialText }) => {
+export const EditableText = ({ initialText, onTextChange }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [text, setText] = useState(initialText);
   const inputRef = useRef(null);
@@ -17,6 +17,9 @@ export const EditableText = ({ initialText }) => {
   const handleBlur = (event) => {
     if (event.type === 'blur' || (event.type === 'keydown' && event.key === 'Enter')) {
       setIsEditing(false);
+      if (onTextChange) {
+        onTextChange(text);
+      }
     }
   };
 
@@ -30,6 +33,7 @@ export const EditableText = ({ initialText }) => {
     <div className="section-name-container" onDoubleClick={handleDoubleClick}>
       {isEditing ? (
         <input
+          className="custom-text"
           type="text"
           maxLength="50"
           value={text}

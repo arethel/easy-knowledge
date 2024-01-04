@@ -47,7 +47,7 @@ class Section(models.Model):
         return self.section_name
 
     class Meta:
-        ordering = ['section_name']
+        ordering = ['user']
         db_table = 'section'
         verbose_name = 'Section'
         verbose_name_plural = 'Sections'

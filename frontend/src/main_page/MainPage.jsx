@@ -22,7 +22,6 @@ export const MainPage = ({ userData, client }) => {
     { id: 1, books: booksList, section_name: 'Artificial Intelligence' },
     { id: 2, books: booksList, section_name: 'Design' },
   ]);
-  const [idCounter, setIdCounter] = useState(sections.length);
   const [showSettings, setShowSettings] = useState(false);
   const [open, setOpen] = useState(false);
   const [type, setType] = useState(null); // 'deleteBook' or 'deleteSection'
@@ -38,9 +37,7 @@ export const MainPage = ({ userData, client }) => {
     const fetchData = async () => {
       try {
         const response = await client.get("api/section/all");
-        //console.log(response.data)
         setSections(response.data.sections);
-        setIdCounter(response.data.sections.length);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -69,20 +66,46 @@ export const MainPage = ({ userData, client }) => {
     setActionConfirmation({ id: null, name: name });
   };
 
-  const handleCreateSection = () => {
-    const newSectionId = idCounter + 1;
-    const newSection = {
-      id: newSectionId,
-      section_name: `New Section`,
-      books: []      
-    };
-    setIdCounter(prevCounter => prevCounter + 1);
-    setSections([...sections, newSection]);
+  const handleCreateSection = async () => {
+    try {
+      const response = await client.post("api/section/", {
+        section_name: `New Section`
+      });
+
+      if (response.status === 200) {
+        const newSection = {
+          id: response.data.section_id,
+          section_name: response.data.section_name,
+          books: []      
+        };
+        setSections([...sections, newSection]);
+      } else {
+        console.error("Failed to create section");
+        alert("Failed to create section");
+      }
+    } catch (error) {
+      console.error("Error during the API call", error);
+      alert("Error during the API call");
+    }
   };
 
-  const handleDeleteSection = (sectionId) => {
-    const updatedSections = sections.filter(section => section.id !== sectionId);
-    setSections(updatedSections);
+  const handleDeleteSection = async (sectionId) => {
+    try {
+      const response = await client.post("api/section/delete/", {
+        section_id: sectionId
+      });
+
+      if (response.status === 200) {
+        const updatedSections = sections.filter(section => section.id !== sectionId);
+        setSections(updatedSections);
+      } else {
+        console.error("Failed to delete section");
+        alert("Failed to delete section");
+      }
+    } catch (error) {
+      console.error("Error during the API call", error);
+      alert("Error during the API call");
+    }
   };
 
   useEffect(() => {
@@ -100,7 +123,7 @@ export const MainPage = ({ userData, client }) => {
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="container">
-        <TopBar userData={userData} handleCreateSection={handleCreateSection} setShowSettings={setShowSettings}/>
+        <TopBar userData={userData} handleCreateSection={handleCreateSection} setShowSettings={setShowSettings} client={client}/>
         <AlertDialog open={open} handleClose={handleClose} actionConfirmation={actionConfirmation} type={type}/>
         <Divider variant="middle" className="main-divider" />
         <Logo />

@@ -225,7 +225,7 @@ class SectionView(viewsets.ViewSet):
         if section_name is not None:
             section.section_name = section_name
             section.save()
-        return Response({'error': 0})
+        return Response({'error': 0, 'data': {'section_name': section.section_name, 'section_id': section.id}})
     
     def create_section(self, request):
         section_name = request.data.get('section_name')

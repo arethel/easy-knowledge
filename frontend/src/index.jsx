@@ -51,12 +51,12 @@ const Index = () => {
             <Routes>
                 <Route path="/" element={isAuthenticated ? <Navigate to="/main" /> : <SignIn client={client} isSignIn={true} setIsAuthenticated={setIsAuthenticated}/>} />
                 <Route path="/main" element={isAuthenticated ? <MainPage userData={userData} client={client} /> : <Navigate to="/" />} />
-                <Route path="/sign-up" element={<SignIn client={client} isSignIn={false}/>} />
-                <Route path="/sign-in" element={<SignIn client={client} isSignIn={true}/>} />
+                <Route path="/sign-up" element={<SignIn client={client} isSignIn={false} setIsAuthenticated={setIsAuthenticated}/>} />
+                <Route path="/sign-in" element={<SignIn client={client} isSignIn={true} setIsAuthenticated={setIsAuthenticated}/>} />
             </Routes>
         </Router>
     );
 }
 
-// root.render(<Index />);
-root.render(<BooksReading />);
+root.render(<Index />);
+//root.render(<BooksReading />);

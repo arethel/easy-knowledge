@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { useNavigate  } from "react-router-dom";
+
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
 import Menu from '@mui/material/Menu';
@@ -12,9 +14,10 @@ import PersonAdd from '@mui/icons-material/PersonAdd';
 import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
 
-export const AccountMenu = ({ username, setShowSettings }) => {
+export const AccountMenu = ({ username, setShowSettings, client }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
-  
+
+  const navigate = useNavigate();
   const open = Boolean(anchorEl);
 
   const handleClick = (event) => {
@@ -28,6 +31,22 @@ export const AccountMenu = ({ username, setShowSettings }) => {
   const handleClickSettings = () => {
     setShowSettings(true);
     setAnchorEl(null);
+  };
+
+  const handleLogout = async () => {
+    try {
+      const response = await client.post('users/auth/logout/');
+
+      if (response.status === 200) {
+        navigate('/sign-in');
+      } else {
+        console.error('Failed to logout');
+        alert('Failed to logout');
+      }
+    } catch (error) {
+      console.error('Error during logout', error);
+      alert('Error during logout');
+    }
   };
 
   return (
@@ -88,7 +107,7 @@ export const AccountMenu = ({ username, setShowSettings }) => {
           </ListItemIcon>
           Settings
         </MenuItem>
-        <MenuItem onClick={handleClose} sx={{ color: "var(--collection-1-font-2)", m: '3px'}}>
+        <MenuItem onClick={handleLogout} sx={{ color: "var(--collection-1-font-2)", m: '3px'}}>
           <ListItemIcon>
             <Logout fontSize="small" sx={{ color: "var(--collection-1-font-2)"}}/>
           </ListItemIcon>
