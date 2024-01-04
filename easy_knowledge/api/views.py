@@ -13,7 +13,7 @@ class BookUserInfo(viewsets.ViewSet):
     permission_classes = [permissions.IsAuthenticated]
     
     def open_section(self, request):
-        section_id = request.body.get('section_id')
+        section_id = request.data.get('section_id')
         user = request.user
         if section_id is None:
             return Response({'error': 1, 'details': 'No section id provided'})
@@ -24,17 +24,18 @@ class BookUserInfo(viewsets.ViewSet):
         return Response({'error': 0})
     
     def leave_section(self, request):
-        section_id = request.body.get('section_id')
+        section_id = request.data.get('section_id')
         user = request.user
         if section_id is None:
             return Response({'error': 1, 'details': 'No section id provided'})
         opened_books, created = OpenedBook.objects.get_or_create(user=user)
         if not opened_books.last_section is None and section_id == opened_books.last_section.id:
             opened_books.last_section = None
+            opened_books.save()
         return Response({'error': 0})
     
     def change_book(self, request):
-        book_id = request.body.get('book_id')
+        book_id = request.data.get('book_id')
         user = request.user
         if book_id is None:
             return Response({'error': 1, 'details': 'No book id provided'})
@@ -47,7 +48,7 @@ class BookUserInfo(viewsets.ViewSet):
         return Response({'error': 0})
     
     def close_book(self, request):
-        book_id = request.body.get('book_id')
+        book_id = request.data.get('book_id')
         user = request.user
         if book_id is None:
             return Response({'error': 1, 'details': 'No book id provided'})
@@ -64,11 +65,13 @@ class BookUserInfo(viewsets.ViewSet):
         return Response({'error': 0})
     
     def open_book(self, request):
-        book_id = request.body.get('book_id')
+        book_id = request.data.get('book_id')
         user = request.user
         if book_id is None:
             return Response({'error': 1, 'details': 'No book id provided'})
         book = get_object_or_404(Book, id=book_id, user=user)
+        if not book.processed:
+            return Response({'error': 1})
         opened_books, created = OpenedBook.objects.get_or_create(user=user)
         if book not in opened_books.books.all():
             opened_books.books.add(book)
@@ -81,14 +84,31 @@ class BookUserInfo(viewsets.ViewSet):
         user = request.user
         opened_books, created = OpenedBook.objects.get_or_create(user=user)
         books = opened_books.books.all()
-        books = [{'book_id': book.id, 'title': book.title} for book in books]
+        opened_books_data = {}
+        for book in books:
+            opened_books_data[book.id] = {'title':book.title}
+            
         last_section = 0
-        last_book = 0
+        last_section_data = {}
         if opened_books.last_section is not None:
-            last_section = opened_books.last_section.id
+            last_section = opened_books.last_section
+            section_books = Book.objects.filter(book_section=last_section, user=user)
+            last_section_data = {'section_id': last_section.id, 'section_name': last_section.section_name, 'books': {}}
+            for book in section_books:
+                last_section_data['books'][book.id] = {'title':book.title, 'processed': book.processed}
+        else:
+            last_section_data = {'section_id': -1, 'section_name': 'Main', 'sections': {}}
+            user_sections = Section.objects.filter(user=user)
+            sections = {}
+            for section in user_sections:
+                sections[section.id] = {'section_name': section.section_name}
+            last_section_data['sections'] = sections
+            
         if opened_books.last_book is not None:
-            last_book = opened_books.last_book.id
-        return Response({'error': 0, 'books': books, 'last_section': last_section, 'last_book': last_book})
+            opened_books_data['selected'] = {'id': opened_books.last_book.id}
+        else:
+            opened_books_data['selected'] = {'id': -1}
+        return Response({'error': 0, 'opened_books_data': opened_books_data, 'last_section_data': last_section_data})
 
 class BookView(viewsets.ViewSet):
     authentication_classes = [authentication.SessionAuthentication]
@@ -274,7 +294,7 @@ class BookProcessing(viewsets.ViewSet):
         return Response({'error': 0})
     
     def get_marked_for_qa(self, request):
-        book_id = request.body.get('book_id')
+        book_id = request.data.get('book_id')
         user = request.user
         if book_id is None:
             return Response({'error': 1, 'details': 'No book id provided'})

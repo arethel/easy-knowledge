@@ -66,5 +66,3 @@ class EpubReader {
         return elements;
     }
 }
-
-export default EpubReader;

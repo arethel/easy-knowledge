@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 
+#todo: change the path
 def book_directory_path(instance, filename):
     return 'user_{0}/original/{1}'.format(instance.user.id, filename)
 
@@ -22,6 +23,7 @@ class Book(models.Model):
         verbose_name_plural = 'Books'
 
 class ProcessedBook(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     processed_file = models.FileField(upload_to=processed_book_directory_path)
     processed_date = models.DateField(auto_now_add=True)
