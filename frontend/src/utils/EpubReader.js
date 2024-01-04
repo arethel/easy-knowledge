@@ -1,9 +1,11 @@
+import JSZip from 'jszip';
+
 class EpubReader {
     constructor() {
         this.zip = null;
     }
 
-    async readEPUB(file) {
+    async readEPUB(blob) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.onload = async (event) => {
@@ -14,7 +16,7 @@ class EpubReader {
             reader.onerror = (event) => {
                 reject(new Error('Failed to read EPUB.'));
             };
-            reader.readAsArrayBuffer(file);
+            reader.readAsArrayBuffer(blob);
         });
     }
 
@@ -66,3 +68,5 @@ class EpubReader {
         return elements;
     }
 }
+
+export default EpubReader;

@@ -6,7 +6,21 @@ import { Paragraph } from "./paragraph/Paragraph.jsx";
 import { EndOfParagraph } from "./endOfParagraph/EndOfParagraph.jsx";
 import { NewChapter } from "./newChapter/NewChapter";
 
-export const Book = () => {
+export const Book = ({book_id, client, loadedEpubs}) => {
+    
+    const [paragraphs, setParagraphs] = useState([]);
+    
+    useEffect(() => {
+        console.log(loadedEpubs, book_id);
+        if (loadedEpubs[book_id] === undefined) return () => {};
+        loadedEpubs[book_id].get_by_page(10).then((newParagraphs) => { 
+            setParagraphs(newParagraphs);
+            console.log(newParagraphs);
+        });
+        
+        
+        return () => {};
+    }, [book_id, loadedEpubs]);
     
     const [constantHeight, setConstantHeight] = useState("960px");
     const sideId = "side-bar";
@@ -40,7 +54,10 @@ export const Book = () => {
     return (
         <div className="book" >
             <div className="paragraphs" style={{ height: constantHeight }}>
-                <Paragraph mainText={'Cell Structure and Function:'} text={
+                {paragraphs.map((paragraph, index) => (
+                    <Paragraph key={index} mainText={''} text={paragraph.content} />
+                ))}
+                {/* <Paragraph mainText={'Cell Structure and Function:'} text={
                 `Biology explores the fundamental unit of life, the
                 cell. Cells are the building blocks of all living
                 organisms and can vary in size and complexity. They
@@ -68,7 +85,7 @@ export const Book = () => {
                 living organisms and their physical surroundings.
                 Topics in ecology include the flow of energy through
                 food chains and webs, the cycling of nutrients, and
-                the impact of human activities on ecosystems.`} />
+                the impact of human activities on ecosystems.`} /> */}
                 
                 
             </div>
