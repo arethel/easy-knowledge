@@ -139,9 +139,9 @@ class BookView(viewsets.ViewSet):
         title = book_file.name
         book = Book(book_file=book_file, user=user, title=title, book_section=section)
         book.save()
-        processed_book = ProcessedBook(book=book)
-        processed_book.save()
-        process_book.delay(book.id)
+        # processed_book = ProcessedBook(book=book, user=user)
+        # processed_book.save()
+        # process_book.delay(book.id)
         return Response({'error': 0, 'book_id': book.id, 'processing': 0})
     
     def change_title(self, request):
@@ -261,7 +261,7 @@ class SectionView(viewsets.ViewSet):
 
         for section in sections:
             books = Book.objects.filter(book_section=section)
-            books_data = [{'title': book.title} for book in books]
+            books_data = [{'id': book.id, 'title': book.title } for book in books]
 
             section_info = {
                 'id': section.id,

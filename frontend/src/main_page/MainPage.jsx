@@ -19,13 +19,14 @@ const booksList = [
 export const MainPage = ({ userData, client }) => {
   const sectionsContainerRef = useRef(null);
   const [sections, setSections] = useState([
-    { id: 1, booksList, text: 'Artificial Intelligence' },
-    { id: 2, booksList, text: 'Design' },
+    { id: 1, books: booksList, section_name: 'Artificial Intelligence' },
+    { id: 2, books: booksList, section_name: 'Design' },
   ]);
   const [idCounter, setIdCounter] = useState(sections.length);
   const [showSettings, setShowSettings] = useState(false);
   const [open, setOpen] = useState(false);
   const [type, setType] = useState(null); // 'deleteBook' or 'deleteSection'
+  const [loading, setLoading] = useState(true);
 
   const [actionConfirmation, setActionConfirmation] = useState({
     // type: null, // 'deleteBook' or 'deleteSection'
@@ -37,11 +38,13 @@ export const MainPage = ({ userData, client }) => {
     const fetchData = async () => {
       try {
         const response = await client.get("api/section/all");
-        console.log(response.data)
+        //console.log(response.data)
         setSections(response.data.sections);
         setIdCounter(response.data.sections.length);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
+        setLoading(false);
       }
     };
   
@@ -70,8 +73,8 @@ export const MainPage = ({ userData, client }) => {
     const newSectionId = idCounter + 1;
     const newSection = {
       id: newSectionId,
-      booksList: [],
-      text: `New Section`,
+      section_name: `New Section`,
+      books: []      
     };
     setIdCounter(prevCounter => prevCounter + 1);
     setSections([...sections, newSection]);
@@ -90,6 +93,10 @@ export const MainPage = ({ userData, client }) => {
     }
   }, [sections]);
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="container">
@@ -106,6 +113,7 @@ export const MainPage = ({ userData, client }) => {
               name={section.section_name}
               handleDeleteSection={handleActionConfirmation}
               setType={setType}
+              client={client}
             />
           ))}
         </div>

@@ -11,7 +11,7 @@ const VerticalLine = () => {
     return <div className="vertical-line"></div>;
 };
 
-export const Section = ({ booksList, name, sectionId, handleDeleteSection, setType }) => {
+export const Section = ({ booksList, name, sectionId, handleDeleteSection, setType, client }) => {
   const [books, setBooks] = useState(booksList);
   console.log(books);
   const [idCounter, setIdCounter] = useState(books.length);
@@ -21,10 +21,11 @@ export const Section = ({ booksList, name, sectionId, handleDeleteSection, setTy
       setBooks(updatedBooks);
   };
 
-  const addNewBook = () => {
+  const addNewBook = (file) => {
+    console.log(file);
     const newBook = {
         id: idCounter + 1,
-        name: "New Book",
+        title: file.name.replace(/\.[^/.]+$/, ""),
     };
     setIdCounter(prevCounter => prevCounter + 1);
     setBooks(prevBooks => [...prevBooks, newBook]);
@@ -62,12 +63,13 @@ export const Section = ({ booksList, name, sectionId, handleDeleteSection, setTy
               sectionId={sectionId}
               index={index}
               moveBookInsideSection={moveBookInsideSection}
+              client={client}
             />
             <VerticalLine />
             {/* {index !== books.length - 1 && <VerticalLine />} */}
           </React.Fragment>
         ))}
-        <AddBook onClick={addNewBook}/>
+        <AddBook onFileSelect={addNewBook} client={client} sectionId={sectionId}/>
       </div>
     </div>
   );

@@ -6,32 +6,16 @@ import CreateIcon from '@mui/icons-material/Create';
 
 import './style.css';
 
-export const Book = ({ book, sectionId, index, moveBookInsideSection, isProps, onProps, removeBook }) => {
+export const Book = ({ book, sectionId, index, moveBookInsideSection, removeBook, client }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [editedName, setEditedName] = useState(book.name);
+  const [editedName, setEditedName] = useState(book.title);
   const inputRef = useRef(null);
 
-  useEffect(() => {
-    const handleDocumentClick = (event) => {
-      if (!event.target.closest('.dots') && isProps && !isEditing) {
-        onProps();
-      }
-    };
-
-    const handleDocumentKeyPress = (event) => {
-      if (isEditing && event.key === 'Enter') {
-        handleSaveEdit();
-      }
-    };
-
-    document.addEventListener('click', handleDocumentClick);
-    document.addEventListener('keypress', handleDocumentKeyPress);
-
-    return () => {
-      document.removeEventListener('click', handleDocumentClick);
-      document.removeEventListener('keypress', handleDocumentKeyPress);
-    };
-  }, [isProps, onProps, isEditing]);
+  const handleKeyPress = (event) => {
+    if (isEditing && event.key === 'Enter') {
+      handleSaveEdit();
+    }
+  };
 
   const [{ isDragging }, dragRef] = useDrag({
     type: 'BOOK',
@@ -50,10 +34,22 @@ export const Book = ({ book, sectionId, index, moveBookInsideSection, isProps, o
     },
   });
 
-  const handleDelete = () => {
-    const isConfirmed = window.confirm(`Are you sure you want to delete '${book.name}'?`);
+  const handleDelete = async () => {
+    const isConfirmed = window.confirm(`Are you sure you want to delete '${book.title}'?`);
     if (isConfirmed) {
-      removeBook(book.id);
+      try {
+        const response = await client.post('api/book/delete/', { book_id: book.id });
+        
+        if (response.status === 200) {
+          removeBook(book.id);
+        } else {
+          console.error('Failed to delete the book');
+          alert('Failed to delete the book');
+        }
+      } catch (error) {
+        console.error('Error during the API call', error);
+        alert('Error during the API call');
+      }
     }
   };
 
@@ -62,8 +58,20 @@ export const Book = ({ book, sectionId, index, moveBookInsideSection, isProps, o
     setIsEditing(true);
   };
 
-  const handleSaveEdit = () => {
-    setIsEditing(false);
+  const handleSaveEdit = async () => {
+    try {
+      const response = await client.post('api/book/change-title/', { book_id: book.id, title: editedName });
+
+      if (response.status === 200) {
+        setIsEditing(false);
+      } else {
+        console.error('Failed to rename the book');
+        alert('Failed to rename the book');
+      }
+    } catch (error) {
+      console.error('Error during the API call', error);
+      alert('Error during the API call');
+    }
   };
 
   const handleNameChange = (e) => {
@@ -79,7 +87,7 @@ export const Book = ({ book, sectionId, index, moveBookInsideSection, isProps, o
         <DeleteIcon name="trashbin" style={{ cursor: 'pointer' }} onClick={handleDelete}/>
       </div>
       <div className="vertical-rectangle">
-        <img className="book-cover" src={require("../../images/book1_cover.png")} alt={book.name} />
+        <img className="book-cover" src={require("../../images/book1_cover.png")} alt={book.title} />
       </div>
       <div className="name-text">
         {isEditing ? (
@@ -88,6 +96,7 @@ export const Book = ({ book, sectionId, index, moveBookInsideSection, isProps, o
               type="text"
               value={editedName}
               onChange={handleNameChange}
+              onKeyDown={handleKeyPress}
               autoFocus
               ref={inputRef}
               onBlur={handleSaveEdit}

@@ -20,7 +20,7 @@ class Book(models.Model):
         return self.title
 
     class Meta:
-        ordering = ['title']
+        ordering = ['user']
         db_table = 'book'
         verbose_name = 'Book'
         verbose_name_plural = 'Books'
