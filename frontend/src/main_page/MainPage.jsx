@@ -16,7 +16,7 @@ const booksList = [
   {id: 4, name: 'Book4 Title'},
 ];
 
-export const MainPage = () => {
+export const MainPage = ({ userData, client }) => {
   const sectionsContainerRef = useRef(null);
   const [sections, setSections] = useState([
     { id: 1, booksList, text: 'Artificial Intelligence' },
@@ -32,6 +32,21 @@ export const MainPage = () => {
     id: null,   // Book or Section ID
     name: null, // Book or Section name
   });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await client.get("api/section/all");
+        console.log(response.data)
+        setSections(response.data.sections);
+        setIdCounter(response.data.sections.length);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+  
+    fetchData();
+  }, []);
 
   const handleActionConfirmation = (id, name) => {
     setActionConfirmation({ id, name });
@@ -78,7 +93,7 @@ export const MainPage = () => {
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="container">
-        <TopBar handleCreateSection={handleCreateSection} setShowSettings={setShowSettings}/>
+        <TopBar userData={userData} handleCreateSection={handleCreateSection} setShowSettings={setShowSettings}/>
         <AlertDialog open={open} handleClose={handleClose} actionConfirmation={actionConfirmation} type={type}/>
         <Divider variant="middle" className="main-divider" />
         <Logo />
@@ -87,11 +102,10 @@ export const MainPage = () => {
             <Section 
               key={section.id}
               sectionId={section.id}
-              booksList={section.booksList}
-              text={section.text}
+              booksList={section.books}
+              name={section.section_name}
               handleDeleteSection={handleActionConfirmation}
               setType={setType}
-              setOpen={setOpen}
             />
           ))}
         </div>

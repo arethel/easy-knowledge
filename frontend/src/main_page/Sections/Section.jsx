@@ -11,9 +11,10 @@ const VerticalLine = () => {
     return <div className="vertical-line"></div>;
 };
 
-export const Section = ({ booksList, text, sectionId, handleDeleteSection, setType, setOpen }) => {
+export const Section = ({ booksList, name, sectionId, handleDeleteSection, setType }) => {
   const [books, setBooks] = useState(booksList);
-  const [idCounter, setIdCounter] = useState(booksList.length);
+  console.log(books);
+  const [idCounter, setIdCounter] = useState(books.length);
 
   const removeBook = (bookId) => {
       const updatedBooks = books.filter(book => book.id !== bookId);
@@ -39,13 +40,13 @@ export const Section = ({ booksList, text, sectionId, handleDeleteSection, setTy
 
   const handleDelete = () => {
     setType('deleteSection');
-    handleDeleteSection(sectionId, text);
+    handleDeleteSection(sectionId, name);
   };
 
   return (
     <div className="custom-container">
       <div className="section-header">
-        <EditableText initialText={text} />
+        <EditableText initialText={name} />
         <span className="trashbin-icon section-icon">
           {/* <Icon name="trashbin" src={require("../../images/icon-trashbin.png")}/> */}
           <DeleteIcon style={{ cursor: 'pointer' }} onClick={handleDelete}/>

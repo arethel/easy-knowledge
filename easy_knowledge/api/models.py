@@ -16,6 +16,9 @@ class Book(models.Model):
     book_section = models.ForeignKey('Section', on_delete=models.CASCADE, related_name='books', null=True)
     processed = models.BooleanField(default=False)
 
+    def __str__(self):
+        return self.title
+
     class Meta:
         ordering = ['title']
         db_table = 'book'
@@ -39,6 +42,9 @@ class Section(models.Model):
     section_name = models.CharField(max_length=200, blank=False, null=False, default='Section')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     creation_date = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return self.section_name
 
     class Meta:
         ordering = ['section_name']

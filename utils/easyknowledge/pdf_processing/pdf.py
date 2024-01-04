@@ -1,4 +1,5 @@
 import os
+print(os.getcwd())
 from PIL import Image
 import io
 import timeit
@@ -51,11 +52,17 @@ class EpubReader:
                 data = item.get_body_content().decode("utf-8")
                 data = re.findall(r'<p>(.*?)</p>', data, re.DOTALL)
                 if data:
+                    current_page = int(data[0].split(sep)[0].strip())
+                    current_order = int(data[0].split(sep)[2].strip())
                     current_is_qa_flag = int(data[0].split(sep)[3].strip())
-                    current_content = data[0].split(sep)[5].strip()
+
+                    element = {
+                        "page": current_page,
+                        "order": current_order
+                    }
 
                     if current_is_qa_flag == 1:
-                        qa_contents.append(current_content)
+                        qa_contents.append(element)
         return qa_contents
 
     def add_questions_answers(self, page_number, order, qa_content):
@@ -335,7 +342,8 @@ if __name__ == '__main__':
         print(f"{percentage}% - Expected time left: {remaining_time:.2f} seconds")
     
     book = EpubReader(epub_path)
+    print(len(book))
     print(book.get_by_page(29))
-    book.add_questions_answers(29, 1, "What is the meaning of life?")
+    #book.add_questions_answers(29, 1, "What is the meaning of life?")
     print(book.get_by_page(29))
     print(book.get_paragraph_by_qa())

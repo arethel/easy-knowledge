@@ -11,7 +11,7 @@ urlpatterns = [
     path('section/', views.SectionView.as_view({'get': 'get', 'post': 'create_section'}), name='section'),
     path('section/delete/', views.SectionView.as_view({'post': 'delete_section'}), name='delete-section'),
     path('section/change-section/', views.SectionView.as_view({'post': 'change_section'}), name='change-section'),
-    path('section/get-sections/', views.SectionView.as_view({'get': 'get_all_sections'}), name='get-sections'),
+    path('section/all/', views.SectionView.as_view({'get': 'get_all_sections'}), name='get-all-sections'),
     
     path('qa/', views.BookProcessing.as_view({'get': 'get_marked_for_qa', 'post': 'mark_for_qa'}), name='qa'),
     path('qa/test/', views.BookProcessing.as_view({'get': 'get_test', 'post': 'create_test'}), name='test'),

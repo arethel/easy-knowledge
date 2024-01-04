@@ -55,7 +55,7 @@ export const AccountMenu = ({ username, setShowSettings }) => {
           elevation: 0,
           sx: {
             overflow: 'visible',
-            bgcolor: 'var(--collection-1-font-3)',
+            bgcolor: 'var(--collection-1-blocks)',
             filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
             mt: 1.5,
             borderRadius: 3,
@@ -73,7 +73,7 @@ export const AccountMenu = ({ username, setShowSettings }) => {
               right: 14,
               width: 10,
               height: 10,
-              bgcolor: 'var(--collection-1-font-3)',
+              bgcolor: 'var(--collection-1-blocks)',
               transform: 'translateY(-50%) rotate(45deg)',
               zIndex: 0,
             },
@@ -82,15 +82,15 @@ export const AccountMenu = ({ username, setShowSettings }) => {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem onClick={handleClickSettings}>
+        <MenuItem onClick={handleClickSettings} sx={{ color: "var(--collection-1-font-2)", m: '3px'}}>
           <ListItemIcon>
-            <Settings fontSize="small" />
+            <Settings fontSize="small" sx={{ color: "var(--collection-1-font-2)"}}/>
           </ListItemIcon>
           Settings
         </MenuItem>
-        <MenuItem onClick={handleClose}>
+        <MenuItem onClick={handleClose} sx={{ color: "var(--collection-1-font-2)", m: '3px'}}>
           <ListItemIcon>
-            <Logout fontSize="small" />
+            <Logout fontSize="small" sx={{ color: "var(--collection-1-font-2)"}}/>
           </ListItemIcon>
           Logout
         </MenuItem>
