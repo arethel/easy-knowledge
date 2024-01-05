@@ -33,7 +33,7 @@ class ProcessedBook(models.Model):
     processing = models.IntegerField(default=0)
 
     class Meta:
-        ordering = ['processed_date']
+        ordering = ['user']
         db_table = 'processed_book'
         verbose_name = 'Processed Book'
         verbose_name_plural = 'Processed Books'

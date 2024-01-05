@@ -18,8 +18,10 @@
 }
 
 .vertical-line {
+    border-radius: 1px;
+    min-width: 2px;
     width: 2px;
-    background-color: #ccc;
+    background-color: var(--collection-1-block2);
     margin: 18px 10px;
     height: 240px;
 }
@@ -126,6 +128,27 @@ input[type=text] {
 
 .vertical-container.loading:hover {
     background-color: var(--collection-1-blocks-no-a);
+}
+
+.loading-center {
+    height: 100%;
+    position: fixed;
+    margin: auto;
+    display: flex;
+    width: 100%;
+    user-select: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.vertical-container.disabled-book {
+    /* pointer-events: none; */
+}
+
+.vertical-rectangle.disabled-book,
+.name-text.disabled-book {
+    opacity: 0.5;
+    filter: grayscale(100%);
 }
 
 .plus-image {

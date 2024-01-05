@@ -7,6 +7,7 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { MySettings } from './Settings/MySettings';
 import { AlertDialog } from './AlertDialog.jsx';
+import { MyCircularProgress } from './Sections/MyCircularProgress';
 import './style.css'
 
 const booksList = [
@@ -117,7 +118,11 @@ export const MainPage = ({ userData, client }) => {
   }, [sections]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="loading-center">
+          <MyCircularProgress determinate={false}/>
+      </div>
+    );
   }
 
   return (

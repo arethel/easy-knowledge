@@ -16,6 +16,7 @@ const VerticalLine = () => {
 export const Section = ({ booksList, name, sectionId, handleDeleteSection, setType, client }) => {
   const [books, setBooks] = useState(booksList);
   const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   const removeBook = (bookId) => {
     const updatedBooks = books.filter(book => book.id !== bookId);
@@ -23,13 +24,35 @@ export const Section = ({ booksList, name, sectionId, handleDeleteSection, setTy
   };
 
   const addNewBook = (file, newId) => {
-    setLoading(false);
+    //setLoading(false);
     console.log(file);
-    const newBook = {
-        id: newId,
-        title: file.name.replace(/\.[^/.]+$/, ""),
-    };
-    setBooks(prevBooks => [...prevBooks, newBook]);
+    // const newBook = {
+    //     id: newId,
+    //     title: file.name.replace(/\.[^/.]+$/, ""),
+    // };
+    // setBooks(prevBooks => [...prevBooks, newBook]);
+
+    const interval = setInterval(async () => {
+      try {
+        const response = await client.post('api/processed-books/', {"book_id": newId});
+        setProgress(response.data.progress);
+        //console.log(response)
+        if (response.data.progress === 100) {
+          const newBook = {
+            id: newId,
+            title: file.name.replace(/\.[^/.]+$/, ""),
+            is_processed:true
+          };
+          setBooks(prevBooks => [...prevBooks, newBook]);
+          clearInterval(interval);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error('Error getting progress from API', error);
+        clearInterval(interval);
+        setLoading(false);
+      }
+    }, 5000);
   };
 
   const handleSectionNameChange = async (newName) => {
@@ -92,7 +115,7 @@ export const Section = ({ booksList, name, sectionId, handleDeleteSection, setTy
           <React.Fragment>
             <div className="vertical-container add-book loading">
               <div className="vertical-rectangle">
-                <MyCircularProgress />
+                <MyCircularProgress progress={progress} determinate={true}/>
               </div>
             </div>
             <VerticalLine />

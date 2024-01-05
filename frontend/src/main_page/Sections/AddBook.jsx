@@ -25,14 +25,17 @@ export const AddBook = ({ onFileSelect, client, sectionId, setLoading }) => {
             console.log("File uploaded successfully")
             onFileSelect(file, response.data.book_id);
           } else {
+            setLoading(false);
             console.error("Failed to upload the file: ", response.data.details);
             alert("Failed to upload the file");
           }
         } catch (error) {
+          setLoading(false);
           console.error("Error during the API call", error);
           alert("Error during the API call");
         }
       } else {
+        setLoading(false);
         console.error("Invalid file type. Please choose a PDF file.");
         alert("Invalid file type. Please choose a PDF file.");
       }

@@ -16,7 +16,7 @@ def process_book(book_id):
     epub_path = processed_book_directory_path(processed_book, book.title + '.epub')
     
     last_progress_update = time.time()
-    for progress in pdf_book.to_epub(epub_path):
+    for progress, estimated_time in pdf_book.to_epub(epub_path):
         if time.time() - last_progress_update > progress_update_interval:
             last_progress_update = time.time()
             processed_book.processing = int(progress * 100)

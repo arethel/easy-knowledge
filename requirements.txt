@@ -17,3 +17,7 @@ celery
 daphne
 tools
 channels[daphne]
+celery[redis]
+pika
+flower
+rabbitmq-server

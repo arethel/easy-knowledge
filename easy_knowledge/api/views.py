@@ -139,9 +139,9 @@ class BookView(viewsets.ViewSet):
         title = book_file.name
         book = Book(book_file=book_file, user=user, title=title, book_section=section)
         book.save()
-        # processed_book = ProcessedBook(book=book, user=user)
-        # processed_book.save()
-        # process_book.delay(book.id)
+        processed_book = ProcessedBook(book=book, user=user)
+        processed_book.save()
+        process_book.delay(book.id)
         return Response({'error': 0, 'book_id': book.id, 'processing': 0})
     
     def change_title(self, request):
@@ -261,7 +261,7 @@ class SectionView(viewsets.ViewSet):
 
         for section in sections:
             books = Book.objects.filter(book_section=section)
-            books_data = [{'id': book.id, 'title': book.title } for book in books]
+            books_data = [{'id': book.id, 'title': book.title, 'is_processed': book.processed } for book in books]
 
             section_info = {
                 'id': section.id,
@@ -288,6 +288,14 @@ class BookProcessing(viewsets.ViewSet):
         book.processed = True
         book.save()
         return Response({'error': 0})
+    
+    def get_progress(self, request):
+        book_id = request.data.get('book_id')
+        user = request.user
+        if book_id is None:
+            return Response({'error': 1, 'details': 'No book id provided'})
+        book = get_object_or_404(ProcessedBook, book_id=book_id, user=user)
+        return Response({'error': 0, 'progress': book.processing})
     
     def mark_for_qa(self, request):
         book_id = request.data.get('book_id')

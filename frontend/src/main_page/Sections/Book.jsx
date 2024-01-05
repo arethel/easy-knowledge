@@ -8,7 +8,7 @@ import './style.css';
 
 export const Book = ({ book, sectionId, index, moveBookInsideSection, removeBook, client }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [editedName, setEditedName] = useState(book.title);
+  const [editedName, setEditedName] = useState(book.title.replace(/\.[^/.]+$/, ""));
   const inputRef = useRef(null);
 
   const handleKeyPress = (event) => {
@@ -86,10 +86,10 @@ export const Book = ({ book, sectionId, index, moveBookInsideSection, removeBook
         {/* <Icon name="trashbin" onClick={handleDelete} src={require("../../images/icon-trashbin.png")} /> */}
         <DeleteIcon name="trashbin" style={{ cursor: 'pointer' }} onClick={handleDelete}/>
       </div>
-      <div className="vertical-rectangle">
+      <div className={`vertical-rectangle ${!book.is_processed ? 'disabled-book' : ''}`}>
         <img className="book-cover" src={require("../../images/book1_cover.png")} alt={book.title} />
       </div>
-      <div className="name-text">
+      <div className={`name-text ${!book.is_processed ? 'disabled-book' : ''}`}>
         {isEditing ? (
           <>
             <input
@@ -111,7 +111,7 @@ export const Book = ({ book, sectionId, index, moveBookInsideSection, removeBook
 
   return (
     <div
-      className='vertical-container'
+    className={`vertical-container ${!book.is_processed ? 'disabled-book' : ''}`}
       ref={(node) => {
         dragRef(dropRef(node));
       }}

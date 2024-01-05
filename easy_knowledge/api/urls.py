@@ -16,6 +16,8 @@ urlpatterns = [
     path('qa/', views.BookProcessing.as_view({'get': 'get_marked_for_qa', 'post': 'mark_for_qa'}), name='qa'),
     path('qa/test/', views.BookProcessing.as_view({'get': 'get_test', 'post': 'create_test'}), name='test'),
     
+    path('processed-books/', views.BookProcessing.as_view({'post': 'get_progress'}), name='get-progress'),
+
     path('limit/', views.BookProcessing.as_view({'get': 'get_limitations_info'}), name='limit'),
     
     path('opened-books/', views.BookUserInfo.as_view({'get': 'get_opened_books_info', 'post': 'open_book'}), name='opened-books'),
