@@ -2,11 +2,12 @@
     right: 20px;
     position: absolute;
     bottom: 20px;
-    height: 40px;
-    width: 100px;
+    height: auto;
+    width: auto;
     align-items: center;
     justify-content: center;
     user-select: none;
+    overflow: hidden;
 }
 
 .pages-bg {
@@ -15,16 +16,21 @@
     height: 100%;
     width: 100%;
     position: absolute;
+    left: 0px;
+    top: 0px;
     opacity: 0.5;
+    overflow: hidden;
 }
 
 .pages-count-container{
     position: relative;
-    height: 100%;
-    width: 100%;
+    height: auto;
+    width: auto;
     display: flex;
     align-items: center;
     justify-content: center;
+    margin: 10px;
+    overflow: hidden;
 }
 
 .pages-text {
@@ -36,4 +42,5 @@
     letter-spacing: var(--main-font-letter-spacing);
     line-height: var(--main-font-line-height);
     display: flex;
+    overflow: hidden;
 }

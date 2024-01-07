@@ -7,6 +7,7 @@ urlpatterns = [
     path('book/delete/', views.BookView.as_view({'post': 'delete_book'}), name='delete-book'),
     path('book/change-section/', views.BookView.as_view({'post': 'change_section'}), name='change-section'),
     path('book/get-images/', views.BookView.as_view({'get': 'get_images'}), name='get-images'),
+    path('book/info/', views.BookUserInfo.as_view({'get': 'get_book_info', 'post': 'set_book_info'}), name='info'),
     
     path('section/', views.SectionView.as_view({'get': 'get', 'post': 'create_section'}), name='section'),
     path('section/delete/', views.SectionView.as_view({'post': 'delete_section'}), name='delete-section'),

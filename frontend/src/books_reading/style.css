@@ -2,6 +2,11 @@
     width: 100%;
     height: 100%;
     display: flex;
+    overflow: hidden;
+}
+
+.book-page-container::-webkit-scrollbar {
+    display: none;
 }
 
 .bg {

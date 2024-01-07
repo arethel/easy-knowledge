@@ -137,6 +137,34 @@ class BookUserInfo(viewsets.ViewSet):
         else:
             opened_books_data['selected'] = {'id': -1}
         return Response({'error': 0, 'opened_books_data': opened_books_data, 'last_section_data': last_section_data})
+    
+    def get_book_info(self, request):
+        book_id = request.query_params.get('book_id')
+        user = request.user
+        if book_id is None:
+            return Response({'error': 1, 'details': 'No book id provided'})
+        book = get_object_or_404(Book, id=book_id, user=user)
+        if not book.processed:
+            return Response({'error': 1, 'details': 'Book not processed'})
+        processed_book = get_object_or_404(ProcessedBook, book=book, user=user)
+        book_info = {'title': book.title, 'page': processed_book.page}
+        return Response({'error': 0, 'book_info': book_info})
+    
+    def set_book_info(self, request):
+        book_id = request.data.get('book_id')
+        user = request.user
+        if book_id is None:
+            return Response({'error': 1, 'details': 'No book id provided'})
+        book = get_object_or_404(Book, id=book_id, user=user)
+        if not book.processed:
+            return Response({'error': 1, 'details': 'Book not processed'})
+        processed_book = get_object_or_404(ProcessedBook, book=book, user=user)
+        page = request.data.get('page')
+        if page is None:
+            return Response({'error': 1, 'details': 'No page provided'})
+        processed_book.page = page
+        processed_book.save()
+        return Response({'error': 0})
 
 class BookView(viewsets.ViewSet):
     authentication_classes = [authentication.SessionAuthentication]

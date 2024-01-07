@@ -12,7 +12,7 @@ const getBook = async (book_id, client, loadedEpubs, setLoadedEpubs) => {
       const newloadedEpubs = { ...loadedEpubs };
       newloadedEpubs[book_id] = epubReader;
       setLoadedEpubs(newloadedEpubs);
-      console.log('loaded');
+      // console.log('loaded');
       
     } catch (error) {
       console.error('Error fetching book:', error);
