@@ -199,7 +199,7 @@ export const SideBar = ({
               onDelete={() => { deleteBook(bookName) }}
               shouldHide={shouldHide}
               onTests={(e) => openTests(bookName)}
-              work={booksDictionary[bookName].processed === true}
+              work={booksDictionary[bookName].processed === true || sectionName.id === -1}
             />
           })}
           {/* <BookButton

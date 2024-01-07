@@ -25,34 +25,34 @@ axios.defaults.xsrfHeaderName = "X-CSRFToken";
 axios.defaults.withCredentials = true;
 axios.defaults.withXSRFToken = true;
 
-const client = axios.create({
-    baseURL: "http://localhost:3030",
-    headers: {
-        "Content-Type": "application/json",
-    },
-});
+// const client = axios.create({
+//     baseURL: "http://localhost:3030",
+//     headers: {
+//         "Content-Type": "application/json",
+//     },
+// });
 
-export const BooksReading = ({ userData, newClient }) => {
+export const BooksReading = ({ userData, client }) => {
     
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    // const [isAuthenticated, setIsAuthenticated] = useState(false);
     
-    useEffect(() => {
-        const fetchUserData = async () => {
-        try {
-            const response = await client.get("users/auth/get-user");
-            if (response.data.error === 1) {
-                const response = await client.post("users/auth/login/", { username: "user1", password: "user1" });
-            }
-            // else{
-            //     console.log(response.data);
-            // }
-        } catch (error) {
-            console.error("Error fetching user data:", error);
-        }
-        };
+    // useEffect(() => {
+    //     const fetchUserData = async () => {
+    //     try {
+    //         const response = await client.get("users/auth/get-user");
+    //         if (response.data.error === 1) {
+    //             const response = await client.post("users/auth/login/", { username: "user1", password: "user1" });
+    //         }
+    //         // else{
+    //         //     console.log(response.data);
+    //         // }
+    //     } catch (error) {
+    //         console.error("Error fetching user data:", error);
+    //     }
+    //     };
 
-        fetchUserData();
-    }, [isAuthenticated]);
+    //     fetchUserData();
+    // }, [isAuthenticated]);
     
     const test = useRef(null);
     const tests = useRef(null);

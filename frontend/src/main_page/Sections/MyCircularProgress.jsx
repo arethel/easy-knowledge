@@ -45,7 +45,7 @@ export const MyCircularProgress = ({ props, progress, determinate }) => {
                 justifyContent: 'center',
               }}
             >
-              <Typography variant="caption" component="div" color="var(--collection-1-font-3)">
+              <Typography variant="caption" component="div" color="var(--collection-1-font-3)" sx={{ userSelect: 'none', }}>
                 {`${Math.round(progress)}%`}
               </Typography>
             </Box>

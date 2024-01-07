@@ -5,7 +5,8 @@ from easyknowledge.user_utils.utils import create_test
 from .models import *
 from datetime import datetime
 import time
-from django.core.files.base import File
+import tempfile
+import os
 
 progress_update_interval = 4
 
@@ -16,18 +17,23 @@ def process_book(book_id):
     pdf_book = PDFReader(book.book_file.path)
     epub_path = processed_book_directory_path(processed_book, book.title + '.epub')
     
-    last_progress_update = time.time()
-    for progress, estimated_time in pdf_book.to_epub(epub_path):
-        if time.time() - last_progress_update > progress_update_interval:
-            last_progress_update = time.time()
-            processed_book.processing = int(progress * 100)
-            processed_book.save()
-    
-    processed_book.processed_file.save(f"{book.title}.epub", open(epub_path, 'rb'))
-    processed_book.processing = 100
-    processed_book.processed_date = datetime.now()
-    processed_book.save()
-    
+    with tempfile.TemporaryDirectory() as temp_dir:
+        epub_path = os.path.join(temp_dir, f"{book.title}.epub")
+
+        last_progress_update = time.time()
+        for progress, estimated_time in pdf_book.to_epub(epub_path):
+            if time.time() - last_progress_update > progress_update_interval:
+                last_progress_update = time.time()
+                processed_book.processing = int(progress * 100)
+                processed_book.save()
+
+        print(epub_path)
+        
+        processed_book.processed_file.save(f"{book.title}.epub", open(epub_path, 'rb'))
+        processed_book.processing = 100
+        processed_book.processed_date = datetime.now()
+        processed_book.save()
+
     book.processed = True
     book.save()
 

@@ -46,6 +46,7 @@ export const AddBook = ({ onFileSelect, client, sectionId, loading, setLoading }
   
     const handleAddBook = () => {
       if (!loading) {
+        fileInputRef.current.value = null;
         fileInputRef.current.click();
       }
     };

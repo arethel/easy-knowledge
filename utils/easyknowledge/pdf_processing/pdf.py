@@ -328,7 +328,7 @@ class PDFReader:
         return elements
 
 if __name__ == '__main__':
-    pdf_path = "../../dataset_processing/ISLRv2.pdf"
+    pdf_path = "../../dataset_processing/Imperia.pdf"
     output_txt_path = "../../dataset_processing/output/output_text.txt"
     output_images_folder = "../../dataset_processing/output/images"
     epub_path = '../../dataset_processing/output/book.epub'

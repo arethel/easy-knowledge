@@ -50,7 +50,7 @@ const Index = () => {
         <Router>
             <Routes>
                 <Route path="/" element={isAuthenticated ? <Navigate to="/main" /> : <SignIn client={client} isSignIn={true} setIsAuthenticated={setIsAuthenticated}/>} />
-                <Route path="/books-reading" element={isAuthenticated ? <BooksReading userData={userData} newClient={client} /> : <SignIn client={client} isSignIn={true} setIsAuthenticated={setIsAuthenticated}/>} />
+                <Route path="/books-reading" element={isAuthenticated ? <BooksReading userData={userData} client={client} /> : <SignIn client={client} isSignIn={true} setIsAuthenticated={setIsAuthenticated}/>} />
                 <Route path="/main" element={isAuthenticated ? <MainPage userData={userData} client={client} /> : <SignIn client={client} isSignIn={true} setIsAuthenticated={setIsAuthenticated}/>} />
                 <Route path="/sign-up" element={<SignIn client={client} isSignIn={false} setIsAuthenticated={setIsAuthenticated}/>} />
                 <Route path="/sign-in" element={<SignIn client={client} isSignIn={true} setIsAuthenticated={setIsAuthenticated}/>} />
