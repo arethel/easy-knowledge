@@ -23,6 +23,10 @@ export const AddBook = ({ onFileSelect, client, sectionId, loading, setLoading }
           if (response.data.error === 0) {
             console.log("File uploaded successfully", response.data.cover_image)
             onFileSelect(file, response.data.book_id, response.data.cover_image);
+          } else if (response.data.error === 2) {
+            setLoading(false);
+            console.error("Limit exceeded: ", response.data.details);
+            alert("Limit exceeded");
           } else {
             setLoading(false);
             console.error("Failed to upload the file: ", response.data.details);

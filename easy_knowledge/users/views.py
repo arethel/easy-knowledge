@@ -39,6 +39,7 @@ class Authentication(viewsets.ViewSet):
             return Response({'error': 1})
         user = request.user
         settings_instance, created = UserSettings.objects.get_or_create(user=user)
+        limitations_instance, created = UserLimitations.objects.get_or_create(user=user)
 
         return Response({
             'receive_notifications': settings_instance.receive_notifications,
@@ -46,6 +47,11 @@ class Authentication(viewsets.ViewSet):
             'language': settings_instance.language,
             'text_size': settings_instance.text_size,
             'text_font': settings_instance.text_font,
+            'max_books': limitations_instance.max_books,
+            'max_sections': limitations_instance.max_sections,
+            'max_questions': limitations_instance.max_questions,
+            'used_questions': limitations_instance.used_questions,
+            'last_update_questions': limitations_instance.last_update_questions,
             'username': user.username,
             'email': user.email,
             'error': 0,

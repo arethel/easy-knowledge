@@ -159,8 +159,13 @@ class BookView(viewsets.ViewSet):
         if section_id is None:
             return Response({'error': 1, 'details': 'No section id provided'})
         
-        book_file = request.FILES.get('file')
         user = request.user
+
+        user_limitations = UserLimitations.objects.get(user=user)
+        if user_limitations.max_books == Book.objects.filter(user=user).count():
+            return Response({'error': 2, 'details': 'Maximum number of books reached.'})
+        
+        book_file = request.FILES.get('file')
         if book_file is None:
             return Response({'error': 1, 'details': 'No book file provided'})
         section = get_object_or_404(Section, id=section_id, user=user)
@@ -266,6 +271,9 @@ class SectionView(viewsets.ViewSet):
     def create_section(self, request):
         section_name = request.data.get('section_name')
         user = request.user
+        user_limitations = UserLimitations.objects.get(user=user)
+        if user_limitations.max_sections == Section.objects.filter(user=user).count():
+            return Response({'error': 2, 'details': 'Maximum number of sections reached.'})
         if section_name is None:
             return Response({'error': 1, 'details': 'No section name provided'})
         section = Section(section_name=section_name, user=user)

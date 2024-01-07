@@ -74,13 +74,16 @@ export const MainPage = ({ userData, client }) => {
         section_name: `New Section`
       });
 
-      if (response.status === 200) {
+      if (response.data.error === 0) {
         const newSection = {
           id: response.data.section_id,
           section_name: response.data.section_name,
           books: []      
         };
         setSections([...sections, newSection]);
+      } else if (response.data.error === 2) {
+        console.error("Limit exceeded: ", response.data.details);
+        alert("Limit exceeded");
       } else {
         console.error("Failed to create section");
         alert("Failed to create section");
