@@ -3,6 +3,7 @@ import { Icon } from "../Icon.jsx";
 import { useDrag, useDrop } from 'react-dnd';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CreateIcon from '@mui/icons-material/Create';
+import { useNavigate } from "react-router-dom";
 
 import './style.css';
 
@@ -11,6 +12,7 @@ export const Book = ({ book, sectionId, index, moveBookInsideSection, removeBook
   const [editedName, setEditedName] = useState(book.title.replace(/\.[^/.]+$/, ""));
   const inputRef = useRef(null);
   console.log(book);
+  const navigate = useNavigate();
 
   const handleKeyPress = (event) => {
     if (isEditing && event.key === 'Enter') {
@@ -78,6 +80,10 @@ export const Book = ({ book, sectionId, index, moveBookInsideSection, removeBook
   const handleNameChange = (e) => {
     setEditedName(e.target.value);
   };
+  
+  const handleBookClick = (event) => {
+    navigate('/books-reading');
+  }
 
   const displayContent = (
     <>
@@ -87,7 +93,7 @@ export const Book = ({ book, sectionId, index, moveBookInsideSection, removeBook
         {/* <Icon name="trashbin" onClick={handleDelete} src={require("../../images/icon-trashbin.png")} /> */}
         <DeleteIcon name="trashbin" style={{ cursor: 'pointer' }} onClick={handleDelete}/>
       </div>
-      <div className={`vertical-rectangle ${!book.is_processed ? 'disabled-book' : ''}`}>
+      <div className={`vertical-rectangle ${!book.is_processed ? 'disabled-book' : ''}`} onClick={handleBookClick}>
         <img className="book-cover" src={`${book.cover_image ? book.cover_image : require('../../images/book1_cover.png')}`} alt={book.title} />
       </div>
       <div className={`name-text ${!book.is_processed ? 'disabled-book' : ''}`}>
