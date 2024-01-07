@@ -1,5 +1,7 @@
 from django.db import models
 from django.conf import settings
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 
 #todo: change the path
 def book_directory_path(instance, filename):
@@ -21,6 +23,12 @@ class Book(models.Model):
     book_section = models.ForeignKey('Section', on_delete=models.CASCADE, related_name='books', null=True)
     processed = models.BooleanField(default=False)
 
+    def delete(self, *args, **kwargs):
+        if self.cover_image:
+            self.cover_image.delete(False)
+        self.book_file.delete(False)
+        super().delete(*args, **kwargs)
+
     def __str__(self):
         return self.title
 
@@ -30,6 +38,12 @@ class Book(models.Model):
         verbose_name = 'Book'
         verbose_name_plural = 'Books'
 
+@receiver(pre_delete, sender=Book)
+def delete_book_media(sender, instance, **kwargs):
+    if instance.cover_image:
+        instance.cover_image.delete(False)
+    instance.book_file.delete(False)
+
 class ProcessedBook(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
@@ -37,11 +51,19 @@ class ProcessedBook(models.Model):
     processed_date = models.DateField(auto_now_add=True)
     processing = models.IntegerField(default=0)
 
+    def delete(self, *args, **kwargs):
+        self.processed_file.delete(False)
+        super().delete(*args, **kwargs)
+
     class Meta:
         ordering = ['user']
         db_table = 'processed_book'
         verbose_name = 'Processed Book'
         verbose_name_plural = 'Processed Books'
+
+@receiver(pre_delete, sender=ProcessedBook)
+def delete_book_media(sender, instance, **kwargs):
+    instance.processed_file.delete(False)
 
 class Section(models.Model):
     section_name = models.CharField(max_length=200, blank=False, null=False, default='Section')

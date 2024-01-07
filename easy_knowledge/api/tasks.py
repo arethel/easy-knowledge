@@ -5,6 +5,7 @@ from easyknowledge.user_utils.utils import create_test
 from .models import *
 from datetime import datetime
 import time
+from django.core.files.base import File
 
 progress_update_interval = 4
 
@@ -22,7 +23,7 @@ def process_book(book_id):
             processed_book.processing = int(progress * 100)
             processed_book.save()
     
-    processed_book.processed_file.name = epub_path
+    processed_book.processed_file.save(f"{book.title}.epub", open(epub_path, 'rb'))
     processed_book.processing = 100
     processed_book.processed_date = datetime.now()
     processed_book.save()
