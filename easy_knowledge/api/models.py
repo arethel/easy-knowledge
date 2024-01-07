@@ -8,8 +8,13 @@ def book_directory_path(instance, filename):
 def processed_book_directory_path(instance, filename):
     return 'user_{0}/processed/{1}'.format(instance.user.id, filename)
 
+def covers_directory_path(instance, filename):
+    return 'user_{0}/covers/{1}'.format(instance.user.id, filename)
+
 class Book(models.Model):
     title = models.CharField(max_length=200)
+    author = models.CharField(max_length=200, blank=True, null=True)
+    cover_image = models.ImageField(upload_to=covers_directory_path, blank=True, null=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     upload_date = models.DateField(auto_now_add=True)
     book_file = models.FileField(upload_to=book_directory_path)

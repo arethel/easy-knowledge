@@ -1,5 +1,7 @@
 import fitz
 import PyPDF2
+import tempfile
+from PIL import Image
 from collections import Counter
 
 def get_page_rect(page):
@@ -133,3 +135,26 @@ def extract_metadata(pdf_path):
 
     print(txt)
     return information
+
+def extract_pdf_metadata(pdf_file):
+    cover_image = None
+    author = None
+
+    try:
+        pdf_document = fitz.open(stream=pdf_file.read(), filetype="pdf")
+        if pdf_document.page_count > 0:
+            first_page = pdf_document.load_page(0)
+            cover_image = first_page.get_pixmap()
+        metadata = pdf_document.metadata
+        author = metadata.get("author")
+
+    except Exception as e:
+        print(f"Error extracting PDF metadata: {e}")
+
+    return cover_image, author
+
+def save_cover_image(pixmap):
+    _, temp_pil_image_path = tempfile.mkstemp(suffix='.png')
+    pixmap_pil = Image.frombytes("RGB", [pixmap.width, pixmap.height], pixmap.samples)
+    pixmap_pil.save(temp_pil_image_path)
+    return temp_pil_image_path

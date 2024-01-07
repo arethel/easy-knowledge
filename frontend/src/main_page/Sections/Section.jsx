@@ -23,7 +23,7 @@ export const Section = ({ booksList, name, sectionId, handleDeleteSection, setTy
     setBooks(updatedBooks);
   };
 
-  const addNewBook = (file, newId) => {
+  const addNewBook = (file, newId, cover_image) => {
     console.log(file);
 
     const progressSocket = new WebSocket('ws://localhost:3030/ws/book-processing-info/');
@@ -41,7 +41,8 @@ export const Section = ({ booksList, name, sectionId, handleDeleteSection, setTy
       const newBook = {
         id: newId,
         title: file.name.replace(/\.[^/.]+$/, ""),
-        is_processed:true
+        is_processed: true,
+        cover_image: cover_image,
       };
       setBooks(prevBooks => [...prevBooks, newBook]);
       setLoading(false);
@@ -122,7 +123,7 @@ export const Section = ({ booksList, name, sectionId, handleDeleteSection, setTy
           </React.Fragment>
           //<Skeleton variant="rectangular" height={200} width={200} />
         )}
-        <AddBook onFileSelect={addNewBook} client={client} sectionId={sectionId} setLoading={setLoading} />
+        <AddBook onFileSelect={addNewBook} client={client} sectionId={sectionId} loading={loading} setLoading={setLoading} />
       </div>
     </div>
   );

@@ -38,6 +38,7 @@ export const MainPage = ({ userData, client }) => {
     const fetchData = async () => {
       try {
         const response = await client.get("api/section/all");
+        console.log(response.data.sections);
         setSections(response.data.sections);
         setLoading(false);
       } catch (error) {

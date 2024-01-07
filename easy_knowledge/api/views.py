@@ -8,6 +8,33 @@ from django.shortcuts import get_object_or_404
 from .models import *
 from users.models import *
 from .tasks import *
+import fitz
+from PIL import Image
+import tempfile
+#from easyknowledge.pdf_processing.pdf_utils import extract_pdf_metadata, save_cover_image
+
+def extract_pdf_metadata(pdf_file):
+    cover_image = None
+    author = None
+
+    try:
+        pdf_document = fitz.open(stream=pdf_file.read(), filetype="pdf")
+        if pdf_document.page_count > 0:
+            first_page = pdf_document.load_page(0)
+            cover_image = first_page.get_pixmap()
+        metadata = pdf_document.metadata
+        author = metadata.get("author")
+
+    except Exception as e:
+        print(f"Error extracting PDF metadata: {e}")
+
+    return cover_image, author
+
+def save_cover_image(pixmap):
+    _, temp_pil_image_path = tempfile.mkstemp(suffix='.png')
+    pixmap_pil = Image.frombytes("RGB", [pixmap.width, pixmap.height], pixmap.samples)
+    pixmap_pil.save(temp_pil_image_path)
+    return temp_pil_image_path
 
 class BookUserInfo(viewsets.ViewSet):
     authentication_classes = [authentication.SessionAuthentication]
@@ -139,12 +166,19 @@ class BookView(viewsets.ViewSet):
         section = get_object_or_404(Section, id=section_id, user=user)
         title = book_file.name
         title, extension = os.path.splitext(title)
-        book = Book(book_file=book_file, user=user, title=title, book_section=section)
+        cover_image, author = extract_pdf_metadata(book_file)
+        book = Book(book_file=book_file, user=user, title=title, book_section=section, author=author)
+        if cover_image:
+            cover_image_path = save_cover_image(cover_image)
+            book.cover_image.save(title + '.png', open(cover_image_path, 'rb'))
+        cover_image_path = book.cover_image.path
         book.save()
+        cover_image_relative_path = book.cover_image.name
+        cover_image_path = request.build_absolute_uri(settings.MEDIA_URL + cover_image_relative_path)
         processed_book = ProcessedBook(book=book, user=user)
         processed_book.save()
         process_book.delay(book.id)
-        return Response({'error': 0, 'book_id': book.id, 'processing': 0})
+        return Response({'error': 0, 'book_id': book.id, 'processing': 0, 'cover_image': cover_image_path})
     
     def change_title(self, request):
         book_id = request.data.get('book_id')
@@ -263,7 +297,17 @@ class SectionView(viewsets.ViewSet):
 
         for section in sections:
             books = Book.objects.filter(book_section=section)
-            books_data = [{'id': book.id, 'title': book.title, 'is_processed': book.processed } for book in books]
+            books_data = []
+
+            for book in books:
+                book_data = {
+                    'id': book.id,
+                    'title': book.title,
+                    'is_processed': book.processed,
+                    'author': book.author,
+                    'cover_image': request.build_absolute_uri(book.cover_image.url) if book.cover_image else None,
+                }
+                books_data.append(book_data)
 
             section_info = {
                 'id': section.id,

@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import { ReactComponent as AddBookIcon } from '../../images/add-book.svg';
 import "./style.css";
 
-export const AddBook = ({ onFileSelect, client, sectionId, setLoading }) => {
+export const AddBook = ({ onFileSelect, client, sectionId, loading, setLoading }) => {
     const fileInputRef = useRef();
 
     const handleFileChange = async (event) => {
@@ -20,10 +20,9 @@ export const AddBook = ({ onFileSelect, client, sectionId, setLoading }) => {
               "Content-Type": "multipart/form-data",
             },
           });
-          console.log(response);
           if (response.data.error === 0) {
-            console.log("File uploaded successfully")
-            onFileSelect(file, response.data.book_id);
+            console.log("File uploaded successfully", response.data.cover_image)
+            onFileSelect(file, response.data.book_id, response.data.cover_image);
           } else {
             setLoading(false);
             console.error("Failed to upload the file: ", response.data.details);
@@ -42,7 +41,9 @@ export const AddBook = ({ onFileSelect, client, sectionId, setLoading }) => {
     };
   
     const handleAddBook = () => {
-      fileInputRef.current.click();
+      if (!loading) {
+        fileInputRef.current.click();
+      }
     };
 
     return (

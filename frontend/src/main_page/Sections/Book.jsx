@@ -10,6 +10,7 @@ export const Book = ({ book, sectionId, index, moveBookInsideSection, removeBook
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState(book.title.replace(/\.[^/.]+$/, ""));
   const inputRef = useRef(null);
+  console.log(book);
 
   const handleKeyPress = (event) => {
     if (isEditing && event.key === 'Enter') {
@@ -87,7 +88,7 @@ export const Book = ({ book, sectionId, index, moveBookInsideSection, removeBook
         <DeleteIcon name="trashbin" style={{ cursor: 'pointer' }} onClick={handleDelete}/>
       </div>
       <div className={`vertical-rectangle ${!book.is_processed ? 'disabled-book' : ''}`}>
-        <img className="book-cover" src={require("../../images/book1_cover.png")} alt={book.title} />
+        <img className="book-cover" src={`${book.cover_image ? book.cover_image : require('../../images/book1_cover.png')}`} alt={book.title} />
       </div>
       <div className={`name-text ${!book.is_processed ? 'disabled-book' : ''}`}>
         {isEditing ? (
