@@ -1,3 +1,4 @@
+import os
 from django.http import FileResponse
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -137,6 +138,7 @@ class BookView(viewsets.ViewSet):
             return Response({'error': 1, 'details': 'No book file provided'})
         section = get_object_or_404(Section, id=section_id, user=user)
         title = book_file.name
+        title, extension = os.path.splitext(title)
         book = Book(book_file=book_file, user=user, title=title, book_section=section)
         book.save()
         processed_book = ProcessedBook(book=book, user=user)

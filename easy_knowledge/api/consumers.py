@@ -10,13 +10,12 @@ class BookProcessingInfo(AsyncWebsocketConsumer):
         user = self.scope["user"]
         while True:
             await asyncio.sleep(2)
-            book_processing_info = {}
-            books = Book.objects.filter(user=user)
+            book_processing_info = []
             close_connection = True
-            for book in books:
-                processed_book = ProcessedBook.objects.get(book=book)
-                book_processing_info[book.id] = {'processed': book.processed, 'percentage': processed_book.processing}
+            async for book in Book.objects.filter(user=user):
+                processed_book = await ProcessedBook.objects.aget(book=book)
                 if not book.processed:
+                    book_processing_info.append({'book_id': book.id, 'processed': book.processed, 'percentage': processed_book.processing})
                     close_connection = False
             await self.send(text_data=json.dumps(book_processing_info))
             

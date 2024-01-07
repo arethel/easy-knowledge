@@ -24,35 +24,35 @@ export const Section = ({ booksList, name, sectionId, handleDeleteSection, setTy
   };
 
   const addNewBook = (file, newId) => {
-    //setLoading(false);
     console.log(file);
-    // const newBook = {
-    //     id: newId,
-    //     title: file.name.replace(/\.[^/.]+$/, ""),
-    // };
-    // setBooks(prevBooks => [...prevBooks, newBook]);
 
-    const interval = setInterval(async () => {
-      try {
-        const response = await client.post('api/processed-books/', {"book_id": newId});
-        setProgress(response.data.progress);
-        //console.log(response)
-        if (response.data.progress === 100) {
-          const newBook = {
-            id: newId,
-            title: file.name.replace(/\.[^/.]+$/, ""),
-            is_processed:true
-          };
-          setBooks(prevBooks => [...prevBooks, newBook]);
-          clearInterval(interval);
-          setLoading(false);
+    const progressSocket = new WebSocket('ws://localhost:3030/ws/book-processing-info/');
+
+    progressSocket.onmessage = function(e) {
+      const d = JSON.parse(e.data);
+      d.forEach((data) => {
+        if (data['percentage'] < 100) {
+          setProgress(data['percentage']);
         }
-      } catch (error) {
-        console.error('Error getting progress from API', error);
-        clearInterval(interval);
-        setLoading(false);
-      }
-    }, 5000);
+      })
+    };
+
+    progressSocket.onclose = function(e) {
+      const newBook = {
+        id: newId,
+        title: file.name.replace(/\.[^/.]+$/, ""),
+        is_processed:true
+      };
+      setBooks(prevBooks => [...prevBooks, newBook]);
+      setLoading(false);
+      setProgress(0);
+    };
+
+    progressSocket.onerror = function(e) {
+      console.error('Socket error');
+      setLoading(false);
+      setProgress(0);
+    };
   };
 
   const handleSectionNameChange = async (newName) => {
