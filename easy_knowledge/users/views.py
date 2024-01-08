@@ -23,7 +23,7 @@ class User(viewsets.ViewSet):
     
     def change_username(self, request):
         user = request.user
-        username = request.body.get('username')
+        username = request.data.get('username')
         if username is None:
             return Response({'error': 1, 'details': 'No username provided'})
         user.username = username
@@ -58,7 +58,7 @@ class Authentication(viewsets.ViewSet):
         })
     
     def register(self, request):
-        data = json.loads(request.body)
+        data = request.data
         form = UserCreationForm(data)
         if form.is_valid():
             user = form.save()
@@ -72,7 +72,7 @@ class Authentication(viewsets.ViewSet):
             return Response({'error': 1, 'details': form.errors})
     
     def login(self, request):
-        data = json.loads(request.body)
+        data = request.data
         username = data.get('username')
         password = data.get('password')
         user = authenticate(username=username, password=password)
@@ -94,7 +94,7 @@ class UserSettingsView(viewsets.ViewSet):
         user = request.user
         settings_instance = get_object_or_404(UserSettings, user=user)
 
-        settings_instance.receive_notifications = request.body.get('receive_notifications', settings_instance.receive_notifications)
+        settings_instance.receive_notifications = request.data.get('receive_notifications', settings_instance.receive_notifications)
 
         theme_choice = request.POST.get('theme')
         if theme_choice in dict(UserSettings.THEME_CHOICES):
