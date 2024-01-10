@@ -1,5 +1,6 @@
 import os
 from django.http import FileResponse
+from django.db import IntegrityError, transaction
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import authentication, permissions, status
@@ -200,7 +201,8 @@ class BookView(viewsets.ViewSet):
         title = book_file.name
         title, extension = os.path.splitext(title)
         cover_image, author = extract_pdf_metadata(book_file)
-        book = Book(book_file=book_file, user=user, title=title, book_section=section, author=author)
+        len_books_in_section = len(Book.objects.filter(book_section=section))
+        book = Book(book_file=book_file, user=user, title=title, book_section=section, author=author, index=len_books_in_section)
         if cover_image:
             cover_image_path = save_cover_image(cover_image)
             book.cover_image.save(title + '.png', open(cover_image_path, 'rb'))
@@ -250,6 +252,20 @@ class BookView(viewsets.ViewSet):
         section = get_object_or_404(Section, id=section_id, user=user)
         book.book_section = section
         book.save()
+        return Response({'error': 0})
+    
+    def change_index(self, request):
+        section_id = request.data.get('section_id')
+        source_index = request.data.get('source_index')
+        destination_index = request.data.get('destination_index')
+        user = request.user
+        if source_index is None or destination_index is None:
+            return Response({'error': 1, 'details': 'No index provided'})
+        book1 = get_object_or_404(Book, index=source_index, book_section_id=section_id, user=user)
+        book2 = get_object_or_404(Book, index=destination_index, book_section_id=section_id, user=user)
+        book1.index, book2.index = destination_index, source_index
+        book1.save()
+        book2.save()
         return Response({'error': 0})
     
     def get_images(self, request):
@@ -342,6 +358,7 @@ class SectionView(viewsets.ViewSet):
                     'is_processed': book.processed,
                     'author': book.author,
                     'cover_image': request.build_absolute_uri(book.cover_image.url) if book.cover_image else None,
+                    'index': book.index,
                 }
                 books_data.append(book_data)
 

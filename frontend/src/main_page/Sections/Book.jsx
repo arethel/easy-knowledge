@@ -32,7 +32,7 @@ export const Book = ({ book, sectionId, index, moveBookInsideSection, removeBook
     accept: 'BOOK',
     drop: (item) => {
       if (item.sectionId === sectionId) {
-        moveBookInsideSection( item.index, index);
+        moveBookInsideSection(item.index, index);
       }
     },
   });

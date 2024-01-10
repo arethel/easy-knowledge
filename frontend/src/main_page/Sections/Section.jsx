@@ -43,6 +43,7 @@ export const Section = ({ booksList, name, sectionId, handleDeleteSection, setTy
         title: file.name.replace(/\.[^/.]+$/, ""),
         is_processed: true,
         cover_image: cover_image,
+        index: books.length,
       };
       setBooks(prevBooks => [...prevBooks, newBook]);
       setLoading(false);
@@ -75,12 +76,28 @@ export const Section = ({ booksList, name, sectionId, handleDeleteSection, setTy
     }
   };
 
-  const moveBookInsideSection = (sourceIndex, destinationIndex) => {
-    const updatedBooks = [...books];
-    const [movedBook] = updatedBooks.splice(sourceIndex, 1);
-    updatedBooks.splice(destinationIndex, 0, movedBook);
+  const moveBookInsideSection = async (sourceIndex, destinationIndex) => {
+    try {
+      const response = await client.post('api/book/change-index/', { section_id: sectionId, source_index: sourceIndex, destination_index: destinationIndex });
 
-    setBooks(updatedBooks);
+      if (response.status === 200) {
+        console.log(sourceIndex, destinationIndex)
+        const updatedBooks = [...books];
+
+        [updatedBooks[sourceIndex], updatedBooks[destinationIndex]] = [updatedBooks[destinationIndex], updatedBooks[sourceIndex],];
+        [updatedBooks[sourceIndex].index, updatedBooks[destinationIndex].index] = [updatedBooks[destinationIndex].index, updatedBooks[sourceIndex].index,];
+
+        console.log('swap', updatedBooks);
+
+        setBooks(updatedBooks);
+      } else {
+        console.error('Failed to move the book');
+        alert('Failed to move the book');
+      }
+    } catch (error) {
+      console.error('Error during the API call', error);
+      alert('Error during the API call');
+    }
   };
 
   const handleDelete = () => {
@@ -98,14 +115,15 @@ export const Section = ({ booksList, name, sectionId, handleDeleteSection, setTy
         </span>
       </div>
       <div className="custom-rectangle">
-        {books.map((book, index) => (
+        {console.log(books)}
+        {books.map((book) => (
             <React.Fragment key={book.id}>
               <Book
                 key={book.id}
                 book={book}
                 removeBook={removeBook}
                 sectionId={sectionId}
-                index={index}
+                index={book.index}
                 moveBookInsideSection={moveBookInsideSection}
                 client={client}
               />

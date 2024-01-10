@@ -22,6 +22,7 @@ class Book(models.Model):
     book_file = models.FileField(upload_to=book_directory_path)
     book_section = models.ForeignKey('Section', on_delete=models.CASCADE, related_name='books', null=True)
     processed = models.BooleanField(default=False)
+    index = models.IntegerField(default=0)
 
     def delete(self, *args, **kwargs):
         if self.cover_image:
@@ -33,7 +34,7 @@ class Book(models.Model):
         return self.title
 
     class Meta:
-        ordering = ['user']
+        ordering = ['user', 'book_section', 'index']
         db_table = 'book'
         verbose_name = 'Book'
         verbose_name_plural = 'Books'

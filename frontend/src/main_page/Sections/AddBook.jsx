@@ -53,7 +53,7 @@ export const AddBook = ({ onFileSelect, client, sectionId, loading, setLoading }
 
     return (
       <div className="vertical-container add-book" onClick={handleAddBook}>
-        <div className="vertical-rectangle">
+        <div className="vertical-rectangle add-book-rectangle">
           {/* <img className="book-cover plus-image" src={require("../../images/plus_image.png")} alt={"text"} /> */}
           <AddBookIcon className="plus-icon" alt="Add book"/>
         </div>

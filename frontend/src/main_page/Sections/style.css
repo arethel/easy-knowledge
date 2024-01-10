@@ -35,6 +35,11 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    box-shadow: 0 16px 24px rgba(0, 0, 0, 0.1);
+}
+
+.vertical-rectangle.add-book-rectangle {
+    box-shadow: none;
 }
 
 .section-header {
@@ -95,6 +100,7 @@ input[type=text] {
     display: flex;
     padding: 10px;
     overflow: auto;
+    box-shadow: 0 16px 24px rgba(0, 0, 0, 0.1);
 }
 
 .book-cover {
