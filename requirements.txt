@@ -21,3 +21,4 @@ celery[redis]
 pika
 flower
 rabbitmq-server
+psycopg2

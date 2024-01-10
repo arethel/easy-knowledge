@@ -45,7 +45,7 @@ def delete_book_media(sender, instance, **kwargs):
     instance.book_file.delete(False)
 
 class ProcessedBook(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default=None)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     processed_file = models.FileField(upload_to=processed_book_directory_path)
     processed_date = models.DateField(auto_now_add=True)
