@@ -13,10 +13,10 @@ const VerticalLine = () => {
     return <div className="vertical-line"></div>;
 };
 
-export const Section = ({ booksList, name, sectionId, handleDeleteSection, setType, client }) => {
+export const Section = ({ booksList, name, sectionId, handleDeleteSection, setType, client, globalLoading, setGlobalLoading }) => {
   const [books, setBooks] = useState(booksList);
-  const [loading, setLoading] = useState(false);
-  const [progress, setProgress] = useState(0);
+  const [progress, setProgress] = useState([]);
+  const [booksToAdd, setBooksToAdd] = useState([]);
 
   const removeBook = (bookId) => {
     const updatedBooks = books.filter(book => book.id !== bookId);
@@ -24,20 +24,53 @@ export const Section = ({ booksList, name, sectionId, handleDeleteSection, setTy
   };
 
   const addNewBook = (file, newId, cover_image) => {
-    console.log(file);
-
+    // console.log(file);
+    // const bookToAdd = {
+    //   title: file.name.replace(/\.[^/.]+$/, ""),
+    //   newId: newId,
+    //   cover_image: cover_image
+    // };
+    // setBooksToAdd(prev => [...prev, bookToAdd]);
     const progressSocket = new WebSocket('ws://localhost:3030/ws/book-processing-info/');
 
     progressSocket.onmessage = function(e) {
       const d = JSON.parse(e.data);
-      d.forEach((data) => {
-        if (data['percentage'] < 100) {
-          setProgress(data['percentage']);
-        }
-      })
+      console.log(d)
+      const newProgress = d.filter(item => item.processed === false && item.book_section.section_id === sectionId);
+      setProgress(newProgress);
+      // d.forEach(item => {
+      //   if (item.processed && item.book_section.section_id === sectionId) {
+      //     const existingBook = books.some(book => book.id === item.book_id);
+      //     if (!existingBook && booksToAdd.length > 0) {
+      //       console.log("dsf", booksToAdd)
+      //       const [firstBookToAdd, ...restBooksToAdd] = booksToAdd;
+      //       setBooksToAdd(restBooksToAdd);
+      //       const newBook = {
+      //         id: firstBookToAdd.newId,
+      //         title: firstBookToAdd.title,
+      //         is_processed: true,
+      //         cover_image: firstBookToAdd.cover_image,
+      //         index: books.length,
+      //       };
+      //       setBooks(prevBooks => [...prevBooks, newBook]);  
+      //     }
+      //   }
+      // });
+      // if (isBookProcessed) {
+      //   const newBook = {
+      //     id: newId,
+      //     title: file.name.replace(/\.[^/.]+$/, ""),
+      //     is_processed: true,
+      //     cover_image: cover_image,
+      //     index: books.length,
+      //   };
+      //   setGlobalLoading(prev => Math.max(prev - 1, 0));
+      //   setProgress([]);
+      // }
     };
 
-    progressSocket.onclose = function(e) {
+    progressSocket.onclose = function() {
+      console.log('Socket closed');
       const newBook = {
         id: newId,
         title: file.name.replace(/\.[^/.]+$/, ""),
@@ -45,15 +78,15 @@ export const Section = ({ booksList, name, sectionId, handleDeleteSection, setTy
         cover_image: cover_image,
         index: books.length,
       };
-      setBooks(prevBooks => [...prevBooks, newBook]);
-      setLoading(false);
-      setProgress(0);
+      setBooks(prevBooks => [...prevBooks, newBook]);  
+      setGlobalLoading(prev => Math.max(prev - 1, 0));
+      setProgress([]);
     };
 
     progressSocket.onerror = function(e) {
       console.error('Socket error');
-      setLoading(false);
-      setProgress(0);
+      setGlobalLoading(prev => Math.max(prev - 1, 0));
+      setProgress([]);
     };
   };
 
@@ -115,7 +148,6 @@ export const Section = ({ booksList, name, sectionId, handleDeleteSection, setTy
         </span>
       </div>
       <div className="custom-rectangle">
-        {console.log(books)}
         {books.map((book) => (
             <React.Fragment key={book.id}>
               <Book
@@ -130,18 +162,26 @@ export const Section = ({ booksList, name, sectionId, handleDeleteSection, setTy
               <VerticalLine />
             </React.Fragment>
           ))}
-        {loading && (
-          <React.Fragment>
-            <div className="vertical-container add-book loading">
-              <div className="vertical-rectangle">
-                <MyCircularProgress progress={progress} determinate={true}/>
+        {globalLoading > 0 && (
+          progress.map((progress_obj) => (
+            <React.Fragment key={progress_obj.book_id}>
+              <div className="vertical-container add-book loading">
+                <div className="vertical-rectangle">
+                  <MyCircularProgress progress={progress_obj.percentage} determinate={true}/>
+                </div>
               </div>
-            </div>
-            <VerticalLine />
-          </React.Fragment>
-          //<Skeleton variant="rectangular" height={200} width={200} />
+              <VerticalLine />
+            </React.Fragment>
+            //<Skeleton variant="rectangular" height={200} width={200} />
+          ))
         )}
-        <AddBook onFileSelect={addNewBook} client={client} sectionId={sectionId} loading={loading} setLoading={setLoading} />
+        <AddBook
+          onFileSelect={addNewBook}
+          client={client}
+          sectionId={sectionId}
+          globalLoading={globalLoading}
+          setGlobalLoading={setGlobalLoading}
+        />
       </div>
     </div>
   );

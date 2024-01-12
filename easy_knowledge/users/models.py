@@ -8,6 +8,13 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
     
+    # def to_dict(self):
+    #     return {
+    #         'username': self.username,
+    #         'email': self.email,
+    #         'profile_picture': self.profile_picture.url if self.profile_picture else None,
+    #     }
+    
     class Meta:
         db_table = 'user'
         verbose_name = 'User'

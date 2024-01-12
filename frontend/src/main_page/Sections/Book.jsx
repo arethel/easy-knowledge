@@ -11,7 +11,6 @@ export const Book = ({ book, sectionId, index, moveBookInsideSection, removeBook
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState(book.title.replace(/\.[^/.]+$/, ""));
   const inputRef = useRef(null);
-  console.log(book);
   const navigate = useNavigate();
 
   const handleKeyPress = (event) => {

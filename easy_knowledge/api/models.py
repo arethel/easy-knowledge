@@ -74,6 +74,11 @@ class Section(models.Model):
 
     def __str__(self):
         return self.section_name
+    
+    def to_dict(self):
+        return {
+            'section_id': self.id,
+        }
 
     class Meta:
         ordering = ['user']

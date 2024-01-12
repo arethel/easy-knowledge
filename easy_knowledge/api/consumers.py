@@ -1,5 +1,6 @@
 import json
 import asyncio
+from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .models import *
 from easyknowledge.pdf_processing.pdf import PDFReader, EpubReader
@@ -14,8 +15,9 @@ class BookProcessingInfo(AsyncWebsocketConsumer):
             close_connection = True
             async for book in Book.objects.filter(user=user):
                 processed_book = await ProcessedBook.objects.aget(book=book)
+                book_section = await database_sync_to_async(lambda: book.book_section.to_dict())()
+                book_processing_info.append({'book_section': book_section, 'book_id': book.id, 'processed': book.processed, 'percentage': processed_book.processing})
                 if not book.processed:
-                    book_processing_info.append({'book_id': book.id, 'processed': book.processed, 'percentage': processed_book.processing})
                     close_connection = False
             await self.send(text_data=json.dumps(book_processing_info))
             

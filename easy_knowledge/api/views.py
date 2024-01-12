@@ -17,6 +17,7 @@ import tempfile
 def extract_pdf_metadata(pdf_file):
     cover_image = None
     author = None
+    title, extension = os.path.splitext(pdf_file.name)
 
     try:
         pdf_document = fitz.open(stream=pdf_file.read(), filetype="pdf")
@@ -29,7 +30,7 @@ def extract_pdf_metadata(pdf_file):
     except Exception as e:
         print(f"Error extracting PDF metadata: {e}")
 
-    return cover_image, author
+    return cover_image, author, title
 
 def save_cover_image(pixmap):
     _, temp_pil_image_path = tempfile.mkstemp(suffix='.png')
@@ -198,9 +199,7 @@ class BookView(viewsets.ViewSet):
         if book_file is None:
             return Response({'error': 1, 'details': 'No book file provided'})
         section = get_object_or_404(Section, id=section_id, user=user)
-        title = book_file.name
-        title, extension = os.path.splitext(title)
-        cover_image, author = extract_pdf_metadata(book_file)
+        cover_image, author, title = extract_pdf_metadata(book_file)
         len_books_in_section = len(Book.objects.filter(book_section=section))
         book = Book(book_file=book_file, user=user, title=title, book_section=section, author=author, index=len_books_in_section)
         if cover_image:

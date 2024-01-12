@@ -27,6 +27,13 @@ export const MainPage = ({ userData, client }) => {
   const [open, setOpen] = useState(false);
   const [type, setType] = useState(null); // 'deleteBook' or 'deleteSection'
   const [loading, setLoading] = useState(true);
+  const [globalLoading, setGlobalLoading] = useState(
+    localStorage.getItem("globalLoading") || 0
+  );
+
+  useEffect(() => {
+    localStorage.setItem("globalLoading", globalLoading);
+  }, [globalLoading]);
 
   const [actionConfirmation, setActionConfirmation] = useState({
     // type: null, // 'deleteBook' or 'deleteSection'
@@ -146,6 +153,8 @@ export const MainPage = ({ userData, client }) => {
               handleDeleteSection={handleActionConfirmation}
               setType={setType}
               client={client}
+              globalLoading={globalLoading}
+              setGlobalLoading={setGlobalLoading}
             />
           ))}
         </div>
