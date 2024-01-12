@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { useNavigate  } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
+import { fetchLogout } from '../utils/authUtils.js';
 
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
@@ -16,9 +17,9 @@ import Logout from '@mui/icons-material/Logout';
 
 export const AccountMenu = ({ username, setShowSettings, client }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
 
   const navigate = useNavigate();
-  const open = Boolean(anchorEl);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -34,19 +35,7 @@ export const AccountMenu = ({ username, setShowSettings, client }) => {
   };
 
   const handleLogout = async () => {
-    try {
-      const response = await client.post('users/auth/logout/');
-
-      if (response.status === 200) {
-        navigate('/sign-in');
-      } else {
-        console.error('Failed to logout');
-        alert('Failed to logout');
-      }
-    } catch (error) {
-      console.error('Error during logout', error);
-      alert('Error during logout');
-    }
+    fetchLogout(client, navigate);
   };
 
   return (

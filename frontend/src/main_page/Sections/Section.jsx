@@ -24,13 +24,13 @@ export const Section = ({ booksList, name, sectionId, handleDeleteSection, setTy
   };
 
   const addNewBook = (file, newId, cover_image) => {
-    // console.log(file);
-    // const bookToAdd = {
-    //   title: file.name.replace(/\.[^/.]+$/, ""),
-    //   newId: newId,
-    //   cover_image: cover_image
-    // };
-    // setBooksToAdd(prev => [...prev, bookToAdd]);
+    console.log(file);
+    const bookToAdd = {
+      title: file.name.replace(/\.[^/.]+$/, ""),
+      newId: newId,
+      cover_image: cover_image
+    };
+    setBooksToAdd([...booksToAdd, bookToAdd]);
     const progressSocket = new WebSocket('ws://localhost:3030/ws/book-processing-info/');
 
     progressSocket.onmessage = function(e) {
@@ -38,24 +38,27 @@ export const Section = ({ booksList, name, sectionId, handleDeleteSection, setTy
       console.log(d)
       const newProgress = d.filter(item => item.processed === false && item.book_section.section_id === sectionId);
       setProgress(newProgress);
-      // d.forEach(item => {
-      //   if (item.processed && item.book_section.section_id === sectionId) {
-      //     const existingBook = books.some(book => book.id === item.book_id);
-      //     if (!existingBook && booksToAdd.length > 0) {
-      //       console.log("dsf", booksToAdd)
-      //       const [firstBookToAdd, ...restBooksToAdd] = booksToAdd;
-      //       setBooksToAdd(restBooksToAdd);
-      //       const newBook = {
-      //         id: firstBookToAdd.newId,
-      //         title: firstBookToAdd.title,
-      //         is_processed: true,
-      //         cover_image: firstBookToAdd.cover_image,
-      //         index: books.length,
-      //       };
-      //       setBooks(prevBooks => [...prevBooks, newBook]);  
-      //     }
-      //   }
-      // });
+      d.forEach(item => {
+        if (item.processed && item.book_section.section_id === sectionId) {
+          const existingBook = books.some(book => book.id === item.book_id);
+          if (!existingBook && booksToAdd.length > 0) {
+            console.log("dsf", booksToAdd)
+            const [firstBookToAdd, ...restBooksToAdd] = booksToAdd;
+            console.log("restBooksToAdd", restBooksToAdd)
+            console.log("firstBookToAdd", firstBookToAdd)
+
+            setBooksToAdd(restBooksToAdd);
+            const newBook = {
+              id: firstBookToAdd.newId,
+              title: firstBookToAdd.title,
+              is_processed: true,
+              cover_image: firstBookToAdd.cover_image,
+              index: books.length,
+            };
+            setBooks([...books, newBook]);  
+          }
+        }
+      });
       // if (isBookProcessed) {
       //   const newBook = {
       //     id: newId,
@@ -71,14 +74,14 @@ export const Section = ({ booksList, name, sectionId, handleDeleteSection, setTy
 
     progressSocket.onclose = function() {
       console.log('Socket closed');
-      const newBook = {
-        id: newId,
-        title: file.name.replace(/\.[^/.]+$/, ""),
-        is_processed: true,
-        cover_image: cover_image,
-        index: books.length,
-      };
-      setBooks(prevBooks => [...prevBooks, newBook]);  
+      // const newBook = {
+      //   id: newId,
+      //   title: file.name.replace(/\.[^/.]+$/, ""),
+      //   is_processed: true,
+      //   cover_image: cover_image,
+      //   index: books.length,
+      // };
+      // setBooks(prevBooks => [...prevBooks, newBook]);  
       setGlobalLoading(prev => Math.max(prev - 1, 0));
       setProgress([]);
     };

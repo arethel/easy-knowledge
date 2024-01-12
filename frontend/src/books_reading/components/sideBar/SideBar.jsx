@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { ReactComponent as AddBookIcon } from '../../../images/add-book.svg';
 import { ReactComponent as UserIcon } from '../../../images/user.svg';
 import getBook from '../../../utils/utils.js'
@@ -6,6 +7,7 @@ import "./style.css";
 
 import { BookButton } from "./Button/BookButton.jsx";
 import { Dropdown } from '../reusableComponents/dropdown/Dropdown.jsx';
+import { fetchLogout } from "../../../utils/authUtils.js";
 
 export const SideBar = ({
   booksDictionary,
@@ -31,6 +33,8 @@ export const SideBar = ({
   const options = ['Account', 'Settings', 'Log out'];
   const [selectedOption, setSelectedOption] = useState(null);
 
+  const navigate = useNavigate();
+
   const handleSelect = (option) => {
     setSelectedOption(option);
     console.log(selectedOption);
@@ -43,6 +47,7 @@ export const SideBar = ({
         break;
       case options[2]:
         console.log(options[2]);
+        fetchLogout(client, navigate);
         break;
       default:
         console.log('Default');

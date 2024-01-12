@@ -50,6 +50,7 @@ export const PDFView = ({ fileUrl }) => {
                                 Zoom,
                                 ZoomIn,
                                 ZoomOut,
+                                SwitchTheme,
                             } = props;
                             return (
                                 <>
@@ -77,7 +78,10 @@ export const PDFView = ({ fileUrl }) => {
                                     <div style={{ padding: '0px 2px' }}>
                                         <GoToNextPage />
                                     </div>
-                                    <div style={{ padding: '0px 2px', marginLeft: 'auto' }}>
+                                    <div style={{ padding: '0px 2px', marginLeft: "auto" }}>
+                                        <SwitchTheme />
+                                    </div>
+                                    <div style={{ padding: '0px 2px'}}>
                                         <EnterFullScreen />
                                     </div>
                                     <div style={{ padding: '0px 2px' }}>

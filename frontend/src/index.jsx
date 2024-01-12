@@ -31,17 +31,17 @@ const Index = () => {
     
     useEffect(() => {
         const fetchUserData = async () => {
-        try {
-            const response = await client.get("/users/auth/get-user");
-            if (response.data.error === 0) {
-                console.log('User is authenticated');
-                setIsAuthenticated(true);
-                setUserData(response.data);
-                console.log(response.data);
+            try {
+                const response = await client.get("/users/auth/get-user");
+                if (response.data.error === 0) {
+                    console.log('User is authenticated');
+                    setIsAuthenticated(true);
+                    setUserData(response.data);
+                    console.log(response.data);
+                }
+            } catch (error) {
+                console.error("Error fetching user data:", error);
             }
-        } catch (error) {
-            console.error("Error fetching user data:", error);
-        }
         };
 
         fetchUserData();

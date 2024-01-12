@@ -227,7 +227,7 @@ export default function SignInForm( { client, setIsAuthenticated } ) {
               autoComplete="email"
               autoFocus
             /> */}
-             <CssFormControl margin="normal" fullWidth variant="outlined">
+            <CssFormControl margin="normal" fullWidth variant="outlined">
               <InputLabel required htmlFor="email">Email Address</InputLabel>
               <OutlinedInput
                 required
@@ -236,6 +236,15 @@ export default function SignInForm( { client, setIsAuthenticated } ) {
                 autoComplete="email"
                 label="Email Address"
                 autoFocus
+              />
+            </CssFormControl>
+            <CssFormControl margin="normal" fullWidth variant="outlined">
+              <InputLabel required htmlFor="username">Username</InputLabel>
+              <OutlinedInput
+                required
+                id="username"
+                name="username"
+                label="Username"
               />
             </CssFormControl>
             <CssFormControl margin="normal" fullWidth variant="outlined">
