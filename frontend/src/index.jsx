@@ -5,6 +5,7 @@ import axios from "axios";
 import { BooksReading } from "./books_reading/books_reading.jsx";
 import { SignIn } from "./sign_in/SignIn.jsx";
 import { MainPage } from "./main_page/MainPage.jsx";
+import { PDFView } from "./main_page/PDFView/PDFView.tsx";
 import Cookies from 'js-cookie';
 
 
@@ -60,4 +61,5 @@ const Index = () => {
 }
 
 root.render(<Index />);
+//root.render(<PDFView fileUrl="./file/Gibel_Imperii_Gaidar.pdf"/>);
 //root.render(<BooksReading />);
