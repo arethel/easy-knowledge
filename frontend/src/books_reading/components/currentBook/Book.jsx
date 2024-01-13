@@ -4,9 +4,17 @@ import "./style.css";
 import { PagesCount } from "./pagesCount/PagesCount.jsx";
 import { Paragraph } from "./paragraph/Paragraph.jsx";
 import { EndOfParagraph } from "./endOfParagraph/EndOfParagraph.jsx";
-import { NewChapter } from "./newChapter/NewChapter";
+import { NewChapter } from "./newChapter/NewChapter"; 
+import { PDFView } from "../../../main_page/PDFView/PDFView.tsx";
+import Button from '@mui/material/Button';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import { Tooltip } from "@mui/material";
+import Fade from '@mui/material/Fade';
+
 
 export const Book = ({book_id, client, loadedEpubs}) => {
+    const [showPDF, setShowPDF] = useState(false);
     
     const [paragraphs, setParagraphs] = useState([]);
     const [pages, setPages] = useState(0);
@@ -15,6 +23,8 @@ export const Book = ({book_id, client, loadedEpubs}) => {
     const [openedPages, setOpenedPages] = useState({});
     const minPagesCount = 10;
     const pagesCountUpdateStep = 2;
+
+    const togglePDFView = () => setShowPDF(!showPDF);
     
     const getBookInfo = async () => {
         try {
@@ -137,6 +147,41 @@ export const Book = ({book_id, client, loadedEpubs}) => {
     }, []);
     
     return (
+        <>
+        <Tooltip
+            enterDelay={500}
+            leaveDelay={50}
+            title={`${showPDF ? 'Hide PDF' : 'Show PDF'}`}
+            placement="top">
+                <Button
+                    variant="text"
+                    color="primary"
+                    onClick={togglePDFView}
+                    sx={{
+                        border: 'none',
+                        padding: '10px 0px',
+                        minWidth: '30px',
+                        width: '50px',
+                        height: '50px',
+                        backgroundColor: 'transparent',
+                        cursor: 'pointer',
+                        outline: 'none',
+                        position: 'absolute',
+                        left: '0',
+                        top: '450px',
+                        transform: 'translateY(-50%)',
+                        transition: 'background-color 0.3s ease',
+                        alignItems: 'center',
+                        zIndex: '1',
+                    }}
+                >
+                    {showPDF ? <ArrowBackIosIcon sx={{ height: '1em', width: '1em'}}/> : <ArrowForwardIosIcon sx={{ height: '1em', width: '1em'}}/>}
+                </Button>
+        </Tooltip>
+        <div>
+            <PDFView fileUrl="./file/Gibel_Imperii_Gaidar.pdf" showPDF={showPDF}/>
+        </div>
+        {!showPDF && 
         <div className="book" >
             <div className="paragraphs" ref={scrollRef} style={{ height: constantHeight }}>
                 {paragraphs.map((paragraph, index) => (
@@ -148,6 +193,7 @@ export const Book = ({book_id, client, loadedEpubs}) => {
                 */}
             </div>
             <PagesCount page={booksInfo[book_id]===undefined? 0: booksInfo[book_id].page} totalPages={pages} />
-        </div>
+        </div>}
+        </>
     );
 };

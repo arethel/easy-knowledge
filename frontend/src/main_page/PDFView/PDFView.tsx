@@ -9,12 +9,12 @@ interface CustomToolbarExampleProps {
     fileUrl: string;
 }
 
-export const PDFView = ({ fileUrl }) => {
+export const PDFView = ({ fileUrl, currentPage, showPDF }) => {
     const toolbarPluginInstance = toolbarPlugin();
     const { Toolbar } = toolbarPluginInstance;
 
     return (
-        <div className="pdf-container">
+        <div className={`pdf-container ${showPDF ? '' : 'invisible'}`}>
             <div
                 className="rpv-core__viewer"
                 style={{
