@@ -2,8 +2,10 @@ import React from "react";
 import "./style.css";
 
 import { Dropdown } from '../../reusableComponents/dropdown/Dropdown.jsx';
+import { useTranslation } from "react-i18next";
 
 export const SettingsPage = ({ settingsDict, onUpdateSettingsDict }) => {
+    const { t } = useTranslation();
     
     const updateSettings = (newSettings) => {
         onUpdateSettingsDict(newSettings);
@@ -19,9 +21,8 @@ export const SettingsPage = ({ settingsDict, onUpdateSettingsDict }) => {
         <div className="settings-page">
             {Object.keys(settingsDict[settingsDict.selected]).map((settingName, index) => (
                 <div key={settingName}>
-                
                 <div className={`row`} >
-                    <div className="setting-name">{settingName}</div>
+                    <div className="setting-name">{t(`${settingName.toLowerCase()}`)}</div>
                     <div className="dropdown-container">
                         <Dropdown
                             options={settingsDict[settingsDict.selected][settingName].values}

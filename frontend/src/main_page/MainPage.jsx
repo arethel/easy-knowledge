@@ -5,9 +5,10 @@ import Divider from '@mui/material/Divider';
 import { Logo } from "./Logo/Logo.jsx";
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { MySettings } from './Settings/MySettings';
+import { Settings } from "../books_reading/components/settings/Settings.jsx";
 import { AlertDialog } from './AlertDialog.jsx';
 import { MyCircularProgress } from './Sections/MyCircularProgress';
+import { useTranslation } from "react-i18next";
 import './style.css'
 
 const booksList = [
@@ -30,6 +31,7 @@ export const MainPage = ({ userData, client }) => {
   const [globalLoading, setGlobalLoading] = useState(
     localStorage.getItem("globalLoading") || 0
   );
+  const { t } = useTranslation();
 
   useEffect(() => {
     localStorage.setItem("globalLoading", globalLoading);
@@ -158,7 +160,7 @@ export const MainPage = ({ userData, client }) => {
             />
           ))}
         </div>
-        <MySettings active={showSettings} setActive={setShowSettings}/>
+        <Settings active={showSettings} setActive={setShowSettings}/>
       </div>
     </DndProvider>
   );

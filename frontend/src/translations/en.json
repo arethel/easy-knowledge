@@ -1,0 +1,17 @@
+{
+    "settings": "Settings",
+    "logout": "Logout",
+    "general": "General",
+    "external": "External",
+    "english": "English",
+    "russian": "Russian",
+    "language": "Language",
+    "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "font": "Font",
+    "font size": "Font Size",
+    "small": "Small",
+    "medium": "Medium",
+    "large": "Large"
+}
