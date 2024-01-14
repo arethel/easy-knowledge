@@ -141,8 +141,8 @@ export const MainPage = ({ userData, client }) => {
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="container">
-        <TopBar userData={userData} handleCreateSection={handleCreateSection} setShowSettings={setShowSettings} client={client}/>
-        <AlertDialog open={open} handleClose={handleClose} actionConfirmation={actionConfirmation} type={type}/>
+        <TopBar userData={userData} handleCreateSection={handleCreateSection} setShowSettings={setShowSettings} client={client} t={t}/>
+        <AlertDialog open={open} handleClose={handleClose} actionConfirmation={actionConfirmation} type={type} t={t}/>
         <Divider variant="middle" className="main-divider" />
         <Logo />
         <div ref={sectionsContainerRef}> 

@@ -13,5 +13,10 @@
     "font size": "Font Size",
     "small": "Small",
     "medium": "Medium",
-    "large": "Large"
+    "large": "Large",
+    "create new section": "Create New Section",
+    "are you sure you want to delete book": "Are you sure you want to delete Book",
+    "are you sure you want to delete section": "Are you sure you want to delete Section",
+    "delete book": "Delete Book",
+    "delete section": "Delete Section"
 }

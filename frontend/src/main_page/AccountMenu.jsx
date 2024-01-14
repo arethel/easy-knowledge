@@ -15,7 +15,7 @@ import PersonAdd from '@mui/icons-material/PersonAdd';
 import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
 
-export const AccountMenu = ({ username, setShowSettings, client }) => {
+export const AccountMenu = ({ username, setShowSettings, client, t }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
 
@@ -94,13 +94,13 @@ export const AccountMenu = ({ username, setShowSettings, client }) => {
           <ListItemIcon>
             <Settings fontSize="small" sx={{ color: "var(--collection-1-font-2)"}}/>
           </ListItemIcon>
-          Settings
+          {t('settings')}
         </MenuItem>
         <MenuItem onClick={handleLogout} sx={{ color: "var(--collection-1-font-2)", m: '3px'}}>
           <ListItemIcon>
             <Logout fontSize="small" sx={{ color: "var(--collection-1-font-2)"}}/>
           </ListItemIcon>
-          Logout
+          {t('logout')}
         </MenuItem>
       </Menu>
     </React.Fragment>

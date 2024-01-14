@@ -7,24 +7,24 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
-export const AlertDialog = ({ open, handleClose, actionConfirmation, type }) => {
+export const AlertDialog = ({ open, handleClose, actionConfirmation, type, t }) => {
     const { id, name } = actionConfirmation;
     let title, description;
   
     if (type === 'deleteBook') {
-      title = "Delete Book";
+      title = t("delete book");
       description = (
         <React.Fragment>
-          Are you sure you want to delete Book 
+          {t('are you sure you want to delete book')} 
           <span className='alert-element-name'>{name}</span>
           ?
         </React.Fragment>
       );
     } else if (type === 'deleteSection') {
-      title = "Delete Section";
+      title = t("delete section");
       description = (
         <React.Fragment>
-          Are you sure you want to delete Section 
+          {t('are you sure you want to delete section')}  
           <span className='alert-element-name'>{name}</span>
            ?
         </React.Fragment>

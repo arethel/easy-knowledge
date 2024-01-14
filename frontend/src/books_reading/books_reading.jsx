@@ -10,8 +10,6 @@ import { Test } from "./components/test/Test.jsx";
 
 import "./style.css";
 
-import axios from "axios";
-
 const openedBooks_init = {
     selected: { id: -1 },
 };
