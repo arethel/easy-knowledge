@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback} from "react";
 import { Page } from "./Page/Page.jsx";
+import Button from '@mui/material/Button';
 import getBook from '../../../utils/utils.js'
 import "./style.css";
 
@@ -12,7 +13,9 @@ export const TopBar = ({
   setUpdateInfo,
   updateInfo,
   loadedEpubs,
-  setLoadedEpubs
+  setLoadedEpubs,
+  isSidebarOpen,
+  toggleSidebar
 }) => {
   
   const [openedProps, setProps] = useState(null);
@@ -108,6 +111,19 @@ export const TopBar = ({
   
   return (
     <div className="top-bar" id='top-bar'>
+      <Button
+        sx={{
+          m: '6px',
+          color: 'var(--collection-1-font-2)',
+          backgroundColor: 'var(--collection-1-block2)',
+          '&:hover': {
+            backgroundColor: 'var(--collection-1-block2)',
+          }
+        }}
+        variant="contained"
+        onClick={toggleSidebar}>
+          {isSidebarOpen ? 'Hide Sidebar' : 'Show Sidebar'}
+      </Button>
       {Object.keys(booksDictionary).map(bookName => {
         if (bookName === 'selected') return null;
         const shouldHide = pagesToHide.includes(bookName);

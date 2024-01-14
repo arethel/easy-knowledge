@@ -19,41 +19,7 @@ const openedBooks_init = {
 const booksInFolder_init = {
 };
 
-
-axios.defaults.xsrfCookieName = "csrftoken";
-axios.defaults.xsrfHeaderName = "X-CSRFToken";
-axios.defaults.withCredentials = true;
-axios.defaults.withXSRFToken = true;
-
-// const client = axios.create({
-//     baseURL: "http://localhost:3030",
-//     headers: {
-//         "Content-Type": "application/json",
-//     },
-// });
-
-export const BooksReading = ({ userData, client }) => {
-    
-    // const [isAuthenticated, setIsAuthenticated] = useState(false);
-    
-    // useEffect(() => {
-    //     const fetchUserData = async () => {
-    //     try {
-    //         const response = await client.get("users/auth/get-user");
-    //         if (response.data.error === 1) {
-    //             const response = await client.post("users/auth/login/", { username: "user1", password: "user1" });
-    //         }
-    //         // else{
-    //         //     console.log(response.data);
-    //         // }
-    //     } catch (error) {
-    //         console.error("Error fetching user data:", error);
-    //     }
-    //     };
-
-    //     fetchUserData();
-    // }, [isAuthenticated]);
-    
+export const BooksReading = ({ userData, client }) => { 
     const test = useRef(null);
     const tests = useRef(null);
 
@@ -63,8 +29,13 @@ export const BooksReading = ({ userData, client }) => {
     const [openedBooks, setOpenedBooks] = useState(openedBooks_init);
     const [loadedEpubs, setLoadedEpubs] = useState({});
     const [booksInFolder, setBooksInFolder] = useState(booksInFolder_init);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     
     const [updateInfo, setUpdateInfo] = useState(true);
+
+    const toggleSidebar = () => {
+        setIsSidebarOpen(!isSidebarOpen);
+    };
     
     useEffect(() => {
         const fetchBooksData = async () => {
@@ -98,21 +69,23 @@ export const BooksReading = ({ userData, client }) => {
 
     return (
         <div className="book-page-container">
-            <SideBar
-                booksDictionary={booksInFolder}
-                setBooksDictionary={setBooksInFolder}
-                settingsSetActive={setActive}
-                pagesDictionary={openedBooks}
-                setPagesDictionary={setOpenedBooks}
-                setTestsPanel={setTestsPanel}
-                setBook_id={setBook_id}
-                sectionName={sectionName}
-                setUpdateInfo={setUpdateInfo}
-                updateInfo={updateInfo}
-                client={client}
-                loadedEpubs={loadedEpubs}
-                setLoadedEpubs={setLoadedEpubs}
-            />
+            {isSidebarOpen && (
+                <SideBar
+                    booksDictionary={booksInFolder}
+                    setBooksDictionary={setBooksInFolder}
+                    settingsSetActive={setActive}
+                    pagesDictionary={openedBooks}
+                    setPagesDictionary={setOpenedBooks}
+                    setTestsPanel={setTestsPanel}
+                    setBook_id={setBook_id}
+                    sectionName={sectionName}
+                    setUpdateInfo={setUpdateInfo}
+                    updateInfo={updateInfo}
+                    client={client}
+                    loadedEpubs={loadedEpubs}
+                    setLoadedEpubs={setLoadedEpubs}
+                />
+            )}
             <div className="main-container">
                 <TopBar
                     booksDictionary={openedBooks}
@@ -124,6 +97,8 @@ export const BooksReading = ({ userData, client }) => {
                     client={client}
                     loadedEpubs={loadedEpubs}
                     setLoadedEpubs={setLoadedEpubs}
+                    isSidebarOpen={isSidebarOpen}
+                    toggleSidebar={toggleSidebar}
                 />
                 <div className="book-area">
                     <Logo />
