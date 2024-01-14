@@ -22,3 +22,6 @@ pika
 flower
 rabbitmq-server
 psycopg2
+django-allauth
+python-dotenv
+djangorestframework-simplejwt

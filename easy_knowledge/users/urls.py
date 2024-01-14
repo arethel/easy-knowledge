@@ -9,6 +9,7 @@ urlpatterns = [
     path('auth/register/', views.Authentication.as_view({'post': 'register'}), name='register'),
     path('auth/login/', views.Authentication.as_view({'post': 'login'}), name='login'),
     path('auth/logout/', views.Authentication.as_view({'post': 'logout'}), name='logout'),
+    path("auth/login/google/", views.GoogleLoginApi.as_view(), name="login-with-google"),
     
     path('settings/change-settings', views.UserSettingsView.as_view({'poast': 'change_settings'}), name='settings'),
 ]
