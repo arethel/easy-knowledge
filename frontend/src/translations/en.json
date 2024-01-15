@@ -18,5 +18,11 @@
     "are you sure you want to delete book": "Are you sure you want to delete Book",
     "are you sure you want to delete section": "Are you sure you want to delete Section",
     "delete book": "Delete Book",
-    "delete section": "Delete Section"
+    "delete section": "Delete Section",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "new section": "New Section",
+    "limit exceeded": "Limit Exceeded",
+    "failed to create section": "Failed to create section",
+    "error during the api call": "Error during the API call"
 }

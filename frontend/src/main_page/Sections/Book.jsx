@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 import './style.css';
 
-export const Book = ({ book, sectionId, index, moveBookInsideSection, removeBook, client }) => {
+export const Book = ({ book, sectionId, index, moveBookInsideSection, client, handleDeleteBook }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState(book.title.replace(/\.[^/.]+$/, ""));
   const inputRef = useRef(null);
@@ -37,22 +37,7 @@ export const Book = ({ book, sectionId, index, moveBookInsideSection, removeBook
   });
 
   const handleDelete = async () => {
-    const isConfirmed = window.confirm(`Are you sure you want to delete '${book.title}'?`);
-    if (isConfirmed) {
-      try {
-        const response = await client.post('api/book/delete/', { book_id: book.id });
-        
-        if (response.status === 200) {
-          removeBook(book.id);
-        } else {
-          console.error('Failed to delete the book');
-          alert('Failed to delete the book');
-        }
-      } catch (error) {
-        console.error('Error during the API call', error);
-        alert('Error during the API call');
-      }
-    }
+    handleDeleteBook(book.id, editedName);
   };
 
   const handleEditClick = (e) => {

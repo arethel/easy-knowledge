@@ -18,5 +18,11 @@
     "are you sure you want to delete book": "Вы уверены, что хотите удалить Книгу",
     "are you sure you want to delete section": "Вы уверены, что хотите удалить Секцию",
     "delete book": "Удалить Книгу",
-    "delete section": "Удалить Секцию"
+    "delete section": "Удалить Секцию",
+    "delete": "Удалить",
+    "cancel": "Отмена",
+    "new section": "Новая Секция",
+    "limit exceeded": "Превышен лимит",
+    "failed to create section": "Не удалось создать Секцию",
+    "error during the api call": "Ошибка во время вызова API"
   }

@@ -11,7 +11,7 @@ export const AlertDialog = ({ open, handleClose, actionConfirmation, type, t }) 
     const { id, name } = actionConfirmation;
     let title, description;
   
-    if (type === 'deleteBook') {
+    if (type === 'Book') {
       title = t("delete book");
       description = (
         <React.Fragment>
@@ -20,7 +20,7 @@ export const AlertDialog = ({ open, handleClose, actionConfirmation, type, t }) 
           ?
         </React.Fragment>
       );
-    } else if (type === 'deleteSection') {
+    } else if (type === 'Section') {
       title = t("delete section");
       description = (
         <React.Fragment>
@@ -32,10 +32,7 @@ export const AlertDialog = ({ open, handleClose, actionConfirmation, type, t }) 
     }
   
     const handleConfirm = () => {
-      if (type === 'deleteBook') {
-      } else if (type === 'deleteSection') {
-        handleClose(true);
-      }
+      handleClose(true);
     };
   
     const handleCancel = () => {
@@ -59,9 +56,9 @@ export const AlertDialog = ({ open, handleClose, actionConfirmation, type, t }) 
               </DialogContentText>
           </DialogContent>
           <DialogActions>
-              <Button onClick={handleCancel} variant="outlined">Cancel</Button>
+              <Button onClick={handleCancel} variant="outlined">{t('cancel')}</Button>
               <Button onClick={handleConfirm} variant="outlined" color="error" autoFocus>
-                  Delete
+                {t('delete')}
               </Button>
           </DialogActions>
         </Dialog>

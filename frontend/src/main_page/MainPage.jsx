@@ -10,6 +10,7 @@ import { AlertDialog } from './AlertDialog.jsx';
 import { MyCircularProgress } from './Sections/MyCircularProgress';
 import { useTranslation } from "react-i18next";
 import './style.css'
+import MyAlert from "./MyAlert.jsx";
 
 const booksList = [
   {id: 1, name: 'Book1 Title Very Very Very Long Title'},
@@ -26,21 +27,21 @@ export const MainPage = ({ userData, client }) => {
   ]);
   const [showSettings, setShowSettings] = useState(false);
   const [open, setOpen] = useState(false);
-  const [type, setType] = useState(null); // 'deleteBook' or 'deleteSection'
   const [loading, setLoading] = useState(true);
   const [globalLoading, setGlobalLoading] = useState(
     localStorage.getItem("globalLoading") || 0
   );
   const { t } = useTranslation();
+  const [openAlert, setOpenAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
 
   useEffect(() => {
     localStorage.setItem("globalLoading", globalLoading);
   }, [globalLoading]);
 
   const [actionConfirmation, setActionConfirmation] = useState({
-    // type: null, // 'deleteBook' or 'deleteSection'
-    id: null,   // Book or Section ID
-    name: null, // Book or Section name
+    id: null,
+    name: null,
   });
 
   useEffect(() => {
@@ -69,9 +70,7 @@ export const MainPage = ({ userData, client }) => {
     const { id, name } = actionConfirmation;
 
     if (confirmed) {
-      if (type === 'deleteSection') {
-        handleDeleteSection(id);
-      }
+      handleDeleteSection(id);
     }
 
     setActionConfirmation({ id: null, name: name });
@@ -80,7 +79,7 @@ export const MainPage = ({ userData, client }) => {
   const handleCreateSection = async () => {
     try {
       const response = await client.post("api/section/", {
-        section_name: `New Section`
+        section_name: t("new section")
       });
 
       if (response.data.error === 0) {
@@ -92,14 +91,20 @@ export const MainPage = ({ userData, client }) => {
         setSections([...sections, newSection]);
       } else if (response.data.error === 2) {
         console.error("Limit exceeded: ", response.data.details);
-        alert("Limit exceeded");
+        //alert("Limit exceeded");
+        setOpenAlert(true);
+        setAlertMessage("Limit exceeded");
       } else {
         console.error("Failed to create section");
-        alert("Failed to create section");
+        //alert("Failed to create section");
+        setOpenAlert(true);
+        setAlertMessage("Failed to create section");
       }
     } catch (error) {
       console.error("Error during the API call", error);
-      alert("Error during the API call");
+      //alert("Error during the API call");
+      setOpenAlert(true);
+      setAlertMessage("Error during the API call");
     }
   };
 
@@ -141,8 +146,9 @@ export const MainPage = ({ userData, client }) => {
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="container">
+        <MyAlert open={openAlert} setOpen={setOpenAlert} severity={"error"} message={alertMessage} t={t}/>
         <TopBar userData={userData} handleCreateSection={handleCreateSection} setShowSettings={setShowSettings} client={client} t={t}/>
-        <AlertDialog open={open} handleClose={handleClose} actionConfirmation={actionConfirmation} type={type} t={t}/>
+        <AlertDialog open={open} handleClose={handleClose} actionConfirmation={actionConfirmation} type={"Section"} t={t}/>
         <Divider variant="middle" className="main-divider" />
         <Logo />
         <div ref={sectionsContainerRef}> 
@@ -153,10 +159,10 @@ export const MainPage = ({ userData, client }) => {
               booksList={section.books}
               name={section.section_name}
               handleDeleteSection={handleActionConfirmation}
-              setType={setType}
               client={client}
               globalLoading={globalLoading}
               setGlobalLoading={setGlobalLoading}
+              t={t}
             />
           ))}
         </div>

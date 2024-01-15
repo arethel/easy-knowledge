@@ -16,7 +16,7 @@ class BookProcessingInfo(AsyncWebsocketConsumer):
             async for book in Book.objects.filter(user=user):
                 processed_book = await ProcessedBook.objects.aget(book=book)
                 book_section = await database_sync_to_async(lambda: book.book_section.to_dict())()
-                book_processing_info.append({'book_section': book_section, 'book_id': book.id, 'processed': book.processed, 'percentage': processed_book.processing})
+                book_processing_info.append({'book_section': book_section, 'book_id': book.id, 'processed': book.processed, 'percentage': processed_book.processing, 'title': book.title, 'author': book.author})
                 if not book.processed:
                     close_connection = False
             await self.send(text_data=json.dumps(book_processing_info))

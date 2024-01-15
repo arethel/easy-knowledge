@@ -6,6 +6,7 @@ import { Icon } from "../Icon";
 import DeleteIcon from '@mui/icons-material/Delete';
 import Skeleton from '@mui/material/Skeleton';
 import { MyCircularProgress } from './MyCircularProgress';
+import { AlertDialog } from '../AlertDialog.jsx';
 
 import "./style.css";
 
@@ -13,10 +14,15 @@ const VerticalLine = () => {
     return <div className="vertical-line"></div>;
 };
 
-export const Section = ({ booksList, name, sectionId, handleDeleteSection, setType, client, globalLoading, setGlobalLoading }) => {
+export const Section = ({ booksList, name, sectionId, handleDeleteSection, setType, client, globalLoading, setGlobalLoading, t }) => {
   const [books, setBooks] = useState(booksList);
   const [progress, setProgress] = useState([]);
   const [booksToAdd, setBooksToAdd] = useState([]);
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [bookActionConfirmation, setBookActionConfirmation] = useState({
+    id: null,
+    name: null,
+  });
 
   const removeBook = (bookId) => {
     const updatedBooks = books.filter(book => book.id !== bookId);
@@ -38,27 +44,27 @@ export const Section = ({ booksList, name, sectionId, handleDeleteSection, setTy
       console.log(d)
       const newProgress = d.filter(item => item.processed === false && item.book_section.section_id === sectionId);
       setProgress(newProgress);
-      d.forEach(item => {
-        if (item.processed && item.book_section.section_id === sectionId) {
-          const existingBook = books.some(book => book.id === item.book_id);
-          if (!existingBook && booksToAdd.length > 0) {
-            console.log("dsf", booksToAdd)
-            const [firstBookToAdd, ...restBooksToAdd] = booksToAdd;
-            console.log("restBooksToAdd", restBooksToAdd)
-            console.log("firstBookToAdd", firstBookToAdd)
+      // d.forEach(item => {
+      //   if (item.processed && item.book_section.section_id === sectionId) {
+      //     const existingBook = books.some(book => book.id === item.book_id);
+      //     if (!existingBook && booksToAdd.length > 0) {
+      //       console.log("dsf", booksToAdd)
+      //       const [firstBookToAdd, ...restBooksToAdd] = booksToAdd;
+      //       console.log("restBooksToAdd", restBooksToAdd)
+      //       console.log("firstBookToAdd", firstBookToAdd)
 
-            setBooksToAdd(restBooksToAdd);
-            const newBook = {
-              id: firstBookToAdd.newId,
-              title: firstBookToAdd.title,
-              is_processed: true,
-              cover_image: firstBookToAdd.cover_image,
-              index: books.length,
-            };
-            setBooks([...books, newBook]);  
-          }
-        }
-      });
+      //       setBooksToAdd(restBooksToAdd);
+      //       const newBook = {
+      //         id: firstBookToAdd.newId,
+      //         title: firstBookToAdd.title,
+      //         is_processed: true,
+      //         cover_image: firstBookToAdd.cover_image,
+      //         index: books.length,
+      //       };
+      //       setBooks([...books, newBook]);  
+      //     }
+      //   }
+      // });
       // if (isBookProcessed) {
       //   const newBook = {
       //     id: newId,
@@ -74,14 +80,14 @@ export const Section = ({ booksList, name, sectionId, handleDeleteSection, setTy
 
     progressSocket.onclose = function() {
       console.log('Socket closed');
-      // const newBook = {
-      //   id: newId,
-      //   title: file.name.replace(/\.[^/.]+$/, ""),
-      //   is_processed: true,
-      //   cover_image: cover_image,
-      //   index: books.length,
-      // };
-      // setBooks(prevBooks => [...prevBooks, newBook]);  
+      const newBook = {
+        id: newId,
+        title: file.name.replace(/\.[^/.]+$/, ""),
+        is_processed: true,
+        cover_image: cover_image,
+        index: books.length,
+      };
+      setBooks(prevBooks => [...prevBooks, newBook]);  
       setGlobalLoading(prev => Math.max(prev - 1, 0));
       setProgress([]);
     };
@@ -137,12 +143,39 @@ export const Section = ({ booksList, name, sectionId, handleDeleteSection, setTy
   };
 
   const handleDelete = () => {
-    setType('deleteSection');
     handleDeleteSection(sectionId, name);
+  };
+
+  const handleBookActionConfirmation = (id, name) => {
+    setBookActionConfirmation({ id, name });
+    setAlertOpen(true);
+  };
+
+  const handleClose = async (confirmed) => {
+    setAlertOpen(false);
+    const { id, name } = bookActionConfirmation;
+
+    if (confirmed) {
+      try {
+        const response = await client.post('api/book/delete/', { book_id: id });
+        
+        if (response.status === 200) {
+          removeBook(id);
+        } else {
+          console.error('Failed to delete the book');
+          alert('Failed to delete the book');
+        }
+      } catch (error) {
+        console.error('Error during the API call', error);
+        alert('Error during the API call');
+      }
+    }
+    setBookActionConfirmation({ id: null, name: name });
   };
 
   return (
     <div className="custom-container">
+      <AlertDialog open={alertOpen} handleClose={handleClose} actionConfirmation={bookActionConfirmation} type={'Book'} t={t}/>
       <div className="section-header">
         <EditableText initialText={name} sectionId={sectionId} onTextChange={handleSectionNameChange} />
         <span className="trashbin-icon section-icon">
@@ -156,10 +189,10 @@ export const Section = ({ booksList, name, sectionId, handleDeleteSection, setTy
               <Book
                 key={book.id}
                 book={book}
-                removeBook={removeBook}
                 sectionId={sectionId}
                 index={book.index}
                 moveBookInsideSection={moveBookInsideSection}
+                handleDeleteBook={handleBookActionConfirmation}
                 client={client}
               />
               <VerticalLine />
