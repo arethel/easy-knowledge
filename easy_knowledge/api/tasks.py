@@ -25,12 +25,14 @@ def process_book(book_id):
             if time.time() - last_progress_update > progress_update_interval:
                 last_progress_update = time.time()
                 processed_book.processing = int(progress * 100)
+                processed_book.time = int(estimated_time)
                 processed_book.save()
 
         print(epub_path)
         
         processed_book.processed_file.save(f"{book.title}.epub", open(epub_path, 'rb'))
         processed_book.processing = 100
+        processed_book.time = 0
         processed_book.processed_date = datetime.now()
         processed_book.save()
 

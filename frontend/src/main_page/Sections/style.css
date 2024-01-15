@@ -151,6 +151,13 @@ input[type=text] {
     /* pointer-events: none; */
 }
 
+.estimated-time {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 14px; 
+    color: var(--collection-1-font-1);
+}
+
 .vertical-rectangle.disabled-book,
 .name-text.disabled-book {
     opacity: 0.5;

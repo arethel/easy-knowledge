@@ -203,12 +203,14 @@ export const Section = ({ booksList, name, sectionId, handleDeleteSection, setTy
             <React.Fragment key={progress_obj.book_id}>
               <div className="vertical-container add-book loading">
                 <div className="vertical-rectangle">
-                  <MyCircularProgress progress={progress_obj.percentage} determinate={true}/>
+                  <MyCircularProgress progress={progress_obj.percentage} determinate={true} />
+                  <div className="estimated-time">
+                    {progress_obj.time} {t('seconds')}
+                  </div>
                 </div>
               </div>
               <VerticalLine />
             </React.Fragment>
-            //<Skeleton variant="rectangular" height={200} width={200} />
           ))
         )}
         <AddBook

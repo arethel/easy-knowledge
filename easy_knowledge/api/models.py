@@ -51,6 +51,7 @@ class ProcessedBook(models.Model):
     processed_file = models.FileField(upload_to=processed_book_directory_path)
     processed_date = models.DateField(auto_now_add=True)
     processing = models.IntegerField(default=0)
+    time = models.IntegerField(default=0)
     page = models.IntegerField(default=0)
 
     def delete(self, *args, **kwargs):
