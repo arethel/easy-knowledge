@@ -3,6 +3,9 @@ print(os.getcwd())
 from PIL import Image
 import io
 import timeit
+import csv
+import json
+import pandas as pd
 from tqdm import tqdm
 import time
 import shutil
@@ -14,7 +17,7 @@ import fitz
 import hashlib
 import matplotlib.pyplot as plt
 from ebooklib import epub
-from .pdf_utils import p_ended, count_words, get_page_rect
+from pdf_utils import p_ended, count_words, get_page_rect
 
 class EpubReader:
     def __init__(self, epub_filename):
@@ -326,6 +329,149 @@ class PDFReader:
                 'content': content
             })
         return elements
+    
+    def get_dataset_images(self, output_images_folder=f"./output/dataset_images"):
+        shutil.rmtree(output_images_folder, ignore_errors=True)
+        if not os.path.exists(output_images_folder):
+            os.makedirs(output_images_folder)
+
+        for page_num in range(len(self.pdf)):
+            page = self.pdf[page_num]
+            content_rectangle = self.get_content_rectangle(page)
+            
+            if content_rectangle is None:
+                continue
+            
+            pix = page.get_pixmap(matrix=fitz.Matrix(1, 1), clip=content_rectangle)
+            img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
+            img_path = os.path.join(output_images_folder, f"page_{page_num + 1}.png")
+            img.save(img_path, "PNG")
+
+    def get_dataset_images_with_bbox(self, csv_file_path):
+        with open(csv_file_path, 'w', newline='') as csv_file:
+            csv_writer = csv.writer(csv_file)
+            #csv_writer.writerow(["label_name", "bbox_x", "bbox_y", "bbox_width", "bbox_height", "image_name", "image_width", "image_height"])
+            csv_writer.writerow(["filename", "class", "width", "height", "xmin", "ymin", "xmax", "ymax"])
+
+        for page_num in range(len(self.pdf)):
+            page = self.pdf[page_num]
+            content_rectangle = self.get_content_rectangle(page)
+
+            if content_rectangle is None:
+                continue
+
+            text_blocks = page.get_text("blocks")
+            for block in text_blocks:
+                block = list(block)
+                block[0] -= content_rectangle[0]
+                block[1] -= content_rectangle[1]
+                block[2] -= content_rectangle[0]
+                block[3] -= content_rectangle[1]
+                bbox = block[0:4]
+                label_name = "block"
+
+                bbox_x, bbox_y, bbox_width, bbox_height = bbox
+                image_name = f"page_{page_num + 1}.png"
+                image_width = content_rectangle[2]
+                image_height = content_rectangle[3]
+
+                with open(csv_file_path, 'a', newline='') as csv_file:
+                    csv_writer = csv.writer(csv_file)
+                    #csv_writer.writerow([label_name, bbox_x, bbox_y, bbox_width, bbox_height, image_name, image_width, image_height])
+                    csv_writer.writerow([image_name, label_name, image_width, image_height, bbox_x, bbox_y, bbox_x+bbox_width, bbox_y+bbox_height])
+
+    def get_content_rectangle(self, page):
+        text_blocks = page.get_text("blocks")
+        if not text_blocks:
+            return None
+    
+        min_x = min_y = float('inf')
+        max_x = max_y = float('-inf')
+    
+        for block in text_blocks:
+            bbox = block[0:4]
+            min_x = min(min_x, bbox[0])
+            min_y = min(min_y, bbox[1])
+            max_x = max(max_x, bbox[2])
+            max_y = max(max_y, bbox[3])
+        content_rectangle = (min_x, min_y, max_x, max_y)
+        return content_rectangle
+
+    def extract_content_and_save_image(self):
+        # Check capabilities of getting content from rectangle
+        page = self.pdf[5]
+        content_rectangle = (100, 120, 800, 400)
+        pix = page.get_pixmap(matrix=fitz.Matrix(1, 1), clip=content_rectangle)
+        img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
+
+        img.save('../../dataset_processing/output/hehe.png', "PNG")
+        words = page.get_text("words", clip=content_rectangle)
+        for word in words:
+            print(word[4])
+            
+def translate_csv_to_json_coco(path='../../dataset_processing/output/dataset.csv', save_json_path='../../dataset_processing/output/traincoco.json'):
+    data = pd.read_csv(path)
+
+    images = []
+    categories = []
+    annotations = []
+
+    category = {}
+    category["supercategory"] = 'none'
+    category["id"] = 0
+    category["name"] = 'None'
+    categories.append(category)
+
+    data['fileid'] = data['filename'].astype('category').cat.codes
+    data['categoryid']= pd.Categorical(data['class'],ordered= True).codes
+    data['categoryid'] = data['categoryid']+1
+    data['annid'] = data.index
+
+    def image(row):
+        image = {}
+        image["height"] = row.height
+        image["width"] = row.width
+        image["id"] = row.fileid
+        image["file_name"] = row.filename
+        return image
+
+    def category(row):
+        category = {}
+        category["supercategory"] = 'None'
+        category["id"] = row.categoryid
+        category["name"] = row[2]
+        return category
+
+    def annotation(row):
+        annotation = {}
+        area = (row.xmax -row.xmin)*(row.ymax - row.ymin)
+        annotation["segmentation"] = []
+        annotation["iscrowd"] = 0
+        annotation["area"] = area
+        annotation["image_id"] = row.fileid
+
+        annotation["bbox"] = [row.xmin, row.ymin, row.xmax -row.xmin,row.ymax-row.ymin ]
+
+        annotation["category_id"] = row.categoryid
+        annotation["id"] = row.annid
+        return annotation
+
+    for row in data.itertuples():
+        annotations.append(annotation(row))
+
+    imagedf = data.drop_duplicates(subset=['fileid']).sort_values(by='fileid')
+    for row in imagedf.itertuples():
+        images.append(image(row))
+
+    catdf = data.drop_duplicates(subset=['categoryid']).sort_values(by='categoryid')
+    for row in catdf.itertuples():
+        categories.append(category(row))
+
+    data_coco = {}
+    data_coco["images"] = images
+    data_coco["categories"] = categories
+    data_coco["annotations"] = annotations
+    json.dump(data_coco, open(save_json_path, "w"), indent=4)
 
 if __name__ == '__main__':
     pdf_path = "../../dataset_processing/Imperia.pdf"
@@ -334,16 +480,20 @@ if __name__ == '__main__':
     epub_path = '../../dataset_processing/output/book.epub'
 
     pdf_book = PDFReader(pdf_path)
+    pdf_book.get_dataset_images_with_bbox("../../dataset_processing/output/dataset.csv")
+    translate_csv_to_json_coco()
+    #pdf_book.extract_content_and_save_image()
+    #pdf_book.get_dataset_images(output_images_folder=f"./output/{pdf_book.pdf_filename}/dataset_images")
     #pdf_book.get_all_images(output_images_folder)
     #pdf_book.extract_full_text(output_txt_path)
     
-    for progress, remaining_time in pdf_book.to_epub(epub_path):
-        percentage = int(progress * 100)
-        print(f"{percentage}% - Expected time left: {remaining_time:.2f} seconds")
+    # for progress, remaining_time in pdf_book.to_epub(epub_path):
+    #     percentage = int(progress * 100)
+    #     print(f"{percentage}% - Expected time left: {remaining_time:.2f} seconds")
     
-    book = EpubReader(epub_path)
-    print(len(book))
-    print(book.get_by_page(29))
+    # book = EpubReader(epub_path)
+    # print(len(book))
+    # print(book.get_by_page(29))
     #book.add_questions_answers(29, 1, "What is the meaning of life?")
-    print(book.get_by_page(29))
-    print(book.get_paragraph_by_qa())
+    # print(book.get_by_page(29))
+    # print(book.get_paragraph_by_qa())

@@ -23,7 +23,18 @@ def extract_pdf_metadata(pdf_file):
         pdf_document = fitz.open(stream=pdf_file.read(), filetype="pdf")
         if pdf_document.page_count > 0:
             first_page = pdf_document.load_page(0)
-            cover_image = first_page.get_pixmap()
+            blocks = first_page.get_text("blocks")
+            min_x = min_y = float('inf')
+            max_x = max_y = float('-inf')
+        
+            for block in blocks:
+                bbox = block[0:4] 
+                min_x = min(min_x, bbox[0])
+                min_y = min(min_y, bbox[1])
+                max_x = max(max_x, bbox[2])
+                max_y = max(max_y, bbox[3])
+            content_rectangle = (min_x, min_y, max_x, max_y)
+            cover_image = first_page.get_pixmap(matrix=fitz.Matrix(1, 1), clip=content_rectangle)
         metadata = pdf_document.metadata
         author = metadata.get("author")
 

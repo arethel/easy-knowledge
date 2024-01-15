@@ -37,6 +37,6 @@ export const SettingsPage = ({ settingsDict, onUpdateSettingsDict }) => {
                     {index < Object.keys(settingsDict[settingsDict.selected]).length - 1 && <hr className="separating-line"/>}
                 </div>
             ))}
-        </div>
+          </div>
     )
 }

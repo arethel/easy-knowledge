@@ -4,6 +4,8 @@
     align-items: center;
     margin: 5px;
     padding: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
     padding-top: 5px;
     border-radius: 20px;
 }
@@ -22,7 +24,7 @@
     min-width: 2px;
     width: 2px;
     background-color: var(--collection-1-block2);
-    margin: 18px 10px;
+    margin: 18px 5px;
     height: 240px;
 }
   
