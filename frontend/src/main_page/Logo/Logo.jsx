@@ -4,10 +4,10 @@ import './style.css';
 
 export const Logo = () => {
   return (
-    <div className="logo">
-      <div className="logo-container">
-        <LogoEK className="easy-knowledge-logo" />
-        <div className="logo-text">Easy Knowledge</div>
+    <div className="logo-main">
+      <div className="logo-container-main">
+        <LogoEK className="easy-knowledge-logo-main" />
+        <div className="logo-text-main">Easy Knowledge</div>
       </div>
     </div>
   );

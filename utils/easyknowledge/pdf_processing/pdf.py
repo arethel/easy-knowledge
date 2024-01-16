@@ -362,15 +362,14 @@ class PDFReader:
 
             text_blocks = page.get_text("blocks")
             for block in text_blocks:
-                block = list(block)
-                block[0] -= content_rectangle[0]
-                block[1] -= content_rectangle[1]
-                block[2] -= content_rectangle[0]
-                block[3] -= content_rectangle[1]
-                bbox = block[0:4]
                 label_name = "block"
 
-                bbox_x, bbox_y, bbox_width, bbox_height = bbox
+                bbox_x, bbox_y, bbox_width, bbox_height = list(block[0:4])
+                bbox_x -= content_rectangle[0]
+                bbox_y -= content_rectangle[1]
+                bbox_width -= content_rectangle[0]
+                bbox_height -= content_rectangle[1]
+
                 image_name = f"page_{page_num + 1}.png"
                 image_width = content_rectangle[2]
                 image_height = content_rectangle[3]
@@ -378,7 +377,7 @@ class PDFReader:
                 with open(csv_file_path, 'a', newline='') as csv_file:
                     csv_writer = csv.writer(csv_file)
                     #csv_writer.writerow([label_name, bbox_x, bbox_y, bbox_width, bbox_height, image_name, image_width, image_height])
-                    csv_writer.writerow([image_name, label_name, image_width, image_height, bbox_x, bbox_y, bbox_x+bbox_width, bbox_y+bbox_height])
+                    csv_writer.writerow([image_name, label_name, image_width, image_height, bbox_x, bbox_y, bbox_width, bbox_height])
 
     def get_content_rectangle(self, page):
         text_blocks = page.get_text("blocks")
@@ -474,12 +473,13 @@ def translate_csv_to_json_coco(path='../../dataset_processing/output/dataset.csv
     json.dump(data_coco, open(save_json_path, "w"), indent=4)
 
 if __name__ == '__main__':
-    pdf_path = "../../dataset_processing/Imperia.pdf"
+    pdf_path = "../../dataset_processing/ISLRv2.pdf"
     output_txt_path = "../../dataset_processing/output/output_text.txt"
     output_images_folder = "../../dataset_processing/output/images"
     epub_path = '../../dataset_processing/output/book.epub'
 
     pdf_book = PDFReader(pdf_path)
+    pdf_book.get_dataset_images("../../dataset_processing/output/dataset_images")
     pdf_book.get_dataset_images_with_bbox("../../dataset_processing/output/dataset.csv")
     translate_csv_to_json_coco()
     #pdf_book.extract_content_and_save_image()

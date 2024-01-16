@@ -6,6 +6,7 @@ import { Icon } from "../Icon";
 import DeleteIcon from '@mui/icons-material/Delete';
 import Skeleton from '@mui/material/Skeleton';
 import { MyCircularProgress } from './MyCircularProgress';
+
 import { AlertDialog } from '../AlertDialog.jsx';
 
 import "./style.css";
@@ -178,9 +179,11 @@ export const Section = ({ booksList, name, sectionId, handleDeleteSection, setTy
       <AlertDialog open={alertOpen} handleClose={handleClose} actionConfirmation={bookActionConfirmation} type={'Book'} t={t}/>
       <div className="section-header">
         <EditableText initialText={name} sectionId={sectionId} onTextChange={handleSectionNameChange} />
-        <span className="trashbin-icon section-icon">
+        <span className="trashbin-icon">
+          <div className="section-icon">
           {/* <Icon name="trashbin" src={require("../../images/icon-trashbin.png")}/> */}
-          <DeleteIcon style={{ cursor: 'pointer' }} onClick={handleDelete}/>
+            <DeleteIcon style={{ cursor: 'pointer' }} onClick={handleDelete}/>
+          </div>
         </span>
       </div>
       <div className="custom-rectangle">

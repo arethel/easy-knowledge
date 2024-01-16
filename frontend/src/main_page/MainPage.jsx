@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Section } from "./Sections/Section";
 import { TopBar } from "./TopBar";
 import Divider from '@mui/material/Divider';
-import { Logo } from "./Logo/Logo.jsx";
+import { Logo } from "../books_reading/components/logo/Logo.jsx";
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { Settings } from "../books_reading/components/settings/Settings.jsx";
@@ -150,7 +150,7 @@ export const MainPage = ({ userData, client }) => {
         <TopBar userData={userData} handleCreateSection={handleCreateSection} setShowSettings={setShowSettings} client={client} t={t}/>
         <AlertDialog open={open} handleClose={handleClose} actionConfirmation={actionConfirmation} type={"Section"} t={t}/>
         <Divider variant="middle" className="main-divider" />
-        <Logo />
+        {/* <Logo /> */}
         <div ref={sectionsContainerRef}> 
           {sections.map((section) => (
             <Section 

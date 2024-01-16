@@ -35,13 +35,27 @@ body {
 }
   
 .create-section-button:hover {
-    background-color: #45a049;
+    background-color: #308fe8;
+}
+
+.create-section-button {
+    padding: 10px 20px;
+    border: none;
+    margin-left: 40px;
+    background-color: var(--collection-1-font-3);
+    font-family: var(--smaller-font-font-family, "Inter-Regular", Helvetica);
+    font-size: 18px;
+    color: var(--collection-1-font-2);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
   
 .custom-text {
     color: var(--collection-1-font-2);
     font-family: var(--main-font-font-family, "Inter-Regular", Helvetica);
-    font-size: var(--main-font-font-size, 22px);
+    /* font-size: var(--main-font-font-size, 22px); */
+    font-size: 25px;
     font-style: var(--main-font-font-style, normal);
     font-weight: var(--main-font-font-weight, 400);
     letter-spacing: var(--main-font-letter-spacing, 0px);
@@ -54,9 +68,13 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
     padding: 10px 20px;
     margin-right: 30px;
+}
+
+.topbar-buttons {
+    display: flex;
+    align-items: center;
 }
 
 .line {
