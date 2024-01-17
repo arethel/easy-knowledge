@@ -17,7 +17,7 @@ import fitz
 import hashlib
 import matplotlib.pyplot as plt
 from ebooklib import epub
-from pdf_utils import p_ended, count_words, get_page_rect
+from pdf_utils import p_ended, count_words, get_page_rect, translate_csv_to_json_coco, combine_datasets
 
 class EpubReader:
     def __init__(self, epub_filename):
@@ -329,25 +329,14 @@ class PDFReader:
                 'content': content
             })
         return elements
-    
-    def get_dataset_images(self, output_images_folder=f"./output/dataset_images"):
+
+    def get_dataset_images_with_bbox(self, output_folder=f"./output/dataset_images"):
+        pdf_name = os.path.basename(self.pdf_filename).replace(".pdf", "")
+        output_images_folder = os.path.join(output_folder, pdf_name)
         shutil.rmtree(output_images_folder, ignore_errors=True)
         if not os.path.exists(output_images_folder):
             os.makedirs(output_images_folder)
-
-        for page_num in range(len(self.pdf)):
-            page = self.pdf[page_num]
-            content_rectangle = self.get_content_rectangle(page)
-            
-            if content_rectangle is None:
-                continue
-            
-            pix = page.get_pixmap(matrix=fitz.Matrix(1, 1), clip=content_rectangle)
-            img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
-            img_path = os.path.join(output_images_folder, f"page_{page_num + 1}.png")
-            img.save(img_path, "PNG")
-
-    def get_dataset_images_with_bbox(self, csv_file_path):
+        csv_file_path = os.path.join(output_images_folder, f"{pdf_name}.csv")
         with open(csv_file_path, 'w', newline='') as csv_file:
             csv_writer = csv.writer(csv_file)
             #csv_writer.writerow(["label_name", "bbox_x", "bbox_y", "bbox_width", "bbox_height", "image_name", "image_width", "image_height"])
@@ -360,6 +349,14 @@ class PDFReader:
             if content_rectangle is None:
                 continue
 
+            pix = page.get_pixmap(matrix=fitz.Matrix(1, 1), clip=content_rectangle)
+            img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
+            out_images = os.path.join(output_images_folder, f"images")
+            if not os.path.exists(out_images):
+                os.makedirs(out_images)
+            img_path = os.path.join(out_images, f"{pdf_name}_page_{page_num + 1}.png")
+            img.save(img_path, "PNG")
+
             text_blocks = page.get_text("blocks")
             for block in text_blocks:
                 label_name = "block"
@@ -370,14 +367,14 @@ class PDFReader:
                 bbox_width -= content_rectangle[0]
                 bbox_height -= content_rectangle[1]
 
-                image_name = f"page_{page_num + 1}.png"
                 image_width = content_rectangle[2]
                 image_height = content_rectangle[3]
 
                 with open(csv_file_path, 'a', newline='') as csv_file:
                     csv_writer = csv.writer(csv_file)
                     #csv_writer.writerow([label_name, bbox_x, bbox_y, bbox_width, bbox_height, image_name, image_width, image_height])
-                    csv_writer.writerow([image_name, label_name, image_width, image_height, bbox_x, bbox_y, bbox_width, bbox_height])
+                    csv_writer.writerow([os.path.basename(img_path), label_name, image_width, image_height, bbox_x, bbox_y, bbox_width, bbox_height])
+        return csv_file_path
 
     def get_content_rectangle(self, page):
         text_blocks = page.get_text("blocks")
@@ -407,81 +404,20 @@ class PDFReader:
         words = page.get_text("words", clip=content_rectangle)
         for word in words:
             print(word[4])
-            
-def translate_csv_to_json_coco(path='../../dataset_processing/output/dataset.csv', save_json_path='../../dataset_processing/output/traincoco.json'):
-    data = pd.read_csv(path)
 
-    images = []
-    categories = []
-    annotations = []
-
-    category = {}
-    category["supercategory"] = 'none'
-    category["id"] = 0
-    category["name"] = 'None'
-    categories.append(category)
-
-    data['fileid'] = data['filename'].astype('category').cat.codes
-    data['categoryid']= pd.Categorical(data['class'],ordered= True).codes
-    data['categoryid'] = data['categoryid']+1
-    data['annid'] = data.index
-
-    def image(row):
-        image = {}
-        image["height"] = row.height
-        image["width"] = row.width
-        image["id"] = row.fileid
-        image["file_name"] = row.filename
-        return image
-
-    def category(row):
-        category = {}
-        category["supercategory"] = 'None'
-        category["id"] = row.categoryid
-        category["name"] = row[2]
-        return category
-
-    def annotation(row):
-        annotation = {}
-        area = (row.xmax -row.xmin)*(row.ymax - row.ymin)
-        annotation["segmentation"] = []
-        annotation["iscrowd"] = 0
-        annotation["area"] = area
-        annotation["image_id"] = row.fileid
-
-        annotation["bbox"] = [row.xmin, row.ymin, row.xmax -row.xmin,row.ymax-row.ymin ]
-
-        annotation["category_id"] = row.categoryid
-        annotation["id"] = row.annid
-        return annotation
-
-    for row in data.itertuples():
-        annotations.append(annotation(row))
-
-    imagedf = data.drop_duplicates(subset=['fileid']).sort_values(by='fileid')
-    for row in imagedf.itertuples():
-        images.append(image(row))
-
-    catdf = data.drop_duplicates(subset=['categoryid']).sort_values(by='categoryid')
-    for row in catdf.itertuples():
-        categories.append(category(row))
-
-    data_coco = {}
-    data_coco["images"] = images
-    data_coco["categories"] = categories
-    data_coco["annotations"] = annotations
-    json.dump(data_coco, open(save_json_path, "w"), indent=4)
 
 if __name__ == '__main__':
-    pdf_path = "../../dataset_processing/ISLRv2.pdf"
+    pdf_path = "../../dataset_processing/Imperia.pdf"
     output_txt_path = "../../dataset_processing/output/output_text.txt"
     output_images_folder = "../../dataset_processing/output/images"
     epub_path = '../../dataset_processing/output/book.epub'
 
-    pdf_book = PDFReader(pdf_path)
-    pdf_book.get_dataset_images("../../dataset_processing/output/dataset_images")
-    pdf_book.get_dataset_images_with_bbox("../../dataset_processing/output/dataset.csv")
-    translate_csv_to_json_coco()
+    # pdf_book = PDFReader(pdf_path)
+    # output_images_folder = "../../dataset_processing/output/dataset_images/"
+    # csv_file_path = pdf_book.get_dataset_images_with_bbox(output_images_folder)
+    # translate_csv_to_json_coco(path=csv_file_path, save_json_path=csv_file_path.replace(".csv", "_traincoco.json"))
+
+    combine_datasets(num_images_to_select=40, output_folder="../../dataset_processing/output/dataset_images")
     #pdf_book.extract_content_and_save_image()
     #pdf_book.get_dataset_images(output_images_folder=f"./output/{pdf_book.pdf_filename}/dataset_images")
     #pdf_book.get_all_images(output_images_folder)
