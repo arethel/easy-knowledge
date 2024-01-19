@@ -25,5 +25,6 @@
     "limit exceeded": "Превышен лимит",
     "failed to create section": "Не удалось создать Секцию",
     "error during the api call": "Ошибка во время вызова API",
-    "seconds": "секунд"
+    "seconds": "секунд",
+    "loading": "Загрузка"
   }

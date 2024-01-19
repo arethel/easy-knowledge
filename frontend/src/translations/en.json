@@ -25,5 +25,6 @@
     "limit exceeded": "Limit Exceeded",
     "failed to create section": "Failed to create section",
     "error during the api call": "Error during the API call",
-    "seconds": "seconds"
+    "seconds": "seconds",
+    "loading": "Loading"
 }

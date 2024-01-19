@@ -6,6 +6,7 @@ import { Icon } from "../Icon";
 import DeleteIcon from '@mui/icons-material/Delete';
 import Skeleton from '@mui/material/Skeleton';
 import { MyCircularProgress } from './MyCircularProgress';
+import useWebSocket, { ReadyState } from "react-use-websocket"
 
 import { AlertDialog } from '../AlertDialog.jsx';
 
@@ -18,6 +19,7 @@ const VerticalLine = () => {
 export const Section = ({ booksList, name, sectionId, handleDeleteSection, setType, client, globalLoading, setGlobalLoading, t }) => {
   const [books, setBooks] = useState(booksList);
   const [progress, setProgress] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [booksToAdd, setBooksToAdd] = useState([]);
   const [alertOpen, setAlertOpen] = useState(false);
   const [bookActionConfirmation, setBookActionConfirmation] = useState({
@@ -39,8 +41,9 @@ export const Section = ({ booksList, name, sectionId, handleDeleteSection, setTy
     };
     setBooksToAdd([...booksToAdd, bookToAdd]);
     const progressSocket = new WebSocket('ws://localhost:3030/ws/book-processing-info/');
-
+    
     progressSocket.onmessage = function(e) {
+      setLoading(false);
       const d = JSON.parse(e.data);
       console.log(d)
       const newProgress = d.filter(item => item.processed === false && item.book_section.section_id === sectionId);
@@ -201,27 +204,42 @@ export const Section = ({ booksList, name, sectionId, handleDeleteSection, setTy
               <VerticalLine />
             </React.Fragment>
           ))}
-        {globalLoading > 0 && (
-          progress.map((progress_obj) => (
-            <React.Fragment key={progress_obj.book_id}>
+        {
+          (globalLoading > 0 && progress.length > 0) ? (
+            progress.map((progress_obj) => (
+              <React.Fragment key={progress_obj.book_id}>
+                <div className="vertical-container add-book loading">
+                  <div className="vertical-rectangle">
+                    <MyCircularProgress progress={progress_obj.percentage} determinate={true} />
+                    <div className="estimated-time">
+                      {progress_obj.time} {t('seconds')}
+                    </div>
+                  </div>
+                </div>
+                <VerticalLine />
+              </React.Fragment>
+            ))
+          ) : loading && (
+            <React.Fragment>
               <div className="vertical-container add-book loading">
                 <div className="vertical-rectangle">
-                  <MyCircularProgress progress={progress_obj.percentage} determinate={true} />
+                  <MyCircularProgress determinate={false} />
                   <div className="estimated-time">
-                    {progress_obj.time} {t('seconds')}
+                    {t('loading')}
                   </div>
                 </div>
               </div>
               <VerticalLine />
             </React.Fragment>
-          ))
-        )}
+          )
+        }
         <AddBook
           onFileSelect={addNewBook}
           client={client}
           sectionId={sectionId}
           globalLoading={globalLoading}
           setGlobalLoading={setGlobalLoading}
+          setLoading={setLoading}
         />
       </div>
     </div>

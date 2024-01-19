@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import { ReactComponent as AddBookIcon } from '../../images/add-book.svg';
 import "./style.css";
 
-export const AddBook = ({ onFileSelect, client, sectionId, globalLoading, setGlobalLoading }) => {
+export const AddBook = ({ onFileSelect, client, sectionId, globalLoading, setGlobalLoading, setLoading }) => {
     const fileInputRef = useRef();
 
     const handleFileChange = async (event) => {
@@ -15,6 +15,7 @@ export const AddBook = ({ onFileSelect, client, sectionId, globalLoading, setGlo
           formData.append("section_id", sectionId);
 
           setGlobalLoading(prev => prev + 1);
+          setLoading(true);
           const response = await client.post("api/book/", formData, {
             headers: {
               "Content-Type": "multipart/form-data",
