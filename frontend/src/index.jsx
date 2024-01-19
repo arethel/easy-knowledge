@@ -7,6 +7,7 @@ import { SignIn } from "./sign_in/SignIn.jsx";
 import { MainPage } from "./main_page/MainPage.jsx";
 import { PDFView } from "./main_page/PDFView/PDFView.tsx";
 import Cookies from 'js-cookie';
+import './tailwind.css';
 import './utils/i18n.js';
 
 

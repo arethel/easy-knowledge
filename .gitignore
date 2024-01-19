@@ -8,6 +8,7 @@ media/
 utils/*/output/*
 */output/*
 *.pdf
+tree.txt
 
 # C extensions
 *.so
