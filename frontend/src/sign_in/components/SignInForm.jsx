@@ -160,7 +160,7 @@ export default function SignInForm( { client, setIsAuthenticated } ) {
     return (
       <Typography className={classes.typography} variant="body2" color="text.secondary" align="center" {...props}>
         {'Copyright © '}
-        <Link color="inherit" href="https://chat.openai.com/">
+        <Link color="inherit" href="">
           Easy Knowledge
         </Link>{' '}
         {new Date().getFullYear()}

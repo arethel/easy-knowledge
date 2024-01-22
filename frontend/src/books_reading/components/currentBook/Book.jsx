@@ -4,22 +4,18 @@ import "./style.css";
 import { PagesCount } from "./pagesCount/PagesCount.jsx";
 import { Paragraph } from "./paragraph/Paragraph.jsx";
 import { EndOfParagraph } from "./endOfParagraph/EndOfParagraph.jsx";
-import { NewChapter } from "./newChapter/NewChapter"; 
-import { PDFView } from "../../../main_page/PDFView/PDFView.tsx";
-import Button from '@mui/material/Button';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import { Tooltip } from "@mui/material";
-import Fade from '@mui/material/Fade';
+import { NewChapter } from "./newChapter/NewChapter";
+import { PdfViewer } from "./pdfViewer/PdfViewer.jsx";
 
 
-export const Book = ({book_id, client, loadedEpubs}) => {
+export const Book = ({ book_id, client, loadedEpubs }) => {
     const [showPDF, setShowPDF] = useState(false);
     
     const [paragraphs, setParagraphs] = useState([]);
     const [pages, setPages] = useState(0);
     const [booksInfo, setBooksInfo] = useState({});
     
+    const [currentPage, setCurrentPage] = useState(-1);
     const [openedPages, setOpenedPages] = useState({});
     const minPagesCount = 10;
     const pagesCountUpdateStep = 2;
@@ -42,158 +38,179 @@ export const Book = ({book_id, client, loadedEpubs}) => {
         return undefined;
     }
     
-    const loadPages = async (page1, page2) => {
-        const newOpenedPages = {};
-        let k = page1;
-        let endPage = page2;
-        while (k < endPage) {
-            if (openedPages[k]===undefined){
-                await loadedEpubs[book_id].get_by_page(k).then((newParagraphs) => { 
-                    newOpenedPages[k] = newParagraphs;
-                    
-                    console.log(newParagraphs);
-                });
+    const lastPage = useRef(-1);
+    const saveBookPage = async () => {
+        try {
+            if (currentPage === lastPage.current) return;
+            lastPage.current = currentPage;
+            const response = await client.post(`api/book/info/`, { book_id: book_id, page: currentPage });
+            if (response.data.error === 0) {
+                console.log("Book page saved");
             }
-            else {  
-                newOpenedPages[k] = openedPages[k];
-            }
-            k += 1;
+        } catch (error) {
+            console.error("Error saving book page:", error);
         }
-        setOpenedPages(newOpenedPages);
-        setParagraphs([].concat(...Object.values(newOpenedPages)));
     }
     
     useEffect(() => {
-        // console.log(loadedEpubs, book_id);
-        if (loadedEpubs[book_id] === undefined) return () => {};
+        const interval = setInterval(() => {
+            saveBookPage();
+        }, 1000);
+        return () => clearInterval(interval);
+    }, [currentPage]);
+    
+    // const loadPages = async (page1, page2) => {
+    //     // console.log(page1, page2);
+    //     const newOpenedPages = {...openedPages};
+    //     let k = page1;
+    //     let endPage = page2;
+    //     while (k < endPage) {
+    //         if (newOpenedPages[k] === undefined) {
+    //             await loadedEpubs[book_id].get_by_page(k).then((newParagraphs) => {
+    //                 newOpenedPages[k] = newParagraphs;
+    //             });
+    //             setParagraphs([].concat(...Object.values(newOpenedPages)));
+    //         }
+    //         k += 1;
+    //     }
+    //     setOpenedPages(newOpenedPages);
+    //     setParagraphs([].concat(...Object.values(newOpenedPages)));
+    // }
+    
+    useEffect(() => {
+        console.log(loadedEpubs, book_id);
+        if (loadedEpubs[book_id] === undefined) return () => { };
         
         
-        loadedEpubs[book_id].getBookLength().then((length) => {
-            setPages(length);
-        });
+        // loadedEpubs[book_id].getBookLength().then((length) => {
+        //     setPages(length);
+        // });
+        
+        
         
         getBookInfo().then((bookInfo) => {
+            console.log(bookInfo);
             if (bookInfo === undefined) return;
-            let k = Math.max(bookInfo.page - Math.floor(minPagesCount / 2), 0)
-            let endPage = k + minPagesCount;
-            loadPages(k, endPage);
-            
+            setCurrentPage(bookInfo.page)
         });
         
-        return () => {};
+        return () => { };
     }, [book_id, loadedEpubs]);
     
-    const [constantHeight, setConstantHeight] = useState("960px");
-    const sideId = "side-bar";
-    const topId = "top-bar";
-    const resizeObserver = useRef(null);
-
-    useEffect(() => {
-        const elementToWatch = document.getElementById(sideId);
-        const elementToWatch2 = document.getElementById(topId);
-
-        if (elementToWatch && elementToWatch2) {
-            resizeObserver.current = new ResizeObserver((entries) => {
-                for (let entry of entries) {
-                    const height1 = entry.contentRect.height;
-                    const height2 = elementToWatch2.clientHeight;
-                    const newHeight = `${height1 - height2}px`;
-                    setConstantHeight(newHeight);
-                }
-            });
-
-            resizeObserver.current.observe(elementToWatch);
-        }
-
-        return () => {
-            if (resizeObserver.current) {
-                resizeObserver.current.disconnect();
-            }
-        };
-    }, [sideId, topId]);
+    // useEffect(() => {
+    //     if (loadedEpubs[book_id] === undefined) return () => { };
+        
+    //     let k = Math.max(currentPage - Math.floor(minPagesCount / 2), 0)
+    //     let endPage = k + minPagesCount;
+    //     loadPages(k, endPage);
+        
+    //     return () => { };
+    // }, [currentPage]);
     
-    const scrollRef = useRef(null);
-    const scrollSignal = 0.2;
-    useEffect(() => {
-        const handleScroll = () => {
-            const content = scrollRef.current;
-            if (content) {
-                const { scrollTop, scrollHeight, clientHeight } = content;
-                const isAtBottom = scrollTop + clientHeight >= scrollHeight*(1-scrollSignal);
-                const isAtTop = scrollTop <= scrollHeight*scrollSignal;
-                console.log(content.scrollHeight > content.clientHeight);
-                if (isAtBottom) {
-                    // Logic to add items at the bottom
-                    console.log("Reached bottom");
-                }
+    // const [constantHeight, setConstantHeight] = useState("960px");
+    // const sideId = "side-bar";
+    // const topId = "top-bar";
+    // const resizeObserver = useRef(null);
 
-                if (isAtTop) {
-                    // Logic to remove items from the top
-                    console.log("Reached top");
-                }
-            }
-        };
+    // useEffect(() => {
+    //     const elementToWatch = document.getElementById(sideId);
+    //     const elementToWatch2 = document.getElementById(topId);
 
-        const content = scrollRef.current;
-        if (content) {
-            content.addEventListener("scroll", handleScroll);
-        }
+    //     if (elementToWatch && elementToWatch2) {
+    //         resizeObserver.current = new ResizeObserver((entries) => {
+    //             for (let entry of entries) {
+    //                 const height1 = entry.contentRect.height;
+    //                 const height2 = elementToWatch2.clientHeight;
+    //                 const newHeight = `${height1 - height2}px`;
+    //                 setConstantHeight(newHeight);
+    //             }
+    //         });
 
-        return () => {
-            if (content) {
-                content.removeEventListener("scroll", handleScroll);
-            }
-        };
-    }, []);
+    //         resizeObserver.current.observe(elementToWatch);
+    //     }
+
+    //     return () => {
+    //         if (resizeObserver.current) {
+    //             resizeObserver.current.disconnect();
+    //         }
+    //     };
+    // }, [sideId, topId]);
+    
+    // const getUpperVisibleDiv = () => {
+    //     const content = scrollRef.current;
+    //     if (content) {
+    //         const { scrollTop, clientHeight } = content;
+    //         const divs = document.querySelectorAll('.book-element.paragraph'); // Replace with your div selector
+    
+    //         for (let i = 0; i < divs.length; i++) {
+    //             const div = divs[i];
+    //             const { top, bottom } = div.getBoundingClientRect();
+    //             if (top >= 0 && bottom <= clientHeight) {
+    //                 // Return the div that is fully visible in the upper portion
+    //                 return div;
+    //             }
+    //         }
+    //     }
+    //     return null;
+    // };
+    
+    // const getPageFromClassName = (className) => {
+    //     const match = className.match(/page-(\d+)/);
+    //     if (match && match[1]) {
+    //         return parseInt(match[1]);
+    //     }
+    //     return null;
+    // };
+    
+    // const scrollRef = useRef(null);
+    // const scrollSignal = 0.2;
+    // useEffect(() => {
+    //     const handleScroll = () => {
+    //         const content = scrollRef.current;
+    //         if (content) {
+    //             const { scrollTop, scrollHeight, clientHeight } = content;
+    //             const isAtBottom = scrollTop + clientHeight >= scrollHeight * (1 - scrollSignal);
+    //             const isAtTop = scrollTop <= scrollHeight * scrollSignal;
+    //             // console.log(content.scrollHeight > content.clientHeight);
+    //             const upperVisibleDiv = getUpperVisibleDiv();
+    //             const currentPage = upperVisibleDiv ? getPageFromClassName(upperVisibleDiv.className) : null;
+    //             setCurrentPage(currentPage);
+    //             // if (isAtBottom) {
+    //             //     // Logic to add items at the bottom
+    //             //     console.log("Reached bottom");
+    //             // }
+
+    //             // if (isAtTop) {
+    //             //     // Logic to remove items from the top
+    //             //     console.log("Reached top");
+    //             // }
+    //         }
+    //     };
+
+    //     const content = scrollRef.current;
+    //     if (content) {
+    //         content.addEventListener("scroll", handleScroll);
+    //     }
+
+    //     return () => {
+    //         if (content) {
+    //             content.removeEventListener("scroll", handleScroll);
+    //         }
+    //     };
+    // }, []);
     
     return (
-        <>
-        <Tooltip
-            enterDelay={500}
-            leaveDelay={50}
-            title={`${showPDF ? 'Hide PDF' : 'Show PDF'}`}
-            placement="top">
-                <Button
-                    variant="text"
-                    color="primary"
-                    onClick={togglePDFView}
-                    sx={{
-                        border: 'none',
-                        padding: '10px 0px',
-                        minWidth: '30px',
-                        width: '50px',
-                        height: '50px',
-                        backgroundColor: 'transparent',
-                        cursor: 'pointer',
-                        outline: 'none',
-                        position: 'absolute',
-                        left: '0',
-                        top: '450px',
-                        transform: 'translateY(-50%)',
-                        transition: 'background-color 0.3s ease',
-                        alignItems: 'center',
-                        zIndex: '1',
-                    }}
-                >
-                    {showPDF ? <ArrowBackIosIcon sx={{ height: '1em', width: '1em'}}/> : <ArrowForwardIosIcon sx={{ height: '1em', width: '1em'}}/>}
-                </Button>
-        </Tooltip>
-        <div>
-            <PDFView fileUrl="./file/Gibel_Imperii_Gaidar.pdf" showPDF={showPDF}/>
-        </div>
-        {!showPDF && 
         <div className="book" >
-            <div className="paragraphs" ref={scrollRef} style={{ height: constantHeight }}>
+            {/* <div className="paragraphs" ref={scrollRef} style={{ height: constantHeight }}>
                 {paragraphs.map((paragraph, index) => (
-                    <Paragraph key={index} mainText={''} text={paragraph.content} />
+                    <Paragraph key={index} mainText={''} text={paragraph.content} page={Number(paragraph.page) + 1} />
                 ))}
                 {/*
                 <EndOfParagraph/>
                 <NewChapter text='New chapter'/>
-                */}
             </div>
-            <PagesCount page={booksInfo[book_id]===undefined? 0: booksInfo[book_id].page} totalPages={pages} />
-        </div>}
-        </>
+            <PagesCount page={booksInfo[book_id]===undefined? 0: currentPage} totalPages={pages} /> */}
+            <PdfViewer pdfUrl={loadedEpubs[book_id]===undefined? '': loadedEpubs[book_id]} />
+        </div>
     );
 };

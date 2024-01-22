@@ -3,9 +3,9 @@ import { ParagraphProps } from "../paragraphProps/ParagraphProps.jsx";
 
 import "./style.css";
 
-export const Paragraph = ({mainText, text}) => {
+export const Paragraph = ({mainText, text, page}) => {
     return (
-        <div className="book-element paragraph">
+        <div className={"book-element paragraph "+`page-${page}`}>
             {mainText == '' ? null : <div className="main-text">{mainText}</div>}
             <p className="paragraph-text">{text}</p>
             <div className="paragraph-props-container">
