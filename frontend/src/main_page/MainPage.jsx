@@ -91,18 +91,15 @@ export const MainPage = ({ userData, client }) => {
         setSections([...sections, newSection]);
       } else if (response.data.error === 2) {
         console.error("Limit exceeded: ", response.data.details);
-        //alert("Limit exceeded");
         setOpenAlert(true);
-        setAlertMessage("Limit exceeded");
+        setAlertMessage("Limit exceeded: " + response.data.details);
       } else {
         console.error("Failed to create section");
-        //alert("Failed to create section");
         setOpenAlert(true);
         setAlertMessage("Failed to create section");
       }
     } catch (error) {
       console.error("Error during the API call", error);
-      //alert("Error during the API call");
       setOpenAlert(true);
       setAlertMessage("Error during the API call");
     }
@@ -145,7 +142,7 @@ export const MainPage = ({ userData, client }) => {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="container">
+      <div className="flex flex-col min-w-full">
         <MyAlert open={openAlert} setOpen={setOpenAlert} severity={"error"} message={alertMessage} t={t}/>
         <TopBar userData={userData} handleCreateSection={handleCreateSection} setShowSettings={setShowSettings} client={client} t={t}/>
         <AlertDialog open={open} handleClose={handleClose} actionConfirmation={actionConfirmation} type={"Section"} t={t}/>

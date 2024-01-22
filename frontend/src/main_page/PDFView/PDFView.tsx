@@ -8,14 +8,16 @@ import '@react-pdf-viewer/core/lib/styles/index.css';
 import '@react-pdf-viewer/toolbar/lib/styles/index.css';
 import './style.css';
 
-interface CustomToolbarExampleProps {
+interface PDFViewProps {
     fileUrl: string;
+    currentPage?: number;
+    showPDF: boolean;
 }
 
-export const PDFView = ({ fileUrl, currentPage, showPDF }) => {
-    const [currentTheme, setCurrentTheme] = React.useState(typeof localStorage !== 'undefined' && localStorage.getItem('current-theme')
-        ? localStorage.getItem('current-theme')
-        : 'light');
+export const PDFView = ({ fileUrl, currentPage, showPDF }: PDFViewProps) => {
+    const [currentTheme, setCurrentTheme] = React.useState<string>(
+        localStorage.getItem('current-theme') ?? 'light'
+    );
     const themeContext = { currentTheme, setCurrentTheme };
 
     const toolbarPluginInstance = toolbarPlugin();

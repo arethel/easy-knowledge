@@ -1,6 +1,6 @@
 body {
     margin: 0;
-    background-color: var(--collection-1-bg);
+    /* background-color: var(--collection-1-bg); */
 }
   
 .icon {
@@ -88,11 +88,6 @@ body {
     background-color: #ccc;
     margin: 10px 20px;
     border-radius: 5px;
-}
-
-.container {
-    display: flex;
-    flex-direction: column;
 }
 
 .user-info {
