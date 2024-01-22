@@ -4,9 +4,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-d
 import axios from "axios";
 import { BooksReading } from "./books_reading/books_reading.jsx";
 import { SignIn } from "./sign_in/SignIn.jsx";
-import { MainPage } from "./main_page/MainPage.jsx";
-import { PDFView } from "./main_page/PDFView/PDFView.tsx";
-import Cookies from 'js-cookie';
+import { MainPage } from "./main_page/MainPage.jsx";;
 import './tailwind.css';
 import './utils/i18n.js';
 

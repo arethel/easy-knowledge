@@ -3,6 +3,8 @@ import { Page } from "./Page/Page.jsx";
 import Button from '@mui/material/Button';
 import getBook from '../../../utils/utils.js'
 import "./style.css";
+import {CloseSideBarIcon, OpenSideBarIcon} from "../../../chat/svg";
+import Tooltip from "../../../chat/components/Tooltip";
 
 export const TopBar = ({
   booksDictionary,
@@ -111,19 +113,13 @@ export const TopBar = ({
   
   return (
     <div className="top-bar" id='top-bar'>
-      <Button
-        sx={{
-          m: '6px',
-          color: 'var(--collection-1-font-2)',
-          backgroundColor: 'var(--collection-1-block2)',
-          '&:hover': {
-            backgroundColor: 'var(--collection-1-block2)',
-          }
-        }}
-        variant="contained"
-        onClick={toggleSidebar}>
-          {isSidebarOpen ? 'Hide Sidebar' : 'Show Sidebar'}
-      </Button>
+      <Tooltip title={'close-sidebar'} side="down" sideOffset={10}>
+          <a
+            className="flex px-3 min-h-[44px] py-1 gap-3 transition-colors duration-200 dark:text-white cursor-pointer text-sm rounded-md border dark:border-white/20 hover:bg-gray-500/10 h-11 w-11 flex-shrink-0 items-center justify-center bg-white dark:bg-transparent"
+            onClick={toggleSidebar}>
+            {isSidebarOpen ? <CloseSideBarIcon></CloseSideBarIcon> : <OpenSideBarIcon></OpenSideBarIcon>}
+          </a>
+      </Tooltip>
       {Object.keys(booksDictionary).map(bookName => {
         if (bookName === 'selected') return null;
         const shouldHide = pagesToHide.includes(bookName);
