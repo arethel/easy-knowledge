@@ -130,3 +130,19 @@ class OpenedBook(models.Model):
         db_table = 'opened_book'
         verbose_name = 'Opened Book'
         verbose_name_plural = 'Opened Books'
+
+class Conversation(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    title = models.CharField(max_length=200)
+    model = models.CharField(max_length=200)
+    system_prompt = models.TextField()
+    messages = models.JSONField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        db_table = 'conversation'
+        verbose_name = 'Conversation'
+        verbose_name_plural = 'Conversations'

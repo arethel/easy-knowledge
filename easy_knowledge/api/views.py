@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework import authentication, permissions, status
 from django.http.response import JsonResponse
 from django.shortcuts import get_object_or_404
+from .serializers import *
 from .models import *
 from users.models import *
 from .tasks import *
@@ -479,3 +480,20 @@ class BookProcessing(viewsets.ViewSet):
         user_limitations = UserLimitations.objects.get(user=user)
         return Response({'error': 0, 'available_qa': user_limitations.get_available_questions(), 
                          'users_daily_limit': user_limitations.max_questions})
+    
+class ConversationView(viewsets.ModelViewSet):
+    queryset = Conversation.objects.all()
+    serializer_class = ConversationSerializer
+    authentication_classes = [authentication.SessionAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def destroy(self, request, *args, **kwargs):
+        conversation = get_object_or_404(Conversation, pk=kwargs.get('pk'), user=request.user)
+        conversation.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def get_queryset(self):
+        return Conversation.objects.filter(user=self.request.user)

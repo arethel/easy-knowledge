@@ -1,5 +1,9 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from . import views
+
+router = DefaultRouter()
+router.register(r'conversation', views.ConversationView, basename='conversation')
 
 urlpatterns = [
     path('book/', views.BookView.as_view({'get': 'get', 'post': 'upload_book'}), name='book'),
@@ -14,6 +18,8 @@ urlpatterns = [
     path('section/delete/', views.SectionView.as_view({'post': 'delete_section'}), name='delete-section'),
     path('section/change-section/', views.SectionView.as_view({'post': 'change_section'}), name='change-section'),
     path('section/all/', views.SectionView.as_view({'get': 'get_all_sections'}), name='get-all-sections'),
+
+    path('', include(router.urls)),
     
     path('qa/', views.BookProcessing.as_view({'get': 'get_marked_for_qa', 'post': 'mark_for_qa'}), name='qa'),
     path('qa/test/', views.BookProcessing.as_view({'get': 'get_test', 'post': 'create_test'}), name='test'),
