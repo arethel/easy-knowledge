@@ -32,6 +32,7 @@ export const SignIn = ({ client, isSignIn=false, setIsAuthenticated }) => {
             <div className="sign-in-container">
                 { isSignIn ? <SignInForm client={client} setIsAuthenticated={setIsAuthenticated} /> : <SignUpForm client={client} setIsAuthenticated={setIsAuthenticated}/> }
             </div>
+            <div className="bg"></div>
         </div>
     )
 }

@@ -142,7 +142,7 @@ export const MainPage = ({ userData, client }) => {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="flex flex-col min-w-full">
+      <div className="flex flex-col min-w-full bg-bgColor min-h-full">
         <MyAlert open={openAlert} setOpen={setOpenAlert} severity={"error"} message={alertMessage} t={t}/>
         <TopBar userData={userData} handleCreateSection={handleCreateSection} setShowSettings={setShowSettings} client={client} t={t}/>
         <AlertDialog open={open} handleClose={handleClose} actionConfirmation={actionConfirmation} type={"Section"} t={t}/>

@@ -54,8 +54,8 @@ body {
 .custom-text {
     color: var(--collection-1-font-2);
     font-family: var(--main-font-font-family, "Inter-Regular", Helvetica);
-    /* font-size: var(--main-font-font-size, 22px); */
-    font-size: 25px;
+    font-size: var(--main-font-font-size, 22px);
+    /* font-size: 25px; */
     font-style: var(--main-font-font-style, normal);
     font-weight: var(--main-font-font-weight, 400);
     letter-spacing: var(--main-font-letter-spacing, 0px);
