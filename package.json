@@ -1,6 +1,9 @@
 {
   "dependencies": {
     "@mui/base": "^5.0.0-beta.21",
-    "@mui/styles": "^5.15.1"
+    "@mui/styles": "^5.15.1",
+    "@react-pdf-viewer/theme": "^3.12.0",
+    "@react-pdf-viewer/toolbar": "^3.12.0",
+    "react-i18next": "^14.0.0"
   }
 }

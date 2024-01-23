@@ -16,8 +16,6 @@ export const TopBar = ({
   updateInfo,
   loadedEpubs,
   setLoadedEpubs,
-  isSidebarOpen,
-  toggleSidebar
 }) => {
   
   const [openedProps, setProps] = useState(null);

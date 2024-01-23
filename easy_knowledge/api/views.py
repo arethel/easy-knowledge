@@ -190,6 +190,15 @@ class BookView(viewsets.ViewSet):
         book = get_object_or_404(Book, id=book_id, user=user)
         if book is None:
             return Response({"error": "Book not found"}, status=404)
+        book_path = book.book_file.path
+        return FileResponse(open(book_path, 'rb'))
+    
+    def get_processed_book(self, request):
+        book_id = request.query_params.get('book_id')
+        user = request.user
+        book = get_object_or_404(Book, id=book_id, user=user)
+        if book is None:
+            return Response({"error": "Book not found"}, status=404)
         if not book.processed:
             return Response({"error": "Book not processed"}, status=404)
         processed_book = ProcessedBook.objects.get(book=book)
