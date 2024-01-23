@@ -1,12 +1,17 @@
 import React, { useState, useEffect} from "react";
 import ReactDOMClient from "react-dom/client";
-import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import axios from "axios";
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import { BooksReading } from "./books_reading/books_reading.jsx";
 import { SignIn } from "./sign_in/SignIn.jsx";
-import { MainPage } from "./main_page/MainPage.jsx";;
-import './tailwind.css';
+import { MainPage } from "./main_page/MainPage.jsx";
 import './utils/i18n.js';
+import './tailwind.css';
+import './index.css';
+import './chat/globalStyles.css';
+import {ThemeProvider} from "./chat/context/ThemeContext";
+import 'react-toastify/dist/ReactToastify.css';
+import App from "./chat/App";
 
 
 axios.defaults.xsrfCookieName = "csrftoken";

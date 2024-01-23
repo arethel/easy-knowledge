@@ -3,7 +3,7 @@ import { Page } from "./Page/Page.jsx";
 import Button from '@mui/material/Button';
 import getBook from '../../../utils/utils.js'
 import "./style.css";
-import {CloseSideBarIcon, OpenSideBarIcon} from "../../../chat/svg";
+import {CloseSideBarIcon, OpenSideBarIcon} from "../../../svg";
 import Tooltip from "../../../chat/components/Tooltip";
 
 export const TopBar = ({
