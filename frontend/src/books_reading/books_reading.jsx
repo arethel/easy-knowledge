@@ -21,6 +21,8 @@ export const BooksReading = ({ userData, client }) => {
     const test = useRef(null);
     const tests = useRef(null);
 
+    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
     const [active, setActive] = useState(false);
     
     const [sectionName, setSectionName] = useState({id: 0, name: "Section Name"});
@@ -29,6 +31,10 @@ export const BooksReading = ({ userData, client }) => {
     const [booksInFolder, setBooksInFolder] = useState(booksInFolder_init);
     
     const [updateInfo, setUpdateInfo] = useState(true);
+
+    const toggleSidebar = () => {
+        setIsSidebarOpen(!isSidebarOpen);
+    };
     
     useEffect(() => {
         const fetchBooksData = async () => {
@@ -62,21 +68,23 @@ export const BooksReading = ({ userData, client }) => {
 
     return (
         <div className="book-page-container">
-            <SideBar
-                booksDictionary={booksInFolder}
-                setBooksDictionary={setBooksInFolder}
-                settingsSetActive={setActive}
-                pagesDictionary={openedBooks}
-                setPagesDictionary={setOpenedBooks}
-                setTestsPanel={setTestsPanel}
-                setBook_id={setBook_id}
-                sectionName={sectionName}
-                setUpdateInfo={setUpdateInfo}
-                updateInfo={updateInfo}
-                client={client}
-                loadedEpubs={loadedEpubs}
-                setLoadedEpubs={setLoadedEpubs}
-            />
+            {isSidebarOpen && (
+                <SideBar
+                    booksDictionary={booksInFolder}
+                    setBooksDictionary={setBooksInFolder}
+                    settingsSetActive={setActive}
+                    pagesDictionary={openedBooks}
+                    setPagesDictionary={setOpenedBooks}
+                    setTestsPanel={setTestsPanel}
+                    setBook_id={setBook_id}
+                    sectionName={sectionName}
+                    setUpdateInfo={setUpdateInfo}
+                    updateInfo={updateInfo}
+                    client={client}
+                    loadedEpubs={loadedEpubs}
+                    setLoadedEpubs={setLoadedEpubs}
+                />
+            )}
             <div className="main-container">
                 <TopBar
                     booksDictionary={openedBooks}
@@ -88,6 +96,8 @@ export const BooksReading = ({ userData, client }) => {
                     client={client}
                     loadedEpubs={loadedEpubs}
                     setLoadedEpubs={setLoadedEpubs}
+                    isSidebarOpen={isSidebarOpen}
+                    toggleSidebar={toggleSidebar}
                 />
                 <div className="book-area">
                     <Logo />
