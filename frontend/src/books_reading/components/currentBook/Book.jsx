@@ -7,9 +7,19 @@ import { EndOfParagraph } from "./endOfParagraph/EndOfParagraph.jsx";
 import { NewChapter } from "./newChapter/NewChapter";
 import { PdfViewer } from "./pdfViewer/PdfViewer.jsx";
 
+import { BookMenu } from "./menu/BookMenu.jsx"
+import {
+    useContextMenu,
+} from "react-contexify";
+
+import { pageNavigationPlugin } from '@react-pdf-viewer/page-navigation';
+import '@react-pdf-viewer/page-navigation/lib/styles/index.css';
 
 export const Book = ({ book_id, client, loadedEpubs }) => {
     const [showPDF, setShowPDF] = useState(false);
+    
+    const pageNavigationPluginInstance = pageNavigationPlugin();
+    const { CurrentPageInput, NumberOfPages } = pageNavigationPluginInstance;
     
     const [paragraphs, setParagraphs] = useState([]);
     const [pages, setPages] = useState(0);
@@ -45,7 +55,7 @@ export const Book = ({ book_id, client, loadedEpubs }) => {
             lastPage.current = currentPage;
             const response = await client.post(`api/book/info/`, { book_id: book_id, page: currentPage });
             if (response.data.error === 0) {
-                console.log("Book page saved");
+                console.log("Book page saved", currentPage);
             }
         } catch (error) {
             console.error("Error saving book page:", error);
@@ -97,6 +107,8 @@ export const Book = ({ book_id, client, loadedEpubs }) => {
         return () => { };
     }, [book_id, loadedEpubs]);
     
+    const bookRef = useRef(null);
+    
     // useEffect(() => {
     //     if (loadedEpubs[book_id] === undefined) return () => { };
         
@@ -107,34 +119,50 @@ export const Book = ({ book_id, client, loadedEpubs }) => {
     //     return () => { };
     // }, [currentPage]);
     
-    // const [constantHeight, setConstantHeight] = useState("960px");
-    // const sideId = "side-bar";
-    // const topId = "top-bar";
-    // const resizeObserver = useRef(null);
+    const [constantHeight, setConstantHeight] = useState("960px");
+    const [TopBarWidth, setTopBarWidth] = useState("1000px");
+    const sideId = "side-bar";
+    const topId = "top-bar";
+    const resizeObserver = useRef(null);
+    const resizeObserver2 = useRef(null);
 
-    // useEffect(() => {
-    //     const elementToWatch = document.getElementById(sideId);
-    //     const elementToWatch2 = document.getElementById(topId);
+    useEffect(() => {
+        const elementToWatch = document.getElementById(sideId);
+        const elementToWatch2 = document.getElementById(topId);
 
-    //     if (elementToWatch && elementToWatch2) {
-    //         resizeObserver.current = new ResizeObserver((entries) => {
-    //             for (let entry of entries) {
-    //                 const height1 = entry.contentRect.height;
-    //                 const height2 = elementToWatch2.clientHeight;
-    //                 const newHeight = `${height1 - height2}px`;
-    //                 setConstantHeight(newHeight);
-    //             }
-    //         });
+        if (elementToWatch && elementToWatch2) {
+            resizeObserver.current = new ResizeObserver((entries) => {
+                for (let entry of entries) {
+                    const height1 = entry.contentRect.height;
+                    const height2 = elementToWatch2.clientHeight;
+                    const newHeight = `${height1 - height2}px`;
+                    setConstantHeight(newHeight);
+                }
+            });
 
-    //         resizeObserver.current.observe(elementToWatch);
-    //     }
+            resizeObserver.current.observe(elementToWatch);
+            
+            resizeObserver2.current = new ResizeObserver((entries) => {
+                for (let entry of entries) {
+                    const width2 = entry.contentRect.width;
+                    if (width2 < 1000) {
+                        setTopBarWidth(`${width2}px`);
+                    }
+                }
+            });
+            
+            resizeObserver2.current.observe(elementToWatch2);
+        }
 
-    //     return () => {
-    //         if (resizeObserver.current) {
-    //             resizeObserver.current.disconnect();
-    //         }
-    //     };
-    // }, [sideId, topId]);
+        return () => {
+            if (resizeObserver.current) {
+                resizeObserver.current.disconnect();
+            }
+            if (resizeObserver2.current) {
+                resizeObserver2.current.disconnect();
+            }
+        };
+    }, [sideId, topId]);
     
     // const getUpperVisibleDiv = () => {
     //     const content = scrollRef.current;
@@ -199,8 +227,12 @@ export const Book = ({ book_id, client, loadedEpubs }) => {
     //     };
     // }, []);
     
+    const { show } = useContextMenu({
+        id: 'book-menu',
+    });
+    
     return (
-        <div className="book" >
+        <div className="book" ref={bookRef} style={{ height: constantHeight }} onContextMenu={(e)=>{show({event: e, });}}>
             {/* <div className="paragraphs" ref={scrollRef} style={{ height: constantHeight }}>
                 {paragraphs.map((paragraph, index) => (
                     <Paragraph key={index} mainText={''} text={paragraph.content} page={Number(paragraph.page) + 1} />
@@ -208,9 +240,19 @@ export const Book = ({ book_id, client, loadedEpubs }) => {
                 {/*
                 <EndOfParagraph/>
                 <NewChapter text='New chapter'/>
-            </div>
-            <PagesCount page={booksInfo[book_id]===undefined? 0: currentPage} totalPages={pages} /> */}
-            <PdfViewer pdfUrl={loadedEpubs[book_id]===undefined? '': loadedEpubs[book_id]} />
+            </div>*/}
+            <PagesCount page={booksInfo[book_id]===undefined? 0: currentPage} totalPages={pages} /> 
+            <PdfViewer
+                pdfUrl={loadedEpubs[book_id] === undefined ? '' : loadedEpubs[book_id]}
+                currentPage={currentPage}
+                setCurrentPage={setCurrentPage}
+                pageNavigationPluginInstance={pageNavigationPluginInstance}
+                maxWidth_={TopBarWidth}
+                setPages={setPages}
+                pages={pages}
+            />
+            
+            <BookMenu/>
         </div>
     );
 };
