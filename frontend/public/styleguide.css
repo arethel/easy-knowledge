@@ -10,8 +10,13 @@
   --collection-1-blocks: rgba(57, 62, 70, 1);
   --collection-1-blocks-half-alpha: rgba(57, 62, 70, 0.5);
   --collection-1-font-1: rgba(92, 126, 146, 1);
+  --collection-1-blocks-no-a: 57, 62, 70;
+  /* --collection-1-font-1: yellow; */
   --collection-1-font-1-alpha: rgba(92, 126, 146, 0.1);
+  --collection-1-font-1-ha: rgba(92, 126, 146, 0.5);
   --collection-1-font-2: rgba(238, 238, 238, 1);
+  --collection-1-font-2-ha: rgba(238, 238, 238, 0.5);
+  --collection-1-font-3: rgb(87, 124, 145);
   --collection-1-gold: rgba(255, 187, 92, 1);
   --collection-1-red: rgba(224, 112, 112, 1);
   --main-font-font-family: "Inter-Regular", Helvetica;

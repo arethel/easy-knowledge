@@ -12,6 +12,10 @@
     overflow: hidden;
 }
 
+.button.off {
+    opacity: 0.5;
+}
+
 .side-bar .button.hide {
     opacity: 0;
     height: 0px;
@@ -20,7 +24,7 @@
 
 .button.expanded {
     /* height: 142px; */
-    height: 74px;
+    height: 108px;
     background-color: var(--collection-1-blocks);
 }
 

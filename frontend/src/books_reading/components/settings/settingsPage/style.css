@@ -19,7 +19,7 @@
     bottom: 0px;
     width: 95%;
     border: 0;
-    border-bottom: 2px solid var(--collection-1-blocks);
+    border-bottom: 1px solid var(--collection-1-blocks);
 }
 
 .settings .setting-name {

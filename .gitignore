@@ -3,6 +3,13 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# output folder and files
+media/
+utils/*/output/*
+*/output/*
+*.pdf
+tree.txt
+
 # C extensions
 *.so
 

@@ -1,7 +1,10 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+
 import "./style.css";
 
 export const SettingsTab = ({ settingsDict, onUpdateSettingsDict }) => {
+    const { t } = useTranslation();
     
     const updateSettings = (newSettings) => {
         onUpdateSettingsDict(newSettings);
@@ -27,7 +30,7 @@ export const SettingsTab = ({ settingsDict, onUpdateSettingsDict }) => {
                             className={`option`}
                             onClick={() => handleTabClick(tabName)}
                         >
-                            {tabName}
+                            {t(`${tabName.toLowerCase()}`)}
                         </div>
                     </div>
                 )

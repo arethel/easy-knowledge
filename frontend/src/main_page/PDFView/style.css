@@ -1,0 +1,19 @@
+.pdf-container {
+    width: 720px;
+    height: 884px;
+    overflow: auto;
+    position: relative;
+    background-color: #000;
+}
+
+.pdf-container.invisible {
+    display: none;
+}
+
+.pdf-container ::-webkit-scrollbar {
+    width: 5px;
+}
+
+.pdf-container ::-webkit-scrollbar-thumb {
+    background: #888;
+}

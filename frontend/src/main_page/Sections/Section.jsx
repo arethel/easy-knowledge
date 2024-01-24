@@ -1,0 +1,247 @@
+import React, { useState, useEffect } from "react";
+import { Book } from "./Book";
+import { AddBook } from "./AddBook";
+import { EditableText } from "./EditableText";
+import { Icon } from "../Icon";
+import DeleteIcon from '@mui/icons-material/Delete';
+import Skeleton from '@mui/material/Skeleton';
+import { MyCircularProgress } from './MyCircularProgress';
+import useWebSocket, { ReadyState } from "react-use-websocket"
+
+import { AlertDialog } from '../AlertDialog.jsx';
+
+import "./style.css";
+
+const VerticalLine = () => {
+    return <div className="vertical-line"></div>;
+};
+
+export const Section = ({ booksList, name, sectionId, handleDeleteSection, setType, client, globalLoading, setGlobalLoading, t }) => {
+  const [books, setBooks] = useState(booksList);
+  const [progress, setProgress] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [booksToAdd, setBooksToAdd] = useState([]);
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [bookActionConfirmation, setBookActionConfirmation] = useState({
+    id: null,
+    name: null,
+  });
+
+  const removeBook = (bookId) => {
+    const updatedBooks = books.filter(book => book.id !== bookId);
+    setBooks(updatedBooks);
+  };
+
+  const addNewBook = (file, newId, cover_image) => {
+    console.log(file);
+    const bookToAdd = {
+      title: file.name.replace(/\.[^/.]+$/, ""),
+      newId: newId,
+      cover_image: cover_image
+    };
+    setBooksToAdd([...booksToAdd, bookToAdd]);
+    const progressSocket = new WebSocket('ws://localhost:3030/ws/book-processing-info/');
+    
+    progressSocket.onmessage = function(e) {
+      setLoading(false);
+      const d = JSON.parse(e.data);
+      console.log(d)
+      const newProgress = d.filter(item => item.processed === false && item.book_section.section_id === sectionId);
+      setProgress(newProgress);
+      // d.forEach(item => {
+      //   if (item.processed && item.book_section.section_id === sectionId) {
+      //     const existingBook = books.some(book => book.id === item.book_id);
+      //     if (!existingBook && booksToAdd.length > 0) {
+      //       console.log("dsf", booksToAdd)
+      //       const [firstBookToAdd, ...restBooksToAdd] = booksToAdd;
+      //       console.log("restBooksToAdd", restBooksToAdd)
+      //       console.log("firstBookToAdd", firstBookToAdd)
+
+      //       setBooksToAdd(restBooksToAdd);
+      //       const newBook = {
+      //         id: firstBookToAdd.newId,
+      //         title: firstBookToAdd.title,
+      //         is_processed: true,
+      //         cover_image: firstBookToAdd.cover_image,
+      //         index: books.length,
+      //       };
+      //       setBooks([...books, newBook]);  
+      //     }
+      //   }
+      // });
+      // if (isBookProcessed) {
+      //   const newBook = {
+      //     id: newId,
+      //     title: file.name.replace(/\.[^/.]+$/, ""),
+      //     is_processed: true,
+      //     cover_image: cover_image,
+      //     index: books.length,
+      //   };
+      //   setGlobalLoading(prev => Math.max(prev - 1, 0));
+      //   setProgress([]);
+      // }
+    };
+
+    progressSocket.onclose = function() {
+      console.log('Socket closed');
+      const newBook = {
+        id: newId,
+        title: file.name.replace(/\.[^/.]+$/, ""),
+        is_processed: true,
+        cover_image: cover_image,
+        index: books.length,
+      };
+      setBooks(prevBooks => [...prevBooks, newBook]);  
+      setGlobalLoading(prev => Math.max(prev - 1, 0));
+      setProgress([]);
+    };
+
+    progressSocket.onerror = function(e) {
+      console.error('Socket error');
+      setGlobalLoading(prev => Math.max(prev - 1, 0));
+      setProgress([]);
+    };
+  };
+
+  const handleSectionNameChange = async (newName) => {
+    try {
+      const response = await client.post('api/section/change-section/', {
+        section_id: sectionId,
+        section_name: newName,
+      });
+
+      if (response.status === 200) {
+        // Handle the successful update
+      } else {
+        console.error('Failed to update section name');
+        alert('Failed to update section name');
+      }
+    } catch (error) {
+      console.error('Error during the API call', error);
+      alert('Error during the API call');
+    }
+  };
+
+  const moveBookInsideSection = async (sourceIndex, destinationIndex) => {
+    try {
+      const response = await client.post('api/book/change-index/', { section_id: sectionId, source_index: sourceIndex, destination_index: destinationIndex });
+
+      if (response.status === 200) {
+        console.log(sourceIndex, destinationIndex)
+        const updatedBooks = [...books];
+
+        [updatedBooks[sourceIndex], updatedBooks[destinationIndex]] = [updatedBooks[destinationIndex], updatedBooks[sourceIndex],];
+        [updatedBooks[sourceIndex].index, updatedBooks[destinationIndex].index] = [updatedBooks[destinationIndex].index, updatedBooks[sourceIndex].index,];
+
+        console.log('swap', updatedBooks);
+
+        setBooks(updatedBooks);
+      } else {
+        console.error('Failed to move the book');
+        alert('Failed to move the book');
+      }
+    } catch (error) {
+      console.error('Error during the API call', error);
+      alert('Error during the API call');
+    }
+  };
+
+  const handleDelete = () => {
+    handleDeleteSection(sectionId, name);
+  };
+
+  const handleBookActionConfirmation = (id, name) => {
+    setBookActionConfirmation({ id, name });
+    setAlertOpen(true);
+  };
+
+  const handleClose = async (confirmed) => {
+    setAlertOpen(false);
+    const { id, name } = bookActionConfirmation;
+
+    if (confirmed) {
+      try {
+        const response = await client.post('api/book/delete/', { book_id: id });
+        
+        if (response.status === 200) {
+          removeBook(id);
+        } else {
+          console.error('Failed to delete the book');
+          alert('Failed to delete the book');
+        }
+      } catch (error) {
+        console.error('Error during the API call', error);
+        alert('Error during the API call');
+      }
+    }
+    setBookActionConfirmation({ id: null, name: name });
+  };
+
+  return (
+    <div className="custom-container">
+      <AlertDialog open={alertOpen} handleClose={handleClose} actionConfirmation={bookActionConfirmation} type={'Book'} t={t}/>
+      <div className="section-header">
+        <EditableText initialText={name} sectionId={sectionId} onTextChange={handleSectionNameChange} />
+        <span className="trashbin-icon">
+          <div className="section-icon">
+          {/* <Icon name="trashbin" src={require("../../images/icon-trashbin.png")}/> */}
+            <DeleteIcon style={{ cursor: 'pointer' }} onClick={handleDelete}/>
+          </div>
+        </span>
+      </div>
+      <div className="custom-rectangle">
+        {books.map((book) => (
+            <React.Fragment key={book.id}>
+              <Book
+                key={book.id}
+                book={book}
+                sectionId={sectionId}
+                index={book.index}
+                moveBookInsideSection={moveBookInsideSection}
+                handleDeleteBook={handleBookActionConfirmation}
+                client={client}
+              />
+              <VerticalLine />
+            </React.Fragment>
+          ))}
+        {
+          (globalLoading > 0 && progress.length > 0) ? (
+            progress.map((progress_obj) => (
+              <React.Fragment key={progress_obj.book_id}>
+                <div className="vertical-container add-book loading">
+                  <div className="vertical-rectangle">
+                    <MyCircularProgress progress={progress_obj.percentage} determinate={true} />
+                    <div className="estimated-time">
+                      {progress_obj.time} {t('seconds')}
+                    </div>
+                  </div>
+                </div>
+                <VerticalLine />
+              </React.Fragment>
+            ))
+          ) : loading && (
+            <React.Fragment>
+              <div className="vertical-container add-book loading">
+                <div className="vertical-rectangle">
+                  <MyCircularProgress determinate={false} />
+                  <div className="estimated-time">
+                    {t('loading')}
+                  </div>
+                </div>
+              </div>
+              <VerticalLine />
+            </React.Fragment>
+          )
+        }
+        <AddBook
+          onFileSelect={addNewBook}
+          client={client}
+          sectionId={sectionId}
+          globalLoading={globalLoading}
+          setGlobalLoading={setGlobalLoading}
+          setLoading={setLoading}
+        />
+      </div>
+    </div>
+  );
+};

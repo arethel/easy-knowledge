@@ -1,0 +1,88 @@
+.test-element-div{
+    width: 100%;
+}
+
+.test-element {
+    background-color: var(--collection-1-block2);
+    border-radius: 5px;
+    height: 70px;
+    overflow: hidden;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    margin: 10px 0;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 10px;
+}
+
+.test-element .test-name {
+    color: var(--collection-1-font-2);
+    font-family: var(--big-font-font-family);
+    font-size: var(--big-font-font-size);
+    font-style: var(--big-font-font-style);
+    font-weight: var(--big-font-font-weight);
+    letter-spacing: var(--big-font-letter-spacing);
+    line-height: var(--big-font-line-height);
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+.tests .test-questions {
+    color: var(--collection-1-font-1);
+    font-family: var(--big-font-font-family);
+    font-size: var(--big-font-font-size);
+    font-style: var(--big-font-font-style);
+    font-weight: var(--big-font-font-weight);
+    letter-spacing: var(--big-font-letter-spacing);
+    line-height: var(--big-font-line-height);
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+.tests .test-date {
+    color: var(--collection-1-font-1);
+    font-family: var(--big-font-font-family);
+    font-size: var(--big-font-font-size);
+    font-style: var(--big-font-font-style);
+    font-weight: var(--big-font-font-weight);
+    letter-spacing: var(--big-font-letter-spacing);
+    line-height: var(--big-font-line-height);
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+.tests .test-element.progress {
+    opacity: 0.6;
+    cursor: default;
+}
+
+.tests .test-element.create {
+    cursor: default;
+}
+
+.ek-input.questions-number{
+    color: var(--collection-1-font-1-ha) !important;
+}
+
+.tests .test-element-create-string {
+    color: var(--collection-1-font-1);
+    font-family: var(--big-font-font-family);
+    font-size: var(--big-font-font-size);
+    font-style: var(--big-font-font-style);
+    font-weight: var(--big-font-font-weight);
+    letter-spacing: var(--big-font-letter-spacing);
+    line-height: var(--big-font-line-height);
+}
+
+.tests .test-element-create-box {
+    height: 100%;
+    margin: 0 20px;
+}

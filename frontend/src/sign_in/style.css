@@ -1,0 +1,164 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+.main-container-sign-in {
+  display: grid;
+  position: absolute;
+  grid-template-columns: 3fr 5fr;
+  height: 100%;
+  width: 100%;
+}
+
+.side-image-container {
+  display: flex;
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+}
+
+.side-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.sign-in-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.overlap-3 {
+  height: 199px;
+  left: 58px;
+  position: absolute;
+  top: 79px;
+  width: 573px;
+}
+
+.text-wrapper-4 {
+  color: var(--collection-1-font-2);
+  font-family: var(--main-font-font-family);
+  font-size: var(--main-font-font-size);
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: normal;
+  position: flex;
+  margin-left: 10px;
+  margin-top: 1px;
+}
+
+.welcome-to-easy {
+  color: transparent;
+  font-family: var(--main-font-font-family);
+  font-size: var(--main-font-font-size);
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: normal;
+  position: flex;
+  margin-top: 40px;
+  margin-left: 20px;
+  width: 567px;
+}
+
+.span {
+  color: var(--collection-1-font-2);
+}
+
+.text-wrapper-5 {
+  color: var(--collection-1-gold);
+}
+
+.text-wrapper-6 {
+  color: var(--collection-1-font-2);
+  font-family: var(--main-font-font-family);
+  font-size: var(--main-font-font-size);
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: normal;
+  position: flex;
+  margin-top: 10px;
+  margin-left: 20px;
+  width: 249px;
+}
+
+.easy-knowledge-logo {
+  height: 31px;
+  width: 34px;
+  position: flex;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  margin-left: 20px;
+}
+
+.side-image {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bg-image {
+  object-fit: cover;
+  max-width: 100%;
+  min-height: 120%;
+  border-top-right-radius: 50px;
+}
+
+.logo-text-container {
+  position: absolute;
+  top: 5%;
+  left: 4%;
+}
+
+.smartphone-container {
+  position: absolute;
+  left: 45%;
+  transform: translateX(-50%);
+  bottom: 6%;
+}
+
+.smartphone {
+  width: 110%;
+  height: auto;
+  margin-top: 10px;
+  align-self: center;
+}
+
+
+@media (max-width: 900px) {
+  .side-image-container,
+  .side-text,
+  .overlap-3,
+  .text-wrapper-4,
+  .welcome-to-easy,
+  .text-wrapper-6,
+  .logo-container,
+  .smartphone-container,
+  .smartphone {
+    display: none;
+  }
+  .main-container-sign-in {
+    display: block flex;
+  } 
+  .sign-in-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}

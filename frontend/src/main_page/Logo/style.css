@@ -1,0 +1,66 @@
+/* .logo-container{
+    position: relative;
+    display: flex;
+}
+
+.logo {
+    height: 100%;
+    position: fixed;
+    margin: auto;
+    display: flex;
+    width: 100%;
+    user-select: none;
+    align-items: center;
+    justify-content: center;
+    z-index: -2;
+}
+
+.logo .logo-text {
+    color: var(--collection-1-font-1);
+    font-family: var(--very-big-font-font-family);
+    font-size: var(--very-big-font-font-size);
+    font-style: var(--very-big-font-font-style);
+    font-weight: var(--very-big-font-font-weight);
+    letter-spacing: var(--very-big-font-letter-spacing);
+    line-height: var(--very-big-font-line-height);
+    opacity: 0.5;
+}
+
+.logo .easy-knowledge-logo {
+    height: 78px;
+    opacity: 0.5;
+    width: 86px;
+    margin-right: 15px;
+} */
+
+.logo-main {
+    height: 20%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 20px;
+}
+
+.logo-container-main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-main .logo-text-main {
+    color: var(--collection-1-font-1);
+    font-family: var(--very-big-font-font-family);
+    font-size: 27px;
+    font-style: var(--very-big-font-font-style);
+    font-weight: var(--very-big-font-font-weight);
+    letter-spacing: var(--very-big-font-letter-spacing);
+    line-height: var(--very-big-font-line-height);
+    margin-top: 5px;
+}
+
+.logo-main .easy-knowledge-logo-main {
+    height: 55px;
+    opacity: 0.5;
+    width: 48px;
+    margin-right: 15px;
+}
