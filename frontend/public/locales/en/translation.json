@@ -45,5 +45,6 @@
   "failed-to-create-section": "Failed to create section",
   "error-during-the-api-call": "Error during the API call",
   "seconds": "seconds",
-  "loading": "Loading"
+  "loading": "Loading",
+  "delete-chat": "Delete chat"
 }

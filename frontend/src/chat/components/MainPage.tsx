@@ -98,12 +98,6 @@ const MainPage = (client: any) => {
         }
     }, [messages]);
 
-    const handleSystemPromptChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
-        const newSystemPrompt = event.target.value;
-        setSystemPrompt(newSystemPrompt);
-    };
-
-
     const startConversation = async (message: string) => {
         const timestamp = new Date().toISOString();
         const shortenedText = message.substring(0, 25);
@@ -175,7 +169,7 @@ const MainPage = (client: any) => {
         } as ChatMessage, ...updatedMessages];
         const message: string = "Some placeholder text to answer user";
         setLoading(false);
-        addMessage(Role.Assistant, MessageType.Error, message);
+        addMessage(Role.Assistant, MessageType.Normal, message);
         // ChatService.sendMessageStreamed(messages, ChatService.getSelectedModelId(), handleStreamedResponse)
         //     .then((response: ChatCompletion) => {
         //         // nop
@@ -241,10 +235,14 @@ const MainPage = (client: any) => {
             }
         });
     }
+
     const scrollToBottom = () => {
         const chatContainer = document.getElementById('chat-container'); // Replace with your chat container's actual ID
         if (chatContainer) {
-            chatContainer.scrollTop = chatContainer.scrollHeight;
+            chatContainer.scroll({
+                top: chatContainer.scrollHeight,
+                behavior: 'smooth'
+            });
         }
     };
 
@@ -267,30 +265,6 @@ const MainPage = (client: any) => {
                 <ToastContainer/>
                 <main
                     className="relative h-full w-full transition-width flex flex-col overflow-hidden items-stretch flex-1">
-                    {isNewConversation ? (
-                        // Render the "System" part for new conversations
-                        <div
-                            className="text-input-with-header chat-pg-instructions flex items-center justify-center m-5">
-                            <div className="text-input-header-subheading subheading"
-                                 style={{marginLeft: '4em'}}>{t('system')}
-                            </div>
-                            <div
-                                className="text-input-header-wrapper overflow-wrapper text-input flex items-center justify-center w-3/5">
-                                <textarea aria-label="Input"
-                                          style={{maxHeight: "200px", overflowY: "auto"}}
-                                          className="focus:ring-0 focus-visible:ring-0 outline-none shadow-none text-input text-input-lg text-input-full text-input-header-buffer"
-                                          placeholder={OPENAI_DEFAULT_SYSTEM_PROMPT}
-                                          value={systemPrompt}
-                                          onChange={handleSystemPromptChange}
-                                          onInput={(e: React.FormEvent<HTMLTextAreaElement>) => {
-                                              const target = e.target as HTMLTextAreaElement;
-                                              target.style.height = "auto";
-                                              target.style.height = target.scrollHeight + "px";
-                                          }}
-                                ></textarea>
-                            </div>
-                        </div>
-                    ) : null}
                     {/*<div className="flex-grow">*/}
                     <Chat chatBlocks={messages} onChatScroll={handleUserScroll} allowAutoScroll={allowAutoScroll}/>
                     {/*</div>*/}

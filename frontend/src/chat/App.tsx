@@ -5,15 +5,13 @@ import './App.css';
 import MainPage from "./components/MainPage";
 
 const App = () => {
-    return (
-      <I18nextProvider i18n={i18n}>
-        <div className="overflow-hidden w-full h-full relative flex z-0">
-            <div style={{ width: '50%', margin: "0 auto", border: "1px solid black" }}>
-                <MainPage />
-            </div>
-        </div>
-      </I18nextProvider>
-    );
+  return (
+    <I18nextProvider i18n={i18n}>
+      <div className="overflow-hidden w-full h-full relative flex z-0">
+        <MainPage />
+      </div>
+    </I18nextProvider>
+  );
 }
 
 export default App;
