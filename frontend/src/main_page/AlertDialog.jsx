@@ -12,19 +12,19 @@ export const AlertDialog = ({ open, handleClose, actionConfirmation, type, t }) 
     let title, description;
   
     if (type === 'Book') {
-      title = t("delete book");
+      title = t("delete-book");
       description = (
         <React.Fragment>
-          {t('are you sure you want to delete book')} 
+          {t('are-you-sure-you-want-to-delete-book')} 
           <span className='alert-element-name'>{name}</span>
           ?
         </React.Fragment>
       );
     } else if (type === 'Section') {
-      title = t("delete section");
+      title = t("delete-section");
       description = (
         <React.Fragment>
-          {t('are you sure you want to delete section')}  
+          {t('are-you-sure-you-want-to-delete-section')}  
           <span className='alert-element-name'>{name}</span>
            ?
         </React.Fragment>

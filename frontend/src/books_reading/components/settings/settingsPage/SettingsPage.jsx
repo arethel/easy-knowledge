@@ -22,7 +22,7 @@ export const SettingsPage = ({ settingsDict, onUpdateSettingsDict }) => {
             {Object.keys(settingsDict[settingsDict.selected]).map((settingName, index) => (
                 <div key={settingName}>
                 <div className={`row`} >
-                    <div className="setting-name">{t(`${settingName.toLowerCase()}`)}</div>
+                    <div className="setting-name">{t(`${settingName.toLowerCase().replace(' ', '-')}`)}</div>
                     <div className="dropdown-container">
                         <Dropdown
                             options={settingsDict[settingsDict.selected][settingName].values}

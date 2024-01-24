@@ -12,19 +12,9 @@ import { useTranslation } from "react-i18next";
 import './style.css'
 import MyAlert from "./MyAlert.jsx";
 
-const booksList = [
-  {id: 1, name: 'Book1 Title Very Very Very Long Title'},
-  {id: 2, name: 'Book2 Title'},
-  {id: 3, name: 'Book3 Title'},
-  {id: 4, name: 'Book4 Title'},
-];
-
 export const MainPage = ({ userData, client }) => {
   const sectionsContainerRef = useRef(null);
-  const [sections, setSections] = useState([
-    { id: 1, books: booksList, section_name: 'Artificial Intelligence' },
-    { id: 2, books: booksList, section_name: 'Design' },
-  ]);
+  const [sections, setSections] = useState([]);
   const [showSettings, setShowSettings] = useState(false);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -79,7 +69,7 @@ export const MainPage = ({ userData, client }) => {
   const handleCreateSection = async () => {
     try {
       const response = await client.post("api/section/", {
-        section_name: t("new section")
+        section_name: t("new-section")
       });
 
       if (response.data.error === 0) {
@@ -92,7 +82,7 @@ export const MainPage = ({ userData, client }) => {
       } else if (response.data.error === 2) {
         console.error("Limit exceeded: ", response.data.details);
         setOpenAlert(true);
-        setAlertMessage("Limit exceeded: " + response.data.details);
+        setAlertMessage(t("limit-exceeded") + response.data.details);
       } else {
         console.error("Failed to create section");
         setOpenAlert(true);
@@ -163,7 +153,7 @@ export const MainPage = ({ userData, client }) => {
             />
           ))}
         </div>
-        <Settings active={showSettings} setActive={setShowSettings}/>
+        <Settings active={showSettings} setActive={setShowSettings} client={client}/>
       </div>
     </DndProvider>
   );

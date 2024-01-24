@@ -10,6 +10,8 @@ from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404, redirect
 from django.conf import settings
 from urllib.parse import urlencode
+import logging
+log = logging.getLogger(__name__)
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .mixins import PublicApiMixin, ApiErrorsMixin
@@ -96,6 +98,18 @@ class Authentication(viewsets.ViewSet):
 class UserSettingsView(viewsets.ViewSet):
     authentication_classes = [authentication.SessionAuthentication]
     permission_classes = [permissions.IsAuthenticated]
+
+    def get_settings(self, request):
+        user = request.user
+        settings_instance = get_object_or_404(UserSettings, user=user)
+        settings_data = {
+            'receive_notifications': settings_instance.receive_notifications,
+            'theme': settings_instance.theme,
+            'language': settings_instance.language,
+            'text_size': settings_instance.text_size,
+            'text_font': settings_instance.text_font
+        }
+        return Response(settings_data)
     
     def change_settings(self, request):
         user = request.user
@@ -103,19 +117,19 @@ class UserSettingsView(viewsets.ViewSet):
 
         settings_instance.receive_notifications = request.data.get('receive_notifications', settings_instance.receive_notifications)
 
-        theme_choice = request.POST.get('theme')
+        theme_choice = request.data.get('theme')
         if theme_choice in dict(UserSettings.THEME_CHOICES):
             settings_instance.theme = theme_choice
 
-        language_choice = request.POST.get('language')
+        language_choice = request.data.get('language')
         if language_choice in dict(UserSettings.LANGUAGE_CHOICES):
             settings_instance.language = language_choice
 
-        text_size_choice = request.POST.get('text_size')
+        text_size_choice = request.data.get('text_size')
         if text_size_choice in dict(UserSettings.TEXT_SIZE_CHOICES):
             settings_instance.text_size = text_size_choice
 
-        text_font_choice = request.POST.get('text_font')
+        text_font_choice = request.data.get('text_font')
         if text_font_choice in dict(UserSettings.TEXT_FONT_CHOICES):
             settings_instance.text_font = text_font_choice
 

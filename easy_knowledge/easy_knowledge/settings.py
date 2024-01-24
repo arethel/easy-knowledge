@@ -214,6 +214,26 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+        'easy_knowledge': {  
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+    },
+}
+
 SITE_ID = 2
 
 LOGIN_REDIRECT_URL = '/'

@@ -108,7 +108,7 @@ export const BooksReading = ({ userData, client }) => {
                     />
                 </div>
             </div>
-            <Settings active={active} setActive={setActive} />
+            <Settings active={active} setActive={setActive} client={client} />
             <Tests
                 ref={tests}
                 test={test}

@@ -66,7 +66,7 @@ class UserSettings(models.Model):
     
     LANGUAGE_CHOICES = [
         ('English', 'English'),
-        ('Spanish', 'Spanish'),
+        ('Russian', 'Russian'),
     ]
     language = models.CharField(max_length=20, choices=LANGUAGE_CHOICES, default='English')
     
