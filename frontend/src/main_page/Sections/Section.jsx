@@ -2,10 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Book } from "./Book";
 import { AddBook } from "./AddBook";
 import { EditableText } from "./EditableText";
-import { Icon } from "../Icon";
 import DeleteIcon from '@mui/icons-material/Delete';
-import Skeleton from '@mui/material/Skeleton';
 import { MyCircularProgress } from './MyCircularProgress';
+import { useTranslation } from "react-i18next";
 import useWebSocket, { ReadyState } from "react-use-websocket"
 
 import { AlertDialog } from '../AlertDialog.jsx';
@@ -16,16 +15,15 @@ const VerticalLine = () => {
     return <div className="vertical-line"></div>;
 };
 
-export const Section = ({ booksList, name, sectionId, handleDeleteSection, setType, client, globalLoading, setGlobalLoading, t }) => {
+export const Section = ({ booksList, name, sectionId, handleDeleteSection, setType, client, globalLoading, setGlobalLoading }) => {
   const [books, setBooks] = useState(booksList);
-  const [progress, setProgress] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [booksToAdd, setBooksToAdd] = useState([]);
   const [alertOpen, setAlertOpen] = useState(false);
   const [bookActionConfirmation, setBookActionConfirmation] = useState({
     id: null,
     name: null,
   });
+  const { t } = useTranslation();
 
   const removeBook = (bookId) => {
     const updatedBooks = books.filter(book => book.id !== bookId);
@@ -34,73 +32,15 @@ export const Section = ({ booksList, name, sectionId, handleDeleteSection, setTy
 
   const addNewBook = (file, newId, cover_image) => {
     console.log(file);
-    const bookToAdd = {
+    const newBook = {
+      id: newId,
       title: file.name.replace(/\.[^/.]+$/, ""),
-      newId: newId,
-      cover_image: cover_image
+      is_processed: true,
+      cover_image: cover_image,
+      index: books.length,
     };
-    setBooksToAdd([...booksToAdd, bookToAdd]);
-    const progressSocket = new WebSocket('ws://localhost:3030/ws/book-processing-info/');
-    
-    progressSocket.onmessage = function(e) {
-      setLoading(false);
-      const d = JSON.parse(e.data);
-      console.log(d)
-      const newProgress = d.filter(item => item.processed === false && item.book_section.section_id === sectionId);
-      setProgress(newProgress);
-      // d.forEach(item => {
-      //   if (item.processed && item.book_section.section_id === sectionId) {
-      //     const existingBook = books.some(book => book.id === item.book_id);
-      //     if (!existingBook && booksToAdd.length > 0) {
-      //       console.log("dsf", booksToAdd)
-      //       const [firstBookToAdd, ...restBooksToAdd] = booksToAdd;
-      //       console.log("restBooksToAdd", restBooksToAdd)
-      //       console.log("firstBookToAdd", firstBookToAdd)
-
-      //       setBooksToAdd(restBooksToAdd);
-      //       const newBook = {
-      //         id: firstBookToAdd.newId,
-      //         title: firstBookToAdd.title,
-      //         is_processed: true,
-      //         cover_image: firstBookToAdd.cover_image,
-      //         index: books.length,
-      //       };
-      //       setBooks([...books, newBook]);  
-      //     }
-      //   }
-      // });
-      // if (isBookProcessed) {
-      //   const newBook = {
-      //     id: newId,
-      //     title: file.name.replace(/\.[^/.]+$/, ""),
-      //     is_processed: true,
-      //     cover_image: cover_image,
-      //     index: books.length,
-      //   };
-      //   setGlobalLoading(prev => Math.max(prev - 1, 0));
-      //   setProgress([]);
-      // }
-    };
-
-    progressSocket.onclose = function() {
-      console.log('Socket closed');
-      const newBook = {
-        id: newId,
-        title: file.name.replace(/\.[^/.]+$/, ""),
-        is_processed: true,
-        cover_image: cover_image,
-        index: books.length,
-      };
-      setBooks(prevBooks => [...prevBooks, newBook]);  
-      setGlobalLoading(prev => Math.max(prev - 1, 0));
-      setProgress([]);
-    };
-
-    progressSocket.onerror = function(e) {
-      console.error('Socket error');
-      setGlobalLoading(prev => Math.max(prev - 1, 0));
-      setProgress([]);
-    };
+    setBooks(prevBooks => [...prevBooks, newBook]);  
+    setGlobalLoading(prev => Math.max(prev - 1, 0));
   };
 
   const handleSectionNameChange = async (newName) => {
@@ -184,7 +124,6 @@ export const Section = ({ booksList, name, sectionId, handleDeleteSection, setTy
         <EditableText initialText={name} sectionId={sectionId} onTextChange={handleSectionNameChange} />
         <span className="trashbin-icon">
           <div className="section-icon">
-          {/* <Icon name="trashbin" src={require("../../images/icon-trashbin.png")}/> */}
             <DeleteIcon style={{ cursor: 'pointer' }} onClick={handleDelete}/>
           </div>
         </span>
@@ -205,21 +144,7 @@ export const Section = ({ booksList, name, sectionId, handleDeleteSection, setTy
             </React.Fragment>
           ))}
         {
-          (globalLoading > 0 && progress.length > 0) ? (
-            progress.map((progress_obj) => (
-              <React.Fragment key={progress_obj.book_id}>
-                <div className="vertical-container add-book loading">
-                  <div className="vertical-rectangle">
-                    <MyCircularProgress progress={progress_obj.percentage} determinate={true} />
-                    <div className="estimated-time">
-                      {progress_obj.time} {t('seconds')}
-                    </div>
-                  </div>
-                </div>
-                <VerticalLine />
-              </React.Fragment>
-            ))
-          ) : loading && (
+          (loading && (
             <React.Fragment>
               <div className="vertical-container add-book loading">
                 <div className="vertical-rectangle">
@@ -231,7 +156,7 @@ export const Section = ({ booksList, name, sectionId, handleDeleteSection, setTy
               </div>
               <VerticalLine />
             </React.Fragment>
-          )
+          ))
         }
         <AddBook
           onFileSelect={addNewBook}

@@ -137,7 +137,6 @@ export const MainPage = ({ userData, client }) => {
         <TopBar userData={userData} handleCreateSection={handleCreateSection} setShowSettings={setShowSettings} client={client} t={t}/>
         <AlertDialog open={open} handleClose={handleClose} actionConfirmation={actionConfirmation} type={"Section"} t={t}/>
         <Divider variant="middle" className="main-divider" />
-        {/* <Logo /> */}
         <div ref={sectionsContainerRef}> 
           {sections.map((section) => (
             <Section 
@@ -149,7 +148,6 @@ export const MainPage = ({ userData, client }) => {
               client={client}
               globalLoading={globalLoading}
               setGlobalLoading={setGlobalLoading}
-              t={t}
             />
           ))}
         </div>
