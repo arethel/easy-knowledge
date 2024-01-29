@@ -68,10 +68,12 @@ class Authentication(viewsets.ViewSet):
     
     def register(self, request):
         data = request.data
+        email_newsletter = data.get('email_newsletter')
         form = UserCreationForm(data)
         if form.is_valid():
             user = form.save()
             user_settings = UserSettings(user=user)
+            user_settings.receive_notifications = email_newsletter
             user_settings.save()
             user_limitations = UserLimitations(user=user)
             user_limitations.save()

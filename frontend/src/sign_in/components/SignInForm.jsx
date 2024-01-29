@@ -22,8 +22,9 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { makeStyles, withStyles } from '@mui/styles';
-import { ReactComponent as GoogleLogo } from '../../images/google-logo.svg';
-import axios from "axios";
+import Copyright from './Copyright';
+import MyAlert from '../../main_page//MyAlert';
+import { useTranslation } from "react-i18next";
 import "./style.css";
 
 const useStyles = makeStyles({
@@ -152,22 +153,12 @@ const defaultTheme = createTheme();
 
 export default function SignInForm( { client, setIsAuthenticated } ) {
   const [showPassword, setShowPassword] = React.useState(false);
+  const [loginError, setLoginError] = React.useState(false);
+  const [openAlert, setOpenAlert] = React.useState(false);
+  const [alertMessage, setAlertMessage] = React.useState("");
   const classes = useStyles();
-
   const navigate = useNavigate();
-
-  function Copyright(props) {
-    return (
-      <Typography className={classes.typography} variant="body2" color="text.secondary" align="center" {...props}>
-        {'Copyright © '}
-        <Link color="inherit" href="">
-          Easy Knowledge
-        </Link>{' '}
-        {new Date().getFullYear()}
-        {'.'}
-      </Typography>
-    );
-  }
+  const { t } = useTranslation();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -186,6 +177,9 @@ export default function SignInForm( { client, setIsAuthenticated } ) {
         navigate('/main')
       } else {
         console.error("Login failed:", response.data.details);
+        setAlertMessage("Login failed: email or password is incorrect");
+        setOpenAlert(true);
+        setLoginError(true);
       }
     } catch (error) {
       console.error("Error during Login:", error);
@@ -200,7 +194,8 @@ export default function SignInForm( { client, setIsAuthenticated } ) {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Container component="main" maxWidth="xs">
+      <MyAlert open={openAlert} setOpen={setOpenAlert} severity={"error"} message={alertMessage} t={t}/>
+      <Container component="main" maxWidth="xs" style={{ display: 'flex', flexDirection: 'column', height: '100vh', alignItems: 'center', justifyContent: "center" }}>
         <CssBaseline />
         <Box
           sx={{
@@ -217,20 +212,11 @@ export default function SignInForm( { client, setIsAuthenticated } ) {
             Sign in
           </Typography>
           <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-            {/* <CssTextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              autoFocus
-            /> */}
             <CssFormControl margin="normal" fullWidth variant="outlined">
               <InputLabel required htmlFor="email">Email Address</InputLabel>
               <OutlinedInput
                 required
+                error={loginError}
                 id="email"
                 name="email"
                 autoComplete="email"
@@ -239,17 +225,9 @@ export default function SignInForm( { client, setIsAuthenticated } ) {
               />
             </CssFormControl>
             <CssFormControl margin="normal" fullWidth variant="outlined">
-              <InputLabel required htmlFor="username">Username</InputLabel>
-              <OutlinedInput
-                required
-                id="username"
-                name="username"
-                label="Username"
-              />
-            </CssFormControl>
-            <CssFormControl margin="normal" fullWidth variant="outlined">
               <InputLabel required htmlFor="password">Password</InputLabel>
               <OutlinedInput
+                error={loginError}
                 id="password"
                 name="password"
                 autoComplete="password"
@@ -270,16 +248,12 @@ export default function SignInForm( { client, setIsAuthenticated } ) {
                 label="Password"
               />
             </CssFormControl>
-            <FormControlLabel
-              control={<Checkbox className={classes.checkbox} value="remember" color="primary" />}
-              label={<Typography className={classes.checkbox}>Remember me</Typography>}
-            />
             <Button
               className={classes.button}
               type="submit"
               fullWidth
               variant="contained"
-              // sx={{ mt: 3, mb: 2, backgroundColor: 'rgba(92, 126, 146, 1)', color: '#fff' }}
+              sx={{ mt: 3, mb: 2 }}
             >
               Sign In
             </Button>
@@ -295,37 +269,9 @@ export default function SignInForm( { client, setIsAuthenticated } ) {
                 </Link>
               </Grid>
             </Grid>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                my: 1,
-                width: '100%',
-              }}
-            >
-              <Typography
-                className={classes.typography}
-                component="h6"
-                variant="subtitle1"
-                sx={{ fontSize: 12, color: 'var(--collection-1-blocks) !important' }}
-              >
-                - OR -
-              </Typography>
-            </Box>
-            <Button
-              className={classes.buttonGoogle}
-              type="button"
-              fullWidth
-              variant="outlined"
-              startIcon={<GoogleLogo className="google-logo" />}
-              sx={{ pb: '10px', pt: '10px', textTransform: 'none', fontSize: '18px'}}
-            >
-              Sign in with Google
-            </Button>
           </Box>
         </Box>
-        <Copyright sx={{ mt: '50px', mb: '5px', color: 'var(--collection-1-blocks) !important' }} />
+        <Copyright />
       </Container>
     </ThemeProvider>
   );

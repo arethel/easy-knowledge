@@ -232,7 +232,7 @@ class BookView(viewsets.ViewSet):
         cover_image_path = request.build_absolute_uri(settings.MEDIA_URL + cover_image_relative_path)
         processed_book = ProcessedBook(book=book, user=user)
         processed_book.save()
-        process_book.delay(book.id)
+        # process_book.delay(book.id)
         return Response({'error': 0, 'book_id': book.id, 'processing': 0, 'cover_image': cover_image_path})
     
     def change_title(self, request):

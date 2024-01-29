@@ -22,6 +22,9 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { makeStyles, withStyles } from '@mui/styles';
+import Copyright from './Copyright';
+import MyAlert from '../../main_page//MyAlert';
+import { useTranslation } from "react-i18next";
 
 import { ReactComponent as GoogleLogo } from '../../images/google-logo.svg';
 import "./style.css";
@@ -152,22 +155,12 @@ const defaultTheme = createTheme();
 
 export default function SignUpForm({ client }) {
   const [showPassword, setShowPassword] = React.useState(false);
+  const [emailNewsletter, setEmailNewsletter] = React.useState(true);
+  const [openAlert, setOpenAlert] = React.useState(false);
+  const [alertMessage, setAlertMessage] = React.useState("");
   const classes = useStyles();
-
-  function Copyright(props) {
-    return (
-      <Typography className={classes.typography} variant="body2" color="text.secondary" align="center" {...props}>
-        {'Copyright © '}
-        <Link color="inherit" href="https://chat.openai.com/">
-          Easy Knowledge
-        </Link>{' '}
-        {new Date().getFullYear()}
-        {'.'}
-      </Typography>
-    );
-  }
-
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -179,6 +172,7 @@ export default function SignUpForm({ client }) {
         email: formData.get("email"),
         password1: formData.get("password"),
         password2: formData.get("confirm-password"),
+        email_newsletter: true,
       });
   
       if (response.data.error === 0) {
@@ -186,6 +180,8 @@ export default function SignUpForm({ client }) {
         navigate('/main')
       } else {
         console.error("Registration failed:", response.data.details);
+        setAlertMessage("Registration failed: password didn't match or email already exists");
+        setOpenAlert(true);
       }
     } catch (error) {
       console.error("Error during registration:", error);
@@ -200,7 +196,8 @@ export default function SignUpForm({ client }) {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Container component="main" maxWidth="xs">
+      <MyAlert open={openAlert} setOpen={setOpenAlert} severity={"error"} message={alertMessage} t={t}/>
+      <Container component="main" maxWidth="xs" style={{ display: 'flex', flexDirection: 'column', height: '100vh', alignItems: 'center', justifyContent: "center" }}>
         <CssBaseline />
         <Box
           sx={{
@@ -217,16 +214,6 @@ export default function SignUpForm({ client }) {
             Sign up
           </Typography>
           <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-            {/* <CssTextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              autoFocus
-            /> */}
             <CssFormControl margin="normal" fullWidth variant="outlined">
               <InputLabel required htmlFor="email">Email Address</InputLabel>
               <OutlinedInput
@@ -236,6 +223,15 @@ export default function SignUpForm({ client }) {
                 autoComplete="email"
                 label="Email Address"
                 autoFocus
+              />
+            </CssFormControl>
+            <CssFormControl margin="normal" fullWidth variant="outlined">
+              <InputLabel required htmlFor="username">Username</InputLabel>
+              <OutlinedInput
+                required
+                id="username"
+                name="username"
+                label="Username"
               />
             </CssFormControl>
             <CssFormControl margin="normal" fullWidth variant="outlined">
@@ -287,7 +283,13 @@ export default function SignUpForm({ client }) {
               />
             </CssFormControl>
             <FormControlLabel
-              control={<Checkbox className={classes.checkbox} value="remember" color="primary" />}
+              control={<Checkbox 
+                className={classes.checkbox} 
+                value="remember" 
+                color="primary" 
+                checked={emailNewsletter} 
+                onChange={(e) => setEmailNewsletter(e.target.checked)}
+              />}
               label={<Typography className={classes.checkbox} sx={{fontSize: '12px'}}>I want to receive marketing promotions and updates via email.</Typography>}
             />
             <Button
@@ -295,7 +297,7 @@ export default function SignUpForm({ client }) {
               type="submit"
               fullWidth
               variant="contained"
-              // sx={{ mt: 3, mb: 2, backgroundColor: 'rgba(92, 126, 146, 1)', color: '#fff' }}
+              sx={{ mt: 3, mb: 2, backgroundColor: 'rgba(92, 126, 146, 1)', color: '#fff' }}
             >
               Sign Up
             </Button>
@@ -306,36 +308,9 @@ export default function SignUpForm({ client }) {
                 </Link>
               </Grid>
             </Grid>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                my: 1,
-                width: '100%',
-              }}
-            >
-              <Typography
-                className={classes.typography}
-                component="h6"
-                variant="subtitle1"
-                sx={{ fontSize: 12, color: 'var(--collection-1-blocks) !important' }}
-              >
-                - OR -
-              </Typography>
-            </Box>
-            <Button
-              className={classes.buttonGoogle}
-              type="button"
-              fullWidth
-              variant="outlined"
-              startIcon={<GoogleLogo className="google-logo" />}
-              sx={{ pb: '10px', pt: '10px', textTransform: 'none', fontSize: '18px'}}
-            >
-              Sign up with Google
-            </Button>
           </Box>
         </Box>
+        <Copyright />
       </Container>
     </ThemeProvider>
   );
