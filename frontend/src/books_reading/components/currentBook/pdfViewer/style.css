@@ -15,4 +15,11 @@
 
 .rpv-core__inner-pages{
     overflow-x: hidden;
+    -webkit-user-drag: none;
+    user-select: none;
+}
+
+.rpv-core__text-layer-text{
+    user-select: none;
+    -webkit-user-drag: none;
 }

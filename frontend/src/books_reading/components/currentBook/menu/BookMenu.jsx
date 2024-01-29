@@ -6,6 +6,7 @@ import {
     useContextMenu,
 } from "react-contexify";
 
+import './style.css'
 import "react-contexify/dist/ReactContexify.css";
 
 const MENU_ID = "book-menu";
@@ -29,7 +30,7 @@ export const BookMenu = () => {
         // <div onContextMenu={show}>Right click inside the box</div>
         // <div onContextMenu={displayMenu}>Right click inside the box</div>
 
-        <Menu id={MENU_ID} preventDefaultOnKeydown={false}>
+        <Menu id={MENU_ID} preventDefaultOnKeydown={false} theme="dark">
             <Item onClick={handleItemClick}>Item 1</Item>
             <Item onClick={handleItemClick}>Item 2</Item>
             <Separator />

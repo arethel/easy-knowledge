@@ -5,13 +5,13 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-d
 import { BooksReading } from "./books_reading/books_reading.jsx";
 import { SignIn } from "./sign_in/SignIn.jsx";
 import { MainPage } from "./main_page/MainPage.jsx";
-// import './utils/i18n.js';
+import './utils/i18n.js';
 import './tailwind.css';
 import './index.css';
-import './chat/globalStyles.css';
-import {ThemeProvider} from "./chat/context/ThemeContext";
+// import './chat/globalStyles.css';
+// import {ThemeProvider} from "./chat/context/ThemeContext";
 import 'react-toastify/dist/ReactToastify.css';
-import App from "./chat/App";
+// import App from "./chat/App";
 
 
 axios.defaults.xsrfCookieName = "csrftoken";
@@ -56,7 +56,7 @@ const Index = () => {
         <Router>
             <Routes>
                 <Route path="/" element={isAuthenticated ? <Navigate to="/main" /> : <SignIn client={client} isSignIn={true} setIsAuthenticated={setIsAuthenticated}/>} />
-                <Route path="/chatgpt" element={isAuthenticated ? <ThemeProvider><App /></ThemeProvider> : <SignIn client={client} isSignIn={true} setIsAuthenticated={setIsAuthenticated}/>} />
+                {/* <Route path="/chatgpt" element={isAuthenticated ? <ThemeProvider><App /></ThemeProvider> : <SignIn client={client} isSignIn={true} setIsAuthenticated={setIsAuthenticated}/>} /> */}
                 <Route path="/books-reading" element={isAuthenticated ? <BooksReading userData={userData} client={client} /> : <SignIn client={client} isSignIn={true} setIsAuthenticated={setIsAuthenticated}/>} />
                 <Route path="/main" element={isAuthenticated ? <MainPage userData={userData} client={client} /> : <SignIn client={client} isSignIn={true} setIsAuthenticated={setIsAuthenticated}/>} />
                 <Route path="/sign-up" element={<SignIn client={client} isSignIn={false} setIsAuthenticated={setIsAuthenticated}/>} />

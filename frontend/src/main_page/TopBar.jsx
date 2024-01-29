@@ -11,7 +11,7 @@ export const TopBar = ({ userData, handleCreateSection, setShowSettings, client,
                 <button className="create-section-button" onClick={handleCreateSection}>
                     {t('create-new-section')}
                 </button>
-                <AccountMenu username={userData.username} setShowSettings={setShowSettings} client={client} t={t} />
+                <AccountMenu username={userData===null?'':userData.username} setShowSettings={setShowSettings} client={client} t={t} />
             </div>
         </div>
 );}
