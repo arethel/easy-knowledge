@@ -1,0 +1,8 @@
+.selection-rectangle{
+    position: absolute;
+    border: 1px solid rgba(0, 110, 255, 0.788);
+    background-color: rgba(0, 110, 255, 0.2);
+    z-index: 1;
+    pointer-events: none;
+    user-select: none;
+}

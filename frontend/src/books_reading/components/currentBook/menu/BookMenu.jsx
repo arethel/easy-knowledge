@@ -19,7 +19,12 @@ export const BookMenu = () => {
     function handleItemClick({ event, props, triggerEvent, data }) {
         console.log(event, props, triggerEvent, data);
     }
-
+    
+    function mark({ event, props }) {
+        
+        console.log(event, props);
+    }
+    
     function displayMenu(e) {
         show({
             event: e,
@@ -31,7 +36,7 @@ export const BookMenu = () => {
         // <div onContextMenu={displayMenu}>Right click inside the box</div>
 
         <Menu id={MENU_ID} preventDefaultOnKeydown={false} theme="dark">
-            <Item onClick={handleItemClick}>Item 1</Item>
+            <Item onClick={mark}>Mark</Item>
             <Item onClick={handleItemClick}>Item 2</Item>
             <Separator />
             <Item disabled>Disabled</Item>
