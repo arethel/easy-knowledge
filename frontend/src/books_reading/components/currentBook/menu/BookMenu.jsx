@@ -20,9 +20,134 @@ export const BookMenu = () => {
         console.log(event, props, triggerEvent, data);
     }
     
+    function calculateArea( props ) {
+        
+        const x = Math.min(props.startPosition.x, props.endPosition.x) / props.startPosition.width * 100
+        const width_ = Math.abs(props.startPosition.x - props.endPosition.x) / props.startPosition.width * 100
+        if (props.startPosition.page > props.endPosition.page) {
+            const temp = props.startPosition
+            props.startPosition = props.endPosition
+            props.endPosition = temp
+        }
+        
+        const areas = []
+        for (let i = props.startPosition.page; i <= props.endPosition.page; i++) {
+            let height_ = 100
+            let y = 0
+            if (i === props.startPosition.page && i < props.endPosition.page) {
+                height_ = (props.startPosition.height - props.startPosition.y) / props.startPosition.height * 100
+                y = props.startPosition.y / props.startPosition.height * 100
+            } else if (i === props.endPosition.page && i > props.startPosition.page) {
+                height_ = props.endPosition.y / props.startPosition.height * 100
+                y = 0
+            } else if (i === props.startPosition.page && i === props.endPosition.page) {
+                height_ = Math.abs(props.startPosition.y - props.endPosition.y) / props.startPosition.height * 100
+                y = Math.min(props.startPosition.y, props.endPosition.y) / props.startPosition.height * 100
+            }
+            
+            const area = {
+                height: height_,
+                width: width_,
+                left: x,
+                top: y,
+                pageIndex: i,
+            }
+            areas.push(area);
+        }
+        const highlight = {
+            areas: areas,
+            text: ''
+        }
+        return highlight
+    }
+    
+    const getTextInsideRectangle = (highlight) => {
+        let text = ''
+        for (let j = 0; j < highlight.areas.length; j++) {
+            const area = highlight.areas[j]
+            const page = area.pageIndex
+            const textsParent = document.querySelector('.rpv-core__text-layer[data-testid="core__text-layer-' + page + '"]')
+            const { clientWidth, clientHeight } = textsParent
+            const texts = textsParent.querySelectorAll('span')
+            for (let i = 0; i < texts.length; i++) {
+                const textElement = texts[i]
+                const { offsetLeft, offsetTop, offsetWidth, offsetHeight } = textElement
+                console.log(offsetLeft, offsetTop, offsetWidth, offsetHeight, clientWidth, clientHeight);
+                const left = offsetLeft / clientWidth * 100
+                const top = offsetTop / clientHeight * 100
+                const width = offsetWidth / clientHeight * 100
+                const height = offsetHeight / clientWidth * 100
+                console.log(left, top, width, height, area);
+                if (left >= area.left && left + width <= area.left + area.width && top >= area.top && top + height <= area.top + area.height) {
+                    text += textElement.textContent + ' '
+                }
+            }
+        }
+        return text
+    }
+    
     function mark({ event, props }) {
         
-        console.log(event, props);
+        
+        if (props.textHighlightProps) {
+            const textHighlightProps = props.textHighlightProps
+            console.log(textHighlightProps);
+            const newHighlightAreas = [...props.highlightAreas_]
+            const highlight = {
+                areas: textHighlightProps.highlightAreas,
+                text: textHighlightProps.selectedText
+            }
+            newHighlightAreas.push(highlight)
+            props.setHighlightAreas_(newHighlightAreas)
+        }
+        
+        if (props.startPosition !== null && props.endPosition !== null && props.showRectangle && props.textHighlightProps === undefined) {
+            const setHighlightAreas = props.setHighlightAreas_
+            const highlightAreas = props.highlightAreas_
+            const newHighlightAreas = [...highlightAreas]
+            const highlight = calculateArea(props);
+            highlight.text = getTextInsideRectangle(highlight);
+            console.log(highlight.text);
+            newHighlightAreas.push(highlight);
+            console.log(newHighlightAreas);
+            setHighlightAreas(newHighlightAreas)
+        }
+        
+        const selection = window.getSelection();
+        if (selection) {
+            selection.removeAllRanges();
+        }
+    }
+    
+    function unmark({ event, props }) {
+        const x_ = props.startPosition.x
+        const y_ = props.startPosition.y
+        const { height, width } = props.startPosition;
+        const page = props.startPosition.page;
+        const x = x_ / width * 100
+        const y = y_ / height * 100
+        
+        const highlightAreas = props.highlightAreas_
+        const newHighlightAreas = [...highlightAreas]
+        
+        
+        console.log(x, y, page, newHighlightAreas);
+        
+        for (let i = highlightAreas.length-1; i >=0; i--) {
+            const areas = highlightAreas[i]
+            let unmarked = false
+            for (let j = 0; j < areas.length; j++) {
+                const area = areas[j]
+                if (area.pageIndex === page && x >= area.left && x <= area.left + area.width && y >= area.top && y <= area.top + area.height) {
+                    newHighlightAreas.splice(i, 1)
+                    unmarked = true
+                    break;
+                }
+            }
+            if (unmarked) break;
+        }
+        props.setHighlightAreas_(newHighlightAreas)
+        
     }
     
     function displayMenu(e) {
@@ -37,7 +162,7 @@ export const BookMenu = () => {
 
         <Menu id={MENU_ID} preventDefaultOnKeydown={false} theme="dark">
             <Item onClick={mark}>Mark</Item>
-            <Item onClick={handleItemClick}>Item 2</Item>
+            <Item onClick={unmark}>Unmark</Item>
             <Separator />
             <Item disabled>Disabled</Item>
             <Separator />

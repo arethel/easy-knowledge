@@ -227,12 +227,8 @@ export const Book = ({ book_id, client, loadedEpubs }) => {
     //     };
     // }, []);
     
-    const { show } = useContextMenu({
-        id: 'book-menu',
-    });
-    
     return (
-        <div className="book" ref={bookRef} style={{ height: constantHeight }} onContextMenu={(e)=>{show({event: e, });}}>
+        <div className="book" ref={bookRef} style={{ height: constantHeight }} >
             {/* <div className="paragraphs" ref={scrollRef} style={{ height: constantHeight }}>
                 {paragraphs.map((paragraph, index) => (
                     <Paragraph key={index} mainText={''} text={paragraph.content} page={Number(paragraph.page) + 1} />

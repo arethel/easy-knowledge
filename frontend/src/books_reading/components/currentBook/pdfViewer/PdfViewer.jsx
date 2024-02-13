@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { Worker, Viewer, SpecialZoomLevel, PageLayout } from '@react-pdf-viewer/core';
-import { highlightPlugin, HighlightArea, SelectionData, RenderHighlightTargetProps } from '@react-pdf-viewer/highlight';
+import { Worker, Viewer, SpecialZoomLevel } from '@react-pdf-viewer/core';
+import { highlightPlugin, Trigger} from '@react-pdf-viewer/highlight';
 import '@react-pdf-viewer/highlight/lib/styles/index.css';
 import '@react-pdf-viewer/core/lib/styles/index.css';
 import './style.css';
@@ -41,15 +41,25 @@ export const PdfViewer = ({ pdfUrl, currentPage, setCurrentPage, maxWidth_, page
     
     const handleMouseDown = (e) => {
         if (e.srcElement.className !== 'rpv-core__text-layer') {
-            setShowRectangle(false);
+            let { offsetX, offsetY, layerX, layerY } = e;
+            const toElement = e.toElement;
+            offsetX += toElement.offsetLeft;
+            offsetY += toElement.offsetTop;
+            const { clientHeight, clientWidth } = e.srcElement.offsetParent;
+            const page = parseInt(e.srcElement.dataset.highlightTextPage);
+            setStartPosition({ x: offsetX, y: offsetY, page: page, rectX: layerX, rectY: layerY, height: clientHeight, width: clientWidth });
+            console.log({ x: offsetX, y: offsetY, page: page, rectX: layerX, rectY: layerY, height: clientHeight, width: clientWidth });
+            if (showRectangle)
+                setShowRectangle(false);
             return;
         }
-        setShowRectangle(true);
         const { offsetX, offsetY, layerX, layerY } = e;
-        const page = parseInt(e.srcElement.offsetParent.attributes[2].value);
         const { clientHeight, clientWidth } = e.srcElement;
-        setMouseDown(true);
+        const page = parseInt(e.srcElement.offsetParent.attributes[2].value);
         setStartPosition({ x: offsetX, y: offsetY, page: page, rectX: layerX, rectY: layerY, height: clientHeight, width: clientWidth });
+        console.log({ x: offsetX, y: offsetY, page: page, rectX: layerX, rectY: layerY, height: clientHeight, width: clientWidth });
+        setMouseDown(true);
+        setShowRectangle(true);
         setEndPosition(null);
     };
     
@@ -57,17 +67,22 @@ export const PdfViewer = ({ pdfUrl, currentPage, setCurrentPage, maxWidth_, page
         if (mouseDown === false) return;
         const { offsetX, offsetY, layerX, layerY } = e;
         const rectSize = Math.abs(startPosition.rectX - layerX) * Math.abs(startPosition.rectY - layerY);
-        if (rectSize < 1000) {
-            setMouseDown(false);
-            setShowRectangle(false);
-            return;
-        }
-        const page = parseInt(e.srcElement.offsetParent.attributes[2].value);
-        const { clientHeight, clientWidth } = e.srcElement;
+        
         const selection = window.getSelection();
         if (selection) {
             selection.removeAllRanges();
         }
+        
+        if (rectSize < 1000) {
+            if (mouseDown)
+                setMouseDown(false);
+            if (showRectangle)
+                setShowRectangle(false);
+            return;
+        }
+        const page = parseInt(e.srcElement.offsetParent.attributes[2].value);
+        const { clientHeight, clientWidth } = e.srcElement;
+        
         setMouseDown(false);
         setEndPosition({ x: offsetX, y: offsetY, page: page, rectX: layerX, rectY: layerY, height: clientHeight, width: clientWidth });
     };
@@ -92,9 +107,72 @@ export const PdfViewer = ({ pdfUrl, currentPage, setCurrentPage, maxWidth_, page
                     startPosition: startPosition,
                     endPosition: endPosition,
                     showRectangle: showRectangle,
+                    highlightAreas_: highlightAreas,
+                    setHighlightAreas_: setHighlightAreas,
                 },
             });
+        
+        if (highlightProps !== null) {
+            show({
+                event: e,
+                props: {
+                    textHighlightProps: textHighlightProps,
+                    setHighlightAreas_: setHighlightAreas,
+                    highlightAreas_: highlightAreas,
+                },
+            });
+            highlightProps = null;
+        }
+        
     };
+    
+    const [highlightAreas, setHighlightAreas] = useState([]);
+    
+    let highlightProps = null;
+    const [textHighlightProps, setTextHighlightProps] = useState({selectedText:null});
+    
+    const renderHighlights = (props) => {
+        // console.log(props);
+        return(
+        <div>
+                {highlightAreas.map((highlight, idx) => {
+                    return highlight.areas.map((area, index) => {
+                        if (area.pageIndex === props.pageIndex)
+                            return (
+                                <div
+                                    key={index}
+                                    className="highlight-area"
+                                    style={Object.assign(
+                                        {},
+                                        {
+                                            background: 'yellow',
+                                            opacity: 0.4,
+                                        },
+                                        props.getCssProperties(area, props.rotation)
+                                    )}
+                                />
+                            );
+                        
+                    });
+                })}
+        </div>
+    )};
+    
+    
+    const renderHighlightTarget = (props) => {
+        console.log('target');
+        highlightProps = props;
+        if (textHighlightProps.selectedText !== props.selectedText) {
+            setTextHighlightProps(props);
+        }
+    };
+    
+    const highlightPluginInstance = highlightPlugin({
+        renderHighlights,
+        renderHighlightTarget,
+        // trigger: Trigger.None,
+    });
+    
     
     useEffect(() => {
         const elements = Array.from(document.querySelectorAll('.rpv-core__text-layer'));
@@ -113,7 +191,7 @@ export const PdfViewer = ({ pdfUrl, currentPage, setCurrentPage, maxWidth_, page
                 element.removeEventListener('click', handleClick);
             });
         };
-    }, [documentUpdated, setDocumentUpdated, startPosition, setStartPosition, endPosition, setEndPosition]);
+    }, [documentUpdated, setDocumentUpdated, startPosition, setStartPosition, endPosition, setEndPosition, textHighlightProps]);
     
     useEffect(() => {
         const elements = Array.from(document.querySelectorAll('.rpv-core__text-layer-text'));
@@ -127,18 +205,28 @@ export const PdfViewer = ({ pdfUrl, currentPage, setCurrentPage, maxWidth_, page
         return () => { };
     }, [mouseDown]);
     
-    useEffect(() => {
-        console.log(startPosition, endPosition)
-        return () => { };
-    }, [endPosition]);
-    
     const pdfViewerRef = useRef(null);
     
     return (
-        <div className='pdf-viewer-container' style={{ maxWidth: maxWidth_ }} ref={pdfViewerRef}>
+        <div
+            className='pdf-viewer-container'
+            style={{ maxWidth: maxWidth_ }}
+            ref={pdfViewerRef}
+            onContextMenu={(e) => {
+                show({
+                    event: e,
+                    props: {
+                        startPosition: startPosition,
+                        endPosition: endPosition,
+                        showRectangle: showRectangle,
+                        highlightAreas_: highlightAreas,
+                        setHighlightAreas_: setHighlightAreas,
+                    },
+                });
+            }}>
             {pdfUrl === '' ?
                 null :
-                <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
+                <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js" >
                     <div className='viewer-container'>
                         <Viewer
                             fileUrl={pdfUrl}
@@ -146,7 +234,7 @@ export const PdfViewer = ({ pdfUrl, currentPage, setCurrentPage, maxWidth_, page
                             initialPage={currentPage}
                             defaultScale={SpecialZoomLevel.PageWidth}
                             theme='dark'
-                            plugins={[pageNavigationPluginInstance]}
+                            plugins={[pageNavigationPluginInstance, highlightPluginInstance]}
                             onDocumentLoad={(e) => { onDocumentLoad(e); }}
                         />
                     </div>
