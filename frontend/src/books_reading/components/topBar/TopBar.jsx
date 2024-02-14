@@ -10,6 +10,7 @@ export const TopBar = ({
   booksDictionary,
   setBooksDictionary,
   setTestsPanel,
+  setHighlightsPanel,
   setBook_id,
   client,
   setUpdateInfo,
@@ -126,6 +127,7 @@ export const TopBar = ({
           onClose={() => { closePage(bookName) }}
           shouldHide={shouldHide}
           onTests={(e) => openTests(bookName)}
+          onHighlights={(e) => setHighlightsPanel(true)}
         />
         
       })}

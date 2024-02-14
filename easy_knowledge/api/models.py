@@ -53,6 +53,7 @@ class ProcessedBook(models.Model):
     processing = models.IntegerField(default=0)
     time = models.IntegerField(default=0)
     page = models.IntegerField(default=0)
+    highlights = models.JSONField(default=list)
 
     def delete(self, *args, **kwargs):
         self.processed_file.delete(False)

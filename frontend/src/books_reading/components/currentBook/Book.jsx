@@ -15,7 +15,17 @@ import {
 import { pageNavigationPlugin } from '@react-pdf-viewer/page-navigation';
 import '@react-pdf-viewer/page-navigation/lib/styles/index.css';
 
-export const Book = ({ book_id, client, loadedEpubs }) => {
+export const Book = ({
+    book_id,
+    client,
+    loadedEpubs,
+    booksInfo,
+    setBooksInfo,
+    highlightAreas,
+    setHighlightAreas,
+    highlightPluginInstance,
+    setHighlightPluginInstance,
+    }) => {
     const [showPDF, setShowPDF] = useState(false);
     
     const pageNavigationPluginInstance = pageNavigationPlugin();
@@ -23,7 +33,6 @@ export const Book = ({ book_id, client, loadedEpubs }) => {
     
     const [paragraphs, setParagraphs] = useState([]);
     const [pages, setPages] = useState(0);
-    const [booksInfo, setBooksInfo] = useState({});
     
     const [currentPage, setCurrentPage] = useState(-1);
     const [openedPages, setOpenedPages] = useState({});
@@ -40,7 +49,7 @@ export const Book = ({ book_id, client, loadedEpubs }) => {
                 newBooksInfo[book_id] = response.data.book_info;
                 setBooksInfo(newBooksInfo);
             }
-            // console.log(response.data);
+            console.log(response.data);
             return response.data.book_info;
         } catch (error) {
             console.error("Error fetching book info:", error);
@@ -240,12 +249,19 @@ export const Book = ({ book_id, client, loadedEpubs }) => {
             <PagesCount page={booksInfo[book_id]===undefined? 0: currentPage} totalPages={pages} /> 
             <PdfViewer
                 pdfUrl={loadedEpubs[book_id] === undefined ? '' : loadedEpubs[book_id]}
+                book_id={book_id}
+                booksInfo={booksInfo}
+                setBooksInfo={setBooksInfo}
                 currentPage={currentPage}
                 setCurrentPage={setCurrentPage}
                 pageNavigationPluginInstance={pageNavigationPluginInstance}
                 maxWidth_={TopBarWidth}
                 setPages={setPages}
                 pages={pages}
+                client={client}
+                highlightAreas={highlightAreas}
+                setHighlightAreas={setHighlightAreas}
+                setHighlightPluginInstance={setHighlightPluginInstance}
             />
             
             <BookMenu/>

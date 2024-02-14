@@ -16,6 +16,7 @@ export const SideBar = ({
   pagesDictionary,
   setPagesDictionary,
   setTestsPanel,
+  setHighlightsPanel,
   setBook_id,
   sectionName,
   setUpdateInfo,
@@ -204,6 +205,7 @@ export const SideBar = ({
               onDelete={() => { deleteBook(bookName) }}
               shouldHide={shouldHide}
               onTests={(e) => openTests(bookName)}
+              onHighlights={(e) => setHighlightsPanel(true)}
               work={booksDictionary[bookName].processed === true || sectionName.id === -1}
             />
           })}

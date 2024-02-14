@@ -11,6 +11,8 @@ import "react-contexify/dist/ReactContexify.css";
 
 const MENU_ID = "book-menu";
 
+
+
 export const BookMenu = () => {
     const { show } = useContextMenu({
         id: MENU_ID,
@@ -54,9 +56,13 @@ export const BookMenu = () => {
             }
             areas.push(area);
         }
+        const currentDate = new Date();
+        const timestamp = currentDate.getTime();
         const highlight = {
             areas: areas,
-            text: ''
+            text: '',
+            id: timestamp,
+            color: 'yellow'
         }
         return highlight
     }
@@ -72,12 +78,12 @@ export const BookMenu = () => {
             for (let i = 0; i < texts.length; i++) {
                 const textElement = texts[i]
                 const { offsetLeft, offsetTop, offsetWidth, offsetHeight } = textElement
-                console.log(offsetLeft, offsetTop, offsetWidth, offsetHeight, clientWidth, clientHeight);
+                // console.log(offsetLeft, offsetTop, offsetWidth, offsetHeight, clientWidth, clientHeight);
                 const left = offsetLeft / clientWidth * 100
                 const top = offsetTop / clientHeight * 100
                 const width = offsetWidth / clientHeight * 100
                 const height = offsetHeight / clientWidth * 100
-                console.log(left, top, width, height, area);
+                // console.log(left, top, width, height, area);
                 if (left >= area.left && left + width <= area.left + area.width && top >= area.top && top + height <= area.top + area.height) {
                     text += textElement.textContent + ' '
                 }
@@ -86,19 +92,44 @@ export const BookMenu = () => {
         return text
     }
     
+    const sendHighlight = async (client, highlight, book_id) => {
+        try {
+            const response = await client.post(`api/book/highlight/`, {'book_id':book_id, 'highlight':highlight});
+            if (response.data.error === 0) {
+                console.log("Highlight saved", highlight);
+            }
+        } catch (error) {
+            console.error("Error saving highlight:", error);
+        }
+    }
+    
+    const deleteHighlight = async (client, highlight, book_id) => {
+        try {
+            const response = await client.post(`api/book/highlight/delete/`, {'book_id':book_id, 'highlight_id':highlight.id});
+            if (response.data.error === 0) {
+                console.log("Highlight deleted", highlight);
+            }
+        } catch (error) {
+            console.error("Error deleting highlight:", error);
+        }
+    }
+    
     function mark({ event, props }) {
-        
-        
         if (props.textHighlightProps) {
             const textHighlightProps = props.textHighlightProps
-            console.log(textHighlightProps);
+            // console.log(textHighlightProps);
             const newHighlightAreas = [...props.highlightAreas_]
+            const currentDate = new Date();
+            const timestamp = currentDate.getTime();
             const highlight = {
                 areas: textHighlightProps.highlightAreas,
-                text: textHighlightProps.selectedText
+                text: textHighlightProps.selectedText,
+                id: timestamp,
+                color: 'yellow'
             }
             newHighlightAreas.push(highlight)
             props.setHighlightAreas_(newHighlightAreas)
+            sendHighlight(props.client_, highlight, props.book_id_)
         }
         
         if (props.startPosition !== null && props.endPosition !== null && props.showRectangle && props.textHighlightProps === undefined) {
@@ -107,10 +138,11 @@ export const BookMenu = () => {
             const newHighlightAreas = [...highlightAreas]
             const highlight = calculateArea(props);
             highlight.text = getTextInsideRectangle(highlight);
-            console.log(highlight.text);
+            // console.log(highlight.text);
             newHighlightAreas.push(highlight);
-            console.log(newHighlightAreas);
+            // console.log(newHighlightAreas);
             setHighlightAreas(newHighlightAreas)
+            sendHighlight(props.client_, highlight, props.book_id_)
         }
         
         const selection = window.getSelection();
@@ -134,7 +166,7 @@ export const BookMenu = () => {
         console.log(x, y, page, newHighlightAreas);
         
         for (let i = highlightAreas.length-1; i >=0; i--) {
-            const areas = highlightAreas[i]
+            const areas = highlightAreas[i].areas
             let unmarked = false
             for (let j = 0; j < areas.length; j++) {
                 const area = areas[j]
@@ -144,7 +176,10 @@ export const BookMenu = () => {
                     break;
                 }
             }
-            if (unmarked) break;
+            if (unmarked) {
+                deleteHighlight(props.client_, highlightAreas[i], props.book_id_)
+                break;
+            }
         }
         props.setHighlightAreas_(newHighlightAreas)
         

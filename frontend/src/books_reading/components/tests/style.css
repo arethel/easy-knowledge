@@ -28,7 +28,7 @@
 }
 
 .tests .panel {
-    background-color: var(--collection-1-block2);
+    background-color: var(--collection-1-bg2);
     border-radius: 20px;
     box-shadow: 15px 15px 4px #00000040;
     height: 90%;
@@ -76,7 +76,7 @@
 }
 
 .tests .panel-BG {
-    background-color: var(--collection-1-bg);
+    background-color: var(--collection-1-bg2);
     border-radius: 20px;
     overflow: hidden;
     display: flex;
@@ -139,3 +139,11 @@
     height: 100%
 }
 
+.tests ::-webkit-scrollbar {
+    width: 10px;
+}
+  
+.tests ::-webkit-scrollbar-thumb {
+    background: var(--collection-1-block2);
+    border-radius: 10px;
+}

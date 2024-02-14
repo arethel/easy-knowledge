@@ -1,4 +1,4 @@
-.test {
+.highlights {
     position: absolute;
     height: 100%;
     left: 0;
@@ -12,12 +12,12 @@
     z-index: 2;
 }
 
-.test.hide{
+.highlights.hide{
     visibility: hidden;
     opacity: 0;
 }
 
-.test .BG {
+.highlights .BG {
     background-color: var(--collection-1-bg);
     height: 100%;
     left: 0;
@@ -27,7 +27,7 @@
     width: 100%;
 }
 
-.test .panel {
+.highlights .panel {
     background-color: var(--collection-1-bg2);
     border-radius: 20px;
     box-shadow: 15px 15px 4px #00000040;
@@ -42,7 +42,7 @@
     padding-top: 10px;
 }
 
-.test .test-name {
+.highlights .highlights-name {
   color: var(--collection-1-font-1);
   font-family: var(--big-font-font-family);
   font-size: var(--big-font-font-size);
@@ -56,7 +56,7 @@
   margin-bottom: 10px;
 }
 
-.test .test-cross.under-icon-circle {
+.highlights .highlights-cross.under-icon-circle {
   height: 30px;
   right: 0px;
   position: absolute;
@@ -70,12 +70,12 @@
   align-items: center;
 }
 
-.test .cross .svg-container{
+.highlights .cross .svg-container{
   height: 20px;
   width: 20px;
 }
 
-.test .panel-BG {
+.highlights .panel-BG {
   background-color: var(--collection-1-bg2);
   border-radius: 20px;
   overflow: hidden;
@@ -90,7 +90,7 @@
   overflow-y: auto;
 }
 
-.test .panel-element{
+.highlights .panel-element{
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -99,7 +99,7 @@
   
 }
 
-.test .separator {
+.highlights .separator {
   background-color: var(--collection-1-block2);
   border-radius: 5px;
   height: 5px;
@@ -107,11 +107,11 @@
   margin: 20px 0px;
 }
 
-.test ::-webkit-scrollbar {
+.highlights ::-webkit-scrollbar {
   width: 10px;
 }
 
-.test ::-webkit-scrollbar-thumb {
+.highlights ::-webkit-scrollbar-thumb {
   background: var(--collection-1-block2);
   border-radius: 10px;
 }

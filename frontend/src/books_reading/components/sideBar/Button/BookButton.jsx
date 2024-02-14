@@ -4,7 +4,7 @@ import { Button } from "../../reusableComponents/button/Button.jsx"
 import { ReactComponent as Dots } from '../../../../images/dots.svg';
 import "./style.css";
 
-export const BookButton = ({ className = '', buttonText, onClick, onProps, isProps, onTests, onShare, onDelete, shouldHide=false, propsBtn = true, imgSrc = null, work=true}) => {
+export const BookButton = ({ className = '', buttonText, onClick, onProps, isProps, onTests, onHighlights, onShare, onDelete, shouldHide=false, propsBtn = true, imgSrc = null, work=true}) => {
     
     return (
         <div className={`button ${isProps ? 'expanded' : ''} ${className}  ${shouldHide ? 'hide' : ''} ${work ? '':'off'}`}>
@@ -31,7 +31,8 @@ export const BookButton = ({ className = '', buttonText, onClick, onProps, isPro
             {propsBtn && work?
                 <div className="props">
                     {/* <Button string="Chapter" /> */}
-                    <Button string="Tests" onClick={(e) => { e.stopPropagation(); onTests(); }}/>
+                    <Button string="Tests" onClick={(e) => { e.stopPropagation(); onTests(); }} />
+                    <Button string="Highlights" onClick={(e) => { e.stopPropagation(); onHighlights(); }} />
                     <Button string="Delete" onClick={(e) => { e.stopPropagation(); onDelete(); }}/>
                 </div> :
                 null

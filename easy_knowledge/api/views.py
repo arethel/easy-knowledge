@@ -161,7 +161,7 @@ class BookUserInfo(viewsets.ViewSet):
         if not book.processed:
             return Response({'error': 1, 'details': 'Book not processed'})
         processed_book = get_object_or_404(ProcessedBook, book=book, user=user)
-        book_info = {'title': book.title, 'page': processed_book.page}
+        book_info = {'title': book.title, 'page': processed_book.page, 'highlights': processed_book.highlights}
         return Response({'error': 0, 'book_info': book_info})
     
     def set_book_info(self, request):
@@ -177,6 +177,41 @@ class BookUserInfo(viewsets.ViewSet):
         if page is None:
             return Response({'error': 1, 'details': 'No page provided'})
         processed_book.page = page
+        processed_book.save()
+        return Response({'error': 0})
+    
+    def add_highlight(self, request):
+        book_id = request.data.get('book_id')
+        user = request.user
+        if book_id is None:
+            return Response({'error': 1, 'details': 'No book id provided'})
+        book = get_object_or_404(Book, id=book_id, user=user)
+        if not book.processed:
+            return Response({'error': 1, 'details': 'Book not processed'})
+        processed_book = get_object_or_404(ProcessedBook, book=book, user=user)
+        highlight = request.data.get('highlight')
+        if highlight is None:
+            return Response({'error': 1, 'details': 'No highlight provided'})
+        processed_book.highlights.append(highlight)
+        processed_book.save()
+        return Response({'error': 0})
+    
+    def delete_highlight(self, request):
+        book_id = request.data.get('book_id')
+        user = request.user
+        if book_id is None:
+            return Response({'error': 1, 'details': 'No book id provided'})
+        book = get_object_or_404(Book, id=book_id, user=user)
+        if not book.processed:
+            return Response({'error': 1, 'details': 'Book not processed'})
+        processed_book = get_object_or_404(ProcessedBook, book=book, user=user)
+        highlight_id = request.data.get('highlight_id')
+        if highlight_id is None:
+            return Response({'error': 1, 'details': 'No highlight provided'})
+        for highlight in processed_book.highlights:
+            if highlight['id'] == highlight_id:
+                processed_book.highlights.remove(highlight)
+                break
         processed_book.save()
         return Response({'error': 0})
 

@@ -7,6 +7,7 @@ import { Book } from "./components/currentBook/Book.jsx";
 import { Settings } from "./components/settings/Settings.jsx";
 import { Tests } from "./components/tests/Tests.jsx";
 import { Test } from "./components/test/Test.jsx";
+import { Highlights } from "./components/highlights/Highlights.jsx";
 
 import "./style.css";
 
@@ -63,8 +64,12 @@ export const BooksReading = ({ userData, client }) => {
 
     const [testsPanel, setTestsPanel] = useState(false);
     const [testPanel, setTestPanel] = useState(false);
+    const [highlightsPanel, setHighlightsPanel] = useState(false);
+    const [highlightAreas, setHighlightAreas] = useState([]);
+    const [highlightPluginInstance, setHighlightPluginInstance] = useState(null);
     const [test_id, setTest_id] = useState(0);
     const [book_id, setBook_id] = useState(0);
+    const [booksInfo, setBooksInfo] = useState({});
 
     return (
         <div className="book-page-container">
@@ -76,6 +81,7 @@ export const BooksReading = ({ userData, client }) => {
                     pagesDictionary={openedBooks}
                     setPagesDictionary={setOpenedBooks}
                     setTestsPanel={setTestsPanel}
+                    setHighlightsPanel={setHighlightsPanel}
                     setBook_id={setBook_id}
                     sectionName={sectionName}
                     setUpdateInfo={setUpdateInfo}
@@ -90,6 +96,7 @@ export const BooksReading = ({ userData, client }) => {
                     booksDictionary={openedBooks}
                     setBooksDictionary={setOpenedBooks}
                     setTestsPanel={setTestsPanel}
+                    setHighlightsPanel={setHighlightsPanel}
                     setBook_id={setBook_id}
                     setUpdateInfo={setUpdateInfo}
                     updateInfo={updateInfo}
@@ -105,6 +112,12 @@ export const BooksReading = ({ userData, client }) => {
                         book_id={book_id}
                         client={client}
                         loadedEpubs={loadedEpubs}
+                        booksInfo={booksInfo}
+                        setBooksInfo={setBooksInfo}
+                        highlightAreas={highlightAreas}
+                        setHighlightAreas={setHighlightAreas}
+                        highlightPluginInstance={highlightPluginInstance}
+                        setHighlightPluginInstance={setHighlightPluginInstance}
                     />
                 </div>
             </div>
@@ -126,6 +139,13 @@ export const BooksReading = ({ userData, client }) => {
                 setActive={setTestPanel}
                 activateTests={setTestsPanel}
                 test_id={test_id}
+            />
+            <Highlights
+                active={highlightsPanel}
+                setActive={setHighlightsPanel}
+                book_info={booksInfo[book_id]}
+                highlightAreas={highlightAreas}
+                highlightPluginInstance={highlightPluginInstance}
             />
             <div className="bg"></div>
         </div>

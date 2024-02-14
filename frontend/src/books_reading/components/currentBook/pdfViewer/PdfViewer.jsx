@@ -12,7 +12,22 @@ import {
 
 import { Rectangle } from './selectRectangle/SelectRectangle.jsx';
 
-export const PdfViewer = ({ pdfUrl, currentPage, setCurrentPage, maxWidth_, pageNavigationPluginInstance, pages, setPages }) => {
+export const PdfViewer = ({
+    pdfUrl,
+    book_id,
+    setBooksInfo,
+    booksInfo,
+    currentPage,
+    setCurrentPage,
+    maxWidth_,
+    pageNavigationPluginInstance,
+    pages,
+    setPages,
+    client,
+    highlightAreas,
+    setHighlightAreas,
+    setHighlightPluginInstance
+    }) => {
     
     const { show } = useContextMenu({
         id: 'book-menu',
@@ -109,6 +124,8 @@ export const PdfViewer = ({ pdfUrl, currentPage, setCurrentPage, maxWidth_, page
                     showRectangle: showRectangle,
                     highlightAreas_: highlightAreas,
                     setHighlightAreas_: setHighlightAreas,
+                    book_id_: book_id,
+                    client_: client,
                 },
             });
         
@@ -119,6 +136,8 @@ export const PdfViewer = ({ pdfUrl, currentPage, setCurrentPage, maxWidth_, page
                     textHighlightProps: textHighlightProps,
                     setHighlightAreas_: setHighlightAreas,
                     highlightAreas_: highlightAreas,
+                    book_id_: book_id,
+                    client_: client,
                 },
             });
             highlightProps = null;
@@ -126,7 +145,11 @@ export const PdfViewer = ({ pdfUrl, currentPage, setCurrentPage, maxWidth_, page
         
     };
     
-    const [highlightAreas, setHighlightAreas] = useState([]);
+    useEffect(() => {
+        if (booksInfo[book_id] === undefined) return;
+        setHighlightAreas(booksInfo[book_id].highlights);
+        return () => { }
+    }, [booksInfo, book_id]);
     
     let highlightProps = null;
     const [textHighlightProps, setTextHighlightProps] = useState({selectedText:null});
@@ -160,7 +183,6 @@ export const PdfViewer = ({ pdfUrl, currentPage, setCurrentPage, maxWidth_, page
     
     
     const renderHighlightTarget = (props) => {
-        console.log('target');
         highlightProps = props;
         if (textHighlightProps.selectedText !== props.selectedText) {
             setTextHighlightProps(props);
@@ -173,6 +195,10 @@ export const PdfViewer = ({ pdfUrl, currentPage, setCurrentPage, maxWidth_, page
         // trigger: Trigger.None,
     });
     
+    useEffect(() => {
+        setHighlightPluginInstance(highlightPluginInstance);
+        return () => { }
+    }, []);
     
     useEffect(() => {
         const elements = Array.from(document.querySelectorAll('.rpv-core__text-layer'));
@@ -221,6 +247,8 @@ export const PdfViewer = ({ pdfUrl, currentPage, setCurrentPage, maxWidth_, page
                         showRectangle: showRectangle,
                         highlightAreas_: highlightAreas,
                         setHighlightAreas_: setHighlightAreas,
+                        book_id_: book_id,
+                        client_: client,
                     },
                 });
             }}>

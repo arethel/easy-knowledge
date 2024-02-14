@@ -6,7 +6,7 @@ import { Icon } from "../../reusableComponents/icons/Icons.jsx"
 import { ReactComponent as Dots } from '../../../../images/dots.svg';
 import { ReactComponent as Cross } from '../../../../images/cross.svg';
 
-export const Page = ({ bookName, isProps, onProps, isActive, onActivate, onClose, shouldHide, onTests}) => {
+export const Page = ({ bookName, isProps, onProps, isActive, onActivate, onClose, shouldHide, onTests, onHighlights}) => {
 
   useEffect(() => {
     const handleDocumentClick = (event) => {
@@ -29,7 +29,8 @@ export const Page = ({ bookName, isProps, onProps, isActive, onActivate, onClose
       </div>
       <div className="props">
         {/* <Button string="Chapter" /> */}
-        <Button string="Tests" onClick={onTests}/>
+        <Button string="Tests" onClick={onTests} />
+        <Button string="Highlights" onClick={onHighlights} />
         {/* <Button string="Delete" /> */}
       </div>
     </div>
