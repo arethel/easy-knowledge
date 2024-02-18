@@ -13,14 +13,14 @@ import './index.css';
 import 'react-toastify/dist/ReactToastify.css';
 // import App from "./chat/App";
 
-
+const URL = "localhost:3030";
 axios.defaults.xsrfCookieName = "csrftoken";
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
 axios.defaults.withCredentials = true;
 axios.defaults.withXSRFToken = true;
 
 const client = axios.create({
-    baseURL: "http://localhost:3030",
+    baseURL: 'http://'+URL,
     headers: {
         "Content-Type": "application/json",
     },
@@ -57,7 +57,7 @@ const Index = () => {
             <Routes>
                 <Route path="/" element={isAuthenticated ? <Navigate to="/main" /> : <SignIn client={client} isSignIn={true} setIsAuthenticated={setIsAuthenticated}/>} />
                 {/* <Route path="/chatgpt" element={isAuthenticated ? <ThemeProvider><App /></ThemeProvider> : <SignIn client={client} isSignIn={true} setIsAuthenticated={setIsAuthenticated}/>} /> */}
-                <Route path="/books-reading" element={isAuthenticated ? <BooksReading userData={userData} client={client} /> : <SignIn client={client} isSignIn={true} setIsAuthenticated={setIsAuthenticated}/>} />
+                <Route path="/books-reading" element={isAuthenticated ? <BooksReading userData={userData} client={client} URL={URL} /> : <SignIn client={client} isSignIn={true} setIsAuthenticated={setIsAuthenticated}/>} />
                 <Route path="/main" element={isAuthenticated ? <MainPage userData={userData} client={client} /> : <SignIn client={client} isSignIn={true} setIsAuthenticated={setIsAuthenticated}/>} />
                 <Route path="/sign-up" element={<SignIn client={client} isSignIn={false} setIsAuthenticated={setIsAuthenticated}/>} />
                 <Route path="/sign-in" element={<SignIn client={client} isSignIn={true} setIsAuthenticated={setIsAuthenticated}/>} />

@@ -3,7 +3,7 @@ import { Input } from "../../reusableComponents/input/Input.jsx";
 import { Button } from "../../reusableComponents/button/Button.jsx";
 import "./style.css";
 
-export const TestElement = ({ elType, onClick, testName = 'test name', questions = 20, date = '31.12.2023', progress = 0 }) => {
+export const TestElement = ({ elType, onClick, testName = 'test name', questions = 20, date = '31.12.2023', progress = 0, client=null, book_id = 0, updateWs = null, setUpdateWs = null }) => {
     
     const [newTestName, setNewTestName] = useState(testName);
     const [newQuestions, setNewQuestions] = useState(questions);
@@ -16,9 +16,24 @@ export const TestElement = ({ elType, onClick, testName = 'test name', questions
         setNewQuestions(value);
     }
     
-    const onCreate = (e) => {
+    const createTest = async (book_id, qa_count, name) => {
+        try {
+            const response = await client.post(`api/qa/test/`, {'book_id':book_id, 'qa_count':qa_count, 'name':name});
+            if (response.data.error === 0) {
+                console.log("Test created", response.data);
+            }
+            else {
+                console.error("Error creating test:", response.data);
+            }
+        } catch (error) {
+            console.error("Error creating test:", error);
+        }
+    }
+    
+    const onCreate = async (e) => {
         e.stopPropagation();
-        console.log('create');
+        await createTest(book_id, newQuestions, newTestName);
+        setUpdateWs(!updateWs);
     }
     
     return (
@@ -33,7 +48,7 @@ export const TestElement = ({ elType, onClick, testName = 'test name', questions
                 <div className="test-element progress">
                     <div className="test-name">{testName}</div>
                     <div className="test-questions">{questions}</div>
-                    <div className="test-date">{progress+'%'}</div>
+                    <div className="test-date">{parseInt(progress)+'%'}</div>
                 </div>
             ) : elType === "create" ? (
                 <div className="test-element create">

@@ -4,11 +4,15 @@ import { ReactComponent as Cross } from '../../../images/cross.svg';
 import { Question } from "./question/Question.jsx";
 import "./style.css";
 
-const Test = forwardRef(({test_id, tests, activateTests, active, setActive}, ref) => {
+const Test = forwardRef(({test_id, tests, activateTests, active, setActive, client, highlightPluginInstance}, ref) => {
     
-    const closeTest= useCallback(() => {
+    const closeTest = useCallback(() => {
         setActive(false);
         activateTests(true);
+    }, [setActive]);
+    
+    const closeTest2 = useCallback(() => {
+        setActive(false);
     }, [setActive]);
     
     const [questions, setQuestions] = useState({});
@@ -17,23 +21,20 @@ const Test = forwardRef(({test_id, tests, activateTests, active, setActive}, ref
         
         const fetchTest = async () => {
             try {
-                // const response = await axios.get('/api/tests');
-                setQuestions({
-                    0: { question: 'question 1', answer: 'answer 1', page: 1 },
-                    1: { question: 'question 2', answer: 'answer 2', page: 2 },
-                    2: { question: 'question 3', answer: 'answer 3', page: 3 },
-                    3: { question: 'question 4', answer: 'answer 4', page: 4 },
-                    4: { question: 'question 5', answer: 'answer 5', page: 5 },
-                    5: { question: 'question 6', answer: 'answer 6', page: 6 },
-                    6: { question: 'question 7', answer: 'answer 7', page: 7 },
-                    7: { question: 'question 8', answer: 'answer 8', page: 8 },
-                    8: { question: 'question 9', answer: 'answer 9', page: 9 },
-                    9: { question: 'question 10', answer: 'answer 10', page: 10 },
-                    10: { question: 'question 11', answer: 'answer 11', page: 11 },
-                    11: { question: 'question 12', answer: 'answer 12', page: 12 },
-                    12: { question: 'question 13', answer: 'answer 13', page: 13 },
-                    
-                });
+                const response = await client.get(`api/qa/test/${test_id}/`);
+                const newQuestions = {};
+                if (response.data.error === 0) {
+                    response.data.test.forEach((question_data, index) => {
+                        newQuestions[index] = {
+                            question: question_data.question,
+                            answer: question_data.answer,
+                            highlight: question_data.highlight,
+                            page: question_data.highlight.areas[0].pageIndex+1,
+                        };
+                    });
+                    setQuestions(newQuestions);
+                }
+                console.log(response.data);
             } catch (error) {
                 console.error('Error fetching tests:', error);
             }
@@ -65,6 +66,11 @@ const Test = forwardRef(({test_id, tests, activateTests, active, setActive}, ref
                                 quesiton={questions[quesiont_id].question}
                                 answer={questions[quesiont_id].answer}
                                 page={questions[quesiont_id].page}
+                                highlight={questions[quesiont_id].highlight}
+                                jumpToHighlightArea={highlightPluginInstance.jumpToHighlightArea}
+                                closeTest2={closeTest2}
+                                active={active}
+                                setActive={setActive}
                             />
                             {index < Object.keys(questions).length - 1 && <div className="separator" />}
                         </div>

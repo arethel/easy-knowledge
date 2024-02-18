@@ -1,13 +1,15 @@
-import React, { useState, useEffect, useRef, useCallback, forwardRef} from "react";
+import React, { useState, useEffect, useRef, useCallback, forwardRef } from "react";
 import "./style.css";
 import { Icon } from "../reusableComponents/icons/Icons.jsx"
 import { ReactComponent as Cross } from '../../../images/cross.svg';
 import { TestElement } from "./testElement/TestElement.jsx";
 
-const Tests = forwardRef(({booksDictionary, activateTest, setTestId, test, book_id=0, active = false, setActive = null}, ref) => {
+const Tests = forwardRef(({booksDictionary, activateTest, setTestId, test, client, URL, book_id=0, active = false, setActive = null}, ref) => {
     
     const [availableQuestions, setAvailableQuestions] = useState(0);
     const [testsList, setTestsList] = useState([]);
+    const [ws, setWs] = useState(null);
+    const [updateWs, setUpdateWs] = useState(true);
     
     const openTest = (test_id) => {
         setTestId(test_id);
@@ -23,21 +25,28 @@ const Tests = forwardRef(({booksDictionary, activateTest, setTestId, test, book_
     
     useEffect(() => {
         
-        const fetchTests = async () => {
-            try {
-                // const response = await axios.get('/api/tests');
-                setTestsList([
-                    { id: 1, elType: 'exist' },
-                    { id: 2, elType: 'in progress' },
-                    { id: 3, elType: 'exist' },
-                ]);
-            } catch (error) {
-                console.error('Error fetching tests:', error);
-            }
+        const connectWebSocket = () => {
+            const newWs = new WebSocket('ws://'+URL+'/ws/test-processing-info/'+book_id+'/');
+            newWs.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                const tests = data.tests;
+                tests.forEach((test) => {
+                    if (test.is_ready && test.progress === 100) {
+                        test.elType = 'exist';
+                    }
+                    else {
+                        test.elType = 'in progress';
+                    }
+                });
+                console.log(data);
+                setAvailableQuestions(data.limitations);
+                setTestsList(tests);
+            };
+            setWs(newWs);
         };
-
+        
         if (active) {
-            fetchTests();
+            connectWebSocket();
         }
         
         const handleClickOutside = (event) => {
@@ -56,9 +65,12 @@ const Tests = forwardRef(({booksDictionary, activateTest, setTestId, test, book_
         }
     
         return () => {
+            if (ws !== null) {
+                ws.close();
+            }
             document.removeEventListener("click", handleClickOutside);
         };
-    }, [active, closeTests]);
+    }, [active, closeTests, updateWs, setUpdateWs]);
     
     return (
         <div className={`tests ${active?'' :'hide'}`}>
@@ -85,10 +97,18 @@ const Tests = forwardRef(({booksDictionary, activateTest, setTestId, test, book_
                                 key={test.id}
                                 elType={test.elType}
                                 onClick={() => openTest(test.id)}
+                                date={test.creation_date}
+                                questions={test.qa_count}
+                                testName={test.name}
+                                progress={test.progress}
                             />
                         ))}
                         < TestElement
                             elType='create'
+                            client={client}
+                            book_id={book_id}
+                            updateWs={updateWs}
+                            setUpdateWs={setUpdateWs}
                         />
                         <div className="questions-div">
                             <div className="questions-left">

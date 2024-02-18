@@ -1,7 +1,9 @@
+from email.policy import default
 from django.db import models
 from django.conf import settings
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
+from asgiref.sync import sync_to_async
 
 #todo: change the path
 def book_directory_path(instance, filename):
@@ -89,30 +91,31 @@ class Section(models.Model):
         verbose_name_plural = 'Sections'
 
 class QA(models.Model):
-    page = models.IntegerField()
-    block = models.IntegerField()
+    test = models.ForeignKey('Test', on_delete=models.CASCADE, related_name='qa', null=True, default=None)
     generated = models.BooleanField(default=False)
-    use = models.BooleanField(default=False)
-    book = models.ForeignKey(ProcessedBook, on_delete=models.CASCADE)
+    highlight = models.JSONField(default=dict)
+    question = models.TextField(default='')
+    answer = models.TextField(default='')
+    generation_task_id = models.CharField(max_length=200, default='')
 
     class Meta:
-        ordering = ['book']
         db_table = 'question_answers'
         verbose_name = 'QA'
         verbose_name_plural = "QA's"
 
 class Test(models.Model):
     book = models.ForeignKey(ProcessedBook, on_delete=models.CASCADE)
+    name = models.CharField(max_length=200, default='Test')
     creation_date = models.DateField(auto_now_add=True)
     qa_count = models.IntegerField(default=0)
-    qa = models.ManyToManyField(QA)
     is_ready = models.BooleanField(default=False)
+    generation_task_id = models.CharField(max_length=200, default='')
     
-    def get_progress(self):
-        progress = int(self.qa.filter(generated=True).count() / self.qa_count * 100)
+    async def get_progress(self):
+        progress = await sync_to_async(self.qa.filter(generated=True).count)() / self.qa_count * 100
         if progress == 100:
             self.is_ready = True
-            self.save()
+            await sync_to_async(self.save)()
         return progress
     
     class Meta:

@@ -18,7 +18,7 @@ const openedBooks_init = {
 const booksInFolder_init = {
 };
 
-export const BooksReading = ({ userData, client }) => { 
+export const BooksReading = ({ userData, client, URL }) => { 
     const test = useRef(null);
     const tests = useRef(null);
 
@@ -131,6 +131,8 @@ export const BooksReading = ({ userData, client }) => {
                 setActive={setTestsPanel}
                 activateTest={setTestPanel}
                 setTestId={setTest_id}
+                client={client}
+                URL={URL}
             />
             <Test
                 ref={test}
@@ -139,6 +141,8 @@ export const BooksReading = ({ userData, client }) => {
                 setActive={setTestPanel}
                 activateTests={setTestsPanel}
                 test_id={test_id}
+                client={client}
+                highlightPluginInstance={highlightPluginInstance}
             />
             <Highlights
                 active={highlightsPanel}

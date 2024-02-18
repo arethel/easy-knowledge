@@ -1,8 +1,8 @@
-import React, {useState, useRef} from "react";
+import React, {useState, useRef, useEffect} from "react";
 import { Button } from "../../reusableComponents/button/Button.jsx";
 import "./style.css";
 
-export const Question = ({ number, quesiton, answer, page}) => {
+export const Question = ({ number, quesiton, answer, page, highlight, jumpToHighlightArea, closeTest2, active, setActive}) => {
     const contentRef = useRef(null);
     const [showAnswer, setShowAnswer] = useState(false);
     
@@ -23,10 +23,21 @@ export const Question = ({ number, quesiton, answer, page}) => {
         expandHeight(!showAnswer);
     }
     
+    const onShowInBook = (area) => {
+        jumpToHighlightArea(area);
+        closeTest2();
+    }
+    
+    useEffect(() => {
+        setShowAnswer(false);
+        expandHeight(false);
+        return () => { }
+    }, [active, setActive]);
+    
     return (
         <div className="question">
             <p className="question-about">
-                {number + '. ' + quesiton}
+                {number + '.' + quesiton}
             </p>
             <p ref={contentRef} className={`answer ${ showAnswer? 'shown': ''}`}>
                 {answer}
@@ -35,7 +46,7 @@ export const Question = ({ number, quesiton, answer, page}) => {
                 <Button boxClasses="show-answer-box" stringClasses="show-answer-string" string={showAnswer? 'Hide answer': 'Show answer'} onClick={showAnswerHandler}/>
                 <div className="info">
                     <div className="page-info">{'Page ' + page}</div>
-                    <Button boxClasses="show-in-book-box" stringClasses="show-in-book-string" string='Show in book'/>
+                    <Button boxClasses="show-in-book-box" stringClasses="show-in-book-string" string='Show in book' onClick={()=>{onShowInBook(highlight.areas[0])}}/>
                 </div>
             </div>
         </div>

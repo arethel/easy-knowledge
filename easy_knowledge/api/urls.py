@@ -23,8 +23,8 @@ urlpatterns = [
 
     path('', include(router.urls)),
     
-    path('qa/', views.BookProcessing.as_view({'get': 'get_marked_for_qa', 'post': 'mark_for_qa'}), name='qa'),
-    path('qa/test/', views.BookProcessing.as_view({'get': 'get_test', 'post': 'create_test'}), name='test'),
+    path('qa/test/', views.BookProcessing.as_view({'post': 'create_test'}), name='test'),
+    path('qa/test/<int:test_id>/', views.BookProcessing.as_view({'get': 'get_test'}), name='get-test'),
     
     path('processed-books/', views.BookProcessing.as_view({'post': 'get_progress'}), name='get-progress'),
 

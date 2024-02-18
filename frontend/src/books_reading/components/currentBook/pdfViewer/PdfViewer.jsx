@@ -111,6 +111,7 @@ export const PdfViewer = ({
     };
     
     const handleClick = (e) => {
+        console.log('click');
         if (
             showRectangle &&
             !mouseDown &&

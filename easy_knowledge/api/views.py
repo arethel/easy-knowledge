@@ -451,34 +451,6 @@ class BookProcessing(viewsets.ViewSet):
         book = get_object_or_404(ProcessedBook, book_id=book_id, user=user)
         return Response({'error': 0, 'progress': book.processing})
     
-    def mark_for_qa(self, request):
-        book_id = request.data.get('book_id')
-        qa_info = request.data.get('qa_info')
-        user = request.user
-        if book_id is None:
-            return Response({'error': 1, 'details': 'No book id provided'})
-        if qa_info is None:
-            return Response({'error': 1, 'details': 'No qa info provided'})
-        book = get_object_or_404(Book, id=book_id, user=user)
-        if not book.processed:
-            return Response({'error': 1, 'details': 'Book not processed'})
-        processed_book = ProcessedBook.objects.get(book=book)
-        mark_for_qa.delay(processed_book, qa_info)
-        return Response({'error': 0})
-    
-    def get_marked_for_qa(self, request):
-        book_id = request.data.get('book_id')
-        user = request.user
-        if book_id is None:
-            return Response({'error': 1, 'details': 'No book id provided'})
-        book = get_object_or_404(Book, id=book_id, user=user)
-        if not book.processed:
-            return Response({'error': 1, 'details': 'Book not processed'})
-        processed_book = ProcessedBook.objects.get(book=book)
-        qa = QA.objects.filter(book=processed_book, use=True)
-        qa = [{'page': qa_.page, 'block': qa_.block} for qa_ in qa]
-        return Response({'error': 0, 'qa': qa})
-    
     def create_test(self, request):
         book_id = request.data.get('book_id')
         user = request.user
@@ -487,37 +459,41 @@ class BookProcessing(viewsets.ViewSet):
         book = get_object_or_404(Book, id=book_id, user=user)
         if not book.processed:
             return Response({'error': 1, 'details': 'Book not processed'})
-        qa_count = request.data.get('qa_count')
+        qa_count = int(request.data.get('qa_count'))
         if qa_count is None:
             return Response({'error': 1, 'details': 'No qa count provided'})
+        test_name = request.data.get('name')
+        if test_name is None:
+            return Response({'error': 1, 'details': 'No test name provided'})
         processed_book = ProcessedBook.objects.get(book=book)
-        book_path = processed_book.processed_file.path
         user_limitations = UserLimitations.objects.get(user=user)
         available_qa = user_limitations.get_available_questions()
         if available_qa < qa_count:
             return Response({'error': 2, 'details': 'Not enough questions available', 
                              'available_qa': available_qa, 
                              'users_daily_limit': user_limitations.max_questions})
-        result = create_test_c.delay(book, qa_count)
-        test = result.get()
-        return Response({'error': 0, 'test_id': test.id})
+        
+        test_db = Test.objects.create(book=processed_book, qa_count=qa_count, name=test_name)
+        result = create_test_c.delay(user.id, processed_book.id, test_db.id)
+        print(result.id)
+        test_db.generation_task_id = result.id
+        test_db.save()
+        # test = result.get()
+        return Response({'error': 0, 'test_id': test_db.id})
     
-    def get_test(self, request):
-        test_id = request.data.get('test_id')
+    def get_test(self, request, test_id):
         user = request.user
         if test_id is None:
             return Response({'error': 1, 'details': 'No test id provided'})
         test = get_object_or_404(Test, id=test_id, book__user=user)
-        book = test.book
-        epub_book = EpubReader(book.processed_file.path)
-        qa = test.qa.all()
+        if not test.is_ready:
+            return Response({'error': 2, 'details': 'Test not ready'})
+        qa = QA.objects.filter(test=test)
         test_data = []
         for qa_ in qa:
-            qa_data = {'page': qa_.page, 'block': qa_.block}
-            if qa_.generated:
-                qa_data['qa'] = epub_book.get_qa(qa_.page, qa_.block)
+            qa_data = {'highlight': qa_.highlight, 'question': qa_.question, 'answer': qa_.answer, 'generated': qa_.generated}
             test_data.append(qa_data)
-        return Response({'error': 0, 'qa': test_data})
+        return Response({'error': 0, 'test': test_data})
     
     def get_limitations_info(self, request):
         user = request.user

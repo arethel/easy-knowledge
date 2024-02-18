@@ -3,10 +3,12 @@ from easyknowledge.pdf_processing.pdf import PDFReader, EpubReader
 from easyknowledge.gpt.gpt import create_question
 from easyknowledge.user_utils.utils import create_test
 from .models import *
+from users.models import *
 from datetime import datetime
 import time
 import tempfile
 import os
+from celery.result import AsyncResult
 
 progress_update_interval = 4
 
@@ -39,38 +41,38 @@ def process_book(book_id):
     book.processed = True
     book.save()
 
-@shared_task(queue = 'qa', ignore_result=True)
-def mark_for_qa(book, qa_info):
-    page = qa_info['page']
-    block = qa_info['block']
-    qa, created = QA.objects.get_or_create(page=page, block=block, book=book)
-    if created:
-        qa.use = True
-        qa.save()
-    else:
-        qa.use = not qa.use
-        qa.save()
-
 gpt_rate_limit = 500
 @shared_task(queue = 'generate_qa', ignore_result=True, rate_limit=f'{gpt_rate_limit}/m')
-def generate_qa(qa: QA, book_path, page, block, content):
-    qa = create_question(content)
-    epub_book = EpubReader(book_path)
-    epub_book.add_questions_answers(page, block, qa)
+def generate_qa(qa_id, content):
+    qa_ = create_question(content)
+    qa_ = qa_.split('<!>')
+    qa = QA.objects.get(id=qa_id)
+    qa.question = qa_[0].replace('<?>', '')
+    qa.answer = qa_[1]
+    print(qa.question, qa.answer)
     qa.generated = True
     qa.save()
     
 @shared_task(queue = 'create_test')
-def create_test_c(book, qa_count):
-    book_path = book.processed_file.path
-    marked_blocks = QA.objects.filter(book=book, use=True)
-    test = create_test(qa_count, marked_blocks)
+def create_test_c(user_id, processed_book_id, test_id):
+    user = User.objects.get(id=user_id)
+    user_limitations = UserLimitations.objects.get(user=user)
+    test_db = Test.objects.get(id=test_id)
+    qa_count = test_db.qa_count
+    processed_book = ProcessedBook.objects.get(id=processed_book_id)
+    highlights = processed_book.highlights
+    test = create_test(qa_count, highlights)
     test_len = len(test)
-    test = Test.objects.create(book=book, qa_count=test_len)
+    test_db.qa_count = test_len
+    test_db.save()
+    user_limitations.used_questions += test_len
+    user_limitations.save()
+    print(test_len)
     for i in range(test_len):
-        qa = QA.objects.get(page=test[i]['page'], block=test[i]['block'], book=book)
-        test.qa.add(qa)
-        if not qa.generated:
-            generate_qa.delay(qa, book_path, test[i]['page'], test[i]['block'], test[i]['content'])
+        qa = QA.objects.create(highlight=test[i], test=test_db)
+        qa_gen = generate_qa.delay(qa.id, test[i]['text'])
+        qa.generation_task_id = qa_gen.id
+        qa.save()
+    
     return test
     

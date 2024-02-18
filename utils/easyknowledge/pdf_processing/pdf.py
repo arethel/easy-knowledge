@@ -1,5 +1,5 @@
 import os
-print(os.getcwd())
+# print(os.getcwd())
 from PIL import Image
 import io
 import timeit
@@ -17,7 +17,7 @@ import fitz
 import hashlib
 import matplotlib.pyplot as plt
 from ebooklib import epub
-from pdf_utils import p_ended, count_words, get_page_rect, translate_csv_to_json_coco, combine_datasets
+from .pdf_utils import p_ended, count_words, get_page_rect, translate_csv_to_json_coco, combine_datasets
 
 class EpubReader:
     def __init__(self, epub_filename):
