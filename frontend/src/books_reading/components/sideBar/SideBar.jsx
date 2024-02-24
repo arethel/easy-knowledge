@@ -34,6 +34,8 @@ export const SideBar = ({
   const options = ['Account', 'Settings', 'Log out'];
   const [selectedOption, setSelectedOption] = useState(null);
 
+  const [hidden, setHidden] = useState(false);
+  
   const navigate = useNavigate();
 
   const handleSelect = (option) => {
@@ -149,6 +151,9 @@ export const SideBar = ({
     if (sectionName.id !== -1){
       leaveSection();
     }
+    else {
+      navigate('/main');
+    }
   }
   
   const createSection = async () => {
@@ -167,67 +172,73 @@ export const SideBar = ({
     }
   }
   
+  const toggleHidden = () => {
+    setHidden(!hidden);
+  }
+  
   return (
-    <div className="side-bar">
-      <div className="BG" id='side-bar'/>
-      <div>
-        
-        <BookButton
-          className={'prev-folder'}
-          buttonText={
-            sectionName.id === -1 ?
-            <div>{sectionName.name}</div>
-            :
-              <div>&lt; {sectionName.name}</div>
-          }
-          propsBtn={false}
-          onClick={onPrevFolderClick}
-        />
-        <div className="books">
-          {Object.keys(booksDictionary).map(bookName => {
-            const shouldHide = booksToHide.includes(bookName);
-            return <BookButton
-              key={bookName}
-              className={bookName}
-              buttonText={
-                sectionName.id === -1 ?
-                  booksDictionary[bookName].section_name
-                :
-                  booksDictionary[bookName].title
-              }
-              propsBtn={
-                sectionName.id !== -1 && booksDictionary[bookName].processed === true
-              }
-              onProps={() => openProps(bookName)}
-              onClick={() => { openBook(bookName) }}
-              isProps={openedProps === bookName}
-              onShare={() => { console.log('Share') }}
-              onDelete={() => { deleteBook(bookName) }}
-              shouldHide={shouldHide}
-              onTests={(e) => openTests(bookName)}
-              onHighlights={(e) => setHighlightsPanel(true)}
-              work={booksDictionary[bookName].processed === true || sectionName.id === -1}
-            />
-          })}
-          {/* <BookButton
-            imgSrc={<AddBookIcon className="add-book-icon" alt="Add book" />}
-            onClick={() => { console.log("add-book") }}
-          /> */}
+    <div className={`side-bar ${hidden?'hidden_':''}`}>
+      <div className="BG" id='side-bar' />
+      <div className="hide-button" onClick={toggleHidden}>{hidden ? <>&#62;</> : <>&#60;</>}</div>
+      <div className="content-container">
+        <div>
+          
+          <BookButton
+            className={'prev-folder'}
+            buttonText={
+              sectionName.id === -1 ?
+              <div>{sectionName.name}</div>
+              :
+                <div>&lt; {sectionName.name}</div>
+            }
+            propsBtn={false}
+            onClick={onPrevFolderClick}
+          />
+          <div className="books">
+            {Object.keys(booksDictionary).map(bookName => {
+              const shouldHide = booksToHide.includes(bookName);
+              return <BookButton
+                key={bookName}
+                className={bookName}
+                buttonText={
+                  sectionName.id === -1 ?
+                    booksDictionary[bookName].section_name
+                  :
+                    booksDictionary[bookName].title
+                }
+                propsBtn={
+                  sectionName.id !== -1 && booksDictionary[bookName].processed === true
+                }
+                onProps={() => openProps(bookName)}
+                onClick={() => { openBook(bookName) }}
+                isProps={openedProps === bookName}
+                onShare={() => { console.log('Share') }}
+                onDelete={() => { deleteBook(bookName) }}
+                shouldHide={shouldHide}
+                onTests={(e) => openTests(bookName)}
+                onHighlights={(e) => setHighlightsPanel(true)}
+                work={booksDictionary[bookName].processed === true || sectionName.id === -1}
+              />
+            })}
+            {/* <BookButton
+              imgSrc={<AddBookIcon className="add-book-icon" alt="Add book" />}
+              onClick={() => { console.log("add-book") }}
+            /> */}
+          </div>
+        </div>
+        <div className="user-button">
+          <Dropdown
+            options={options}
+            onSelect={handleSelect}
+            mainText={
+              <div className="button-content">
+                <UserIcon className='icon-user' />
+                <div className="username">Username</div>
+              </div>
+            }
+          />
         </div>
       </div>
-      <div className="user-button">
-        <Dropdown
-          options={options}
-          onSelect={handleSelect}
-          mainText={
-            <div className="button-content">
-              <UserIcon className='icon-user' />
-              <div className="username">Username</div>
-            </div>
-          }
-        />
-      </div>
-      
     </div>
   );
 };
