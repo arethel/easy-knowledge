@@ -257,7 +257,7 @@ class BookView(viewsets.ViewSet):
         section = get_object_or_404(Section, id=section_id, user=user)
         cover_image, author, title = extract_pdf_metadata(book_file)
         len_books_in_section = len(Book.objects.filter(book_section=section))
-        book = Book(book_file=book_file, user=user, title=title, book_section=section, author=author, index=len_books_in_section)
+        book = Book(book_file=book_file, user=user, title=title, book_section=section, author=author, index=len_books_in_section, processed = True)
         if cover_image:
             cover_image_path = save_cover_image(cover_image)
             book.cover_image.save(title + '.png', open(cover_image_path, 'rb'))
@@ -265,7 +265,7 @@ class BookView(viewsets.ViewSet):
         book.save()
         cover_image_relative_path = book.cover_image.name
         cover_image_path = request.build_absolute_uri(settings.MEDIA_URL + cover_image_relative_path)
-        processed_book = ProcessedBook(book=book, user=user)
+        processed_book = ProcessedBook(book=book, user=user, processing = 100)
         processed_book.save()
         # process_book.delay(book.id)
         return Response({'error': 0, 'book_id': book.id, 'processing': 0, 'cover_image': cover_image_path})

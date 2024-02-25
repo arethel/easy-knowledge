@@ -109,6 +109,7 @@ export const BooksReading = ({ userData, client, URL }) => {
                 <div className="book-area">
                     <Logo />
                     <Book
+                        booksDictionary={openedBooks}
                         book_id={book_id}
                         client={client}
                         loadedEpubs={loadedEpubs}

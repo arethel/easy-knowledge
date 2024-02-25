@@ -40,12 +40,18 @@ export const TopBar = ({
   const activatePage = useCallback((bookName, nBooksDict=null) => {
     if (activePage != bookName) {
       setActivePage(bookName);
+      
+      if (loadedEpubs[bookName] !== undefined) {
+        setBook_id(bookName);
+      }
+      
       changeBookApi(bookName).then((response) => {
         if (response !== null && response.data.error === 0 && loadedEpubs[bookName] === undefined) {
           setBook_id(bookName);
           getBook(bookName, client, loadedEpubs, setLoadedEpubs)
         }
       });
+      
       let booksDictionaryCopy = {};
       if (nBooksDict)
         booksDictionaryCopy = { ...nBooksDict };

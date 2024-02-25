@@ -16,6 +16,7 @@ import { pageNavigationPlugin } from '@react-pdf-viewer/page-navigation';
 import '@react-pdf-viewer/page-navigation/lib/styles/index.css';
 
 export const Book = ({
+    booksDictionary,
     book_id,
     client,
     loadedEpubs,
@@ -96,23 +97,63 @@ export const Book = ({
     //     setParagraphs([].concat(...Object.values(newOpenedPages)));
     // }
     
+    const [pdfViewers, setPdfViewers] = useState({});
+    const updatePdfViewer = (bookId, pdfViewerComponent) => {
+        setPdfViewers(prevState => ({
+          ...prevState,
+          [bookId]: pdfViewerComponent
+        }));
+    };
+    
+    const deletePdfViewer = (bookId) => {
+        const newPdfViewers = { ...pdfViewers };
+        delete newPdfViewers[bookId];
+        setPdfViewers(newPdfViewers);
+    };
+    
+    useEffect(() => {
+        if (booksDictionary.selected === undefined) return () => { };
+        Object.keys(pdfViewers).forEach((bookId) => { 
+            if (booksDictionary[bookId] === undefined) deletePdfViewer(bookId);
+        })
+        
+        return () => { };
+    }, [booksDictionary]);
+    
+    const renderPdfViewer = (book_id) => {
+        const PdfViewerComponent = pdfViewers[book_id];
+        return PdfViewerComponent ? <PdfViewerComponent /> : null;
+    };
+    
     useEffect(() => {
         console.log(loadedEpubs, book_id);
         if (loadedEpubs[book_id] === undefined) return () => { };
-        
-        
-        // loadedEpubs[book_id].getBookLength().then((length) => {
-        //     setPages(length);
-        // });
-        
-        
+        if (pdfViewers[book_id] === undefined){
+            updatePdfViewer(book_id, () => (
+                <PdfViewer
+                    pdfUrl={loadedEpubs[book_id] === undefined ? '' : loadedEpubs[book_id]}
+                    book_id={book_id}
+                    booksInfo={booksInfo}
+                    setBooksInfo={setBooksInfo}
+                    currentPage={currentPage}
+                    setCurrentPage={setCurrentPage}
+                    pageNavigationPluginInstance={pageNavigationPluginInstance}
+                    maxWidth_={TopBarWidth}
+                    setPages={setPages}
+                    pages={pages}
+                    client={client}
+                    highlightAreas={highlightAreas}
+                    setHighlightAreas={setHighlightAreas}
+                    setHighlightPluginInstance={setHighlightPluginInstance}
+                />
+            ));
+        }
         
         getBookInfo().then((bookInfo) => {
             console.log(bookInfo);
             if (bookInfo === undefined) return;
             setCurrentPage(bookInfo.page)
         });
-        
         return () => { };
     }, [book_id, loadedEpubs]);
     
@@ -246,23 +287,15 @@ export const Book = ({
                 <EndOfParagraph/>
                 <NewChapter text='New chapter'/>
             </div>*/}
-            <PagesCount page={booksInfo[book_id]===undefined? 0: currentPage} totalPages={pages} /> 
-            <PdfViewer
-                pdfUrl={loadedEpubs[book_id] === undefined ? '' : loadedEpubs[book_id]}
-                book_id={book_id}
-                booksInfo={booksInfo}
-                setBooksInfo={setBooksInfo}
-                currentPage={currentPage}
-                setCurrentPage={setCurrentPage}
-                pageNavigationPluginInstance={pageNavigationPluginInstance}
-                maxWidth_={TopBarWidth}
-                setPages={setPages}
-                pages={pages}
-                client={client}
-                highlightAreas={highlightAreas}
-                setHighlightAreas={setHighlightAreas}
-                setHighlightPluginInstance={setHighlightPluginInstance}
-            />
+            <PagesCount page={booksInfo[book_id]===undefined? 0: currentPage} totalPages={pages[book_id]?pages[book_id]:0} /> 
+            {Object.keys(pdfViewers).length > 0 ? Object.keys(pdfViewers).map((bookId, index) => {
+                return (
+                    <div key={index} className={`pdf-viewer-container ${bookId!==book_id?'hide':''}`}>
+                        {renderPdfViewer(bookId)}
+                    </div>
+                );
+                
+            }) : null}
             
             <BookMenu/>
         </div>

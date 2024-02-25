@@ -36,7 +36,7 @@ export const PdfViewer = ({
     const [pagesContainer, setPagesContainer] = useState(null);
     
     const onDocumentLoad = async (e) => {
-        setPages(e.doc.numPages);
+        setPages({ ...pages, [book_id]: e.doc.numPages });
         const el = pdfViewerRef.current.querySelector('.rpv-core__inner-pages').children[0];
         setPagesContainer(el);
         await new Promise((resolve) => setTimeout(resolve, 2000));

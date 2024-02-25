@@ -12,7 +12,7 @@ from celery.result import AsyncResult
 
 progress_update_interval = 4
 
-@shared_task(ignore_result=True)
+@shared_task(queue = 'process_book', ignore_result=True)
 def process_book(book_id):
     book = Book.objects.get(id=book_id)
     processed_book = ProcessedBook.objects.get(book=book)

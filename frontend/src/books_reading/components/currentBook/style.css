@@ -37,11 +37,26 @@
     z-index: -1;
 }
 
+.book .pdf-viewer-container{
+    height: 100%;
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-y: hidden;
+}
+
+.book .pdf-viewer-container.hide{
+    position: absolute;
+    z-index: -1;
+}
+
 ::-webkit-scrollbar {
     width: 20px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--collection-1-font-1);
+    background: var(--collection-1-blocks);
     border-radius: 10px;
 }

@@ -24,7 +24,6 @@
   height: 40px;
   border-radius: 10px;
   cursor: pointer;
-  background-color: var(--collection-1-blocks);
   z-index: 100;
   display: flex;
   justify-content: center;
@@ -36,8 +35,15 @@
   font-weight: var(--smaller-font-font-weight);
   letter-spacing: var(--smaller-font-letter-spacing);
   line-height: var(--smaller-font-line-height);
+  background-color: rgba(0, 0, 0, 0.0);
+  transition: all 0.5s;
+  opacity: 0.5;
 }
 
+.side-bar .hide-button:hover {
+  background-color: var(--collection-1-blocks);
+  opacity: 1;
+}
 .side-bar .BG {
   background-color: var(--collection-1-blocks);
   height: 100%;

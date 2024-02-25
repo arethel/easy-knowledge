@@ -65,8 +65,17 @@ export const Book = ({ book, sectionId, index, moveBookInsideSection, client, ha
     setEditedName(e.target.value);
   };
   
+  const openBookApi = async (book_id) => {
+    const response = await client.post("api/opened-books/", { 'book_id': book_id });
+    if (response.data.error === 0) {
+      console.log('Book was opened');
+    }
+    return response;
+  }
+  
   const handleBookClick = (event) => {
     navigate('/books-reading');
+    openBookApi(book.id);
   }
 
   const displayContent = (
