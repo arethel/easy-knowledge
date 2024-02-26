@@ -35,7 +35,7 @@ export const Book = ({
     const [paragraphs, setParagraphs] = useState([]);
     const [pages, setPages] = useState(0);
     
-    const [currentPage, setCurrentPage] = useState(-1);
+    const [currentPage, setCurrentPage] = useState({});
     const [openedPages, setOpenedPages] = useState({});
     const minPagesCount = 10;
     const pagesCountUpdateStep = 2;
@@ -61,11 +61,11 @@ export const Book = ({
     const lastPage = useRef(-1);
     const saveBookPage = async () => {
         try {
-            if (currentPage === lastPage.current) return;
-            lastPage.current = currentPage;
-            const response = await client.post(`api/book/info/`, { book_id: book_id, page: currentPage });
+            if (currentPage[book_id] === lastPage.current) return;
+            lastPage.current = currentPage[book_id];
+            const response = await client.post(`api/book/info/`, { book_id: book_id, page: currentPage[book_id] });
             if (response.data.error === 0) {
-                console.log("Book page saved", currentPage);
+                console.log("Book page saved", currentPage[book_id]);
             }
         } catch (error) {
             console.error("Error saving book page:", error);
@@ -152,7 +152,8 @@ export const Book = ({
         getBookInfo().then((bookInfo) => {
             console.log(bookInfo);
             if (bookInfo === undefined) return;
-            setCurrentPage(bookInfo.page)
+            if (currentPage[book_id] !== bookInfo.page)
+                setCurrentPage({...currentPage, [book_id]:bookInfo.page})
         });
         return () => { };
     }, [book_id, loadedEpubs]);
@@ -287,7 +288,7 @@ export const Book = ({
                 <EndOfParagraph/>
                 <NewChapter text='New chapter'/>
             </div>*/}
-            <PagesCount page={booksInfo[book_id]===undefined? 0: currentPage} totalPages={pages[book_id]?pages[book_id]:0} /> 
+            <PagesCount page={currentPage[book_id]===undefined? 0: currentPage[book_id]} totalPages={pages[book_id]?pages[book_id]:0} /> 
             {Object.keys(pdfViewers).length > 0 ? Object.keys(pdfViewers).map((bookId, index) => {
                 return (
                     <div key={index} className={`pdf-viewer-container ${bookId!==book_id?'hide':''}`}>

@@ -46,7 +46,7 @@
     background-color: var(--collection-1-bg);
 }
 
-.book-file {
+.button .book-file {
     display: flex;
     position: relative;
     height: 38px;
@@ -54,7 +54,23 @@
     justify-content: center;
 }
 
-.text {
+.button .book-file .container {
+    display: flex;
+    position: relative;
+    height: 38px;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    justify-content: center;
+    white-space: nowrap;
+    display: flex;
+}
+
+.button .book-file .container.masked {
+    mask-image: linear-gradient(to right, rgba(0, 0, 0, 1) 80%, rgba(0, 0, 0, 0));
+}
+
+.button .text {
     color: var(--collection-1-font-2);
     font-family: var(--main-font-font-family);
     font-size: var(--main-font-font-size);
@@ -62,9 +78,30 @@
     font-weight: var(--main-font-font-weight);
     letter-spacing: var(--main-font-letter-spacing);
     line-height: var(--main-font-line-height);
+    /* width: 60%; */
+    overflow: hidden;
+    justify-content: center;
+    white-space: nowrap;
+    display: flex;
 }
 
-.text.prev-folder {
+.button .book-file .text-container{
+    width: 60%;
+    overflow: hidden;
+    justify-content: center;
+    white-space: nowrap;
+    display: flex;
+}
+
+.button .book-file .text-container.prev-folder{
+    width: 100%;
+}
+
+.button .book-file .text-container.masked {
+    mask-image: linear-gradient(to right, rgba(0, 0, 0, 1) 80%, rgba(0, 0, 0, 0));
+}
+
+.button .text.prev-folder {
     color: var(--collection-1-font-1);
     font-family: var(--smaller-font-font-family);
     font-size: var(--smaller-font-font-size);
@@ -72,9 +109,22 @@
     font-weight: var(--smaller-font-font-weight);
     letter-spacing: var(--smaller-font-letter-spacing);
     line-height: var(--smaller-font-line-height);
+    width: 100%;
+    overflow: hidden;
+    justify-content: center;
+    white-space: nowrap;
+    display: flex;
 }
 
-.props {
+.button .book-file .text-container.masked .text {
+    justify-content: left;
+}
+
+.button .book-file .text-container.masked .text.prev-folder {
+    justify-content: center;
+}
+
+.button .props {
     padding: 4px;
     width: 100%;
     height: 100%;

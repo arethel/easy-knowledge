@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./style.css";
 import { Button } from "../../reusableComponents/button/Button.jsx"
 import { Icon } from "../../reusableComponents/icons/Icons.jsx"
@@ -19,11 +19,25 @@ export const Page = ({ bookName, isProps, onProps, isActive, onActivate, onClose
       document.removeEventListener('click', handleDocumentClick);
     };
   }, [isProps, onProps]);
-
+  
+  const bookNameRef = useRef(null);
+  const [showFullName, setShowFullName] = useState(true);
+  
+  useEffect(() => {
+    if (bookNameRef.current) {
+      if (bookNameRef.current.scrollWidth > bookNameRef.current.clientWidth) {
+        setShowFullName(false);
+      } else {
+        setShowFullName(true);
+      }
+    }
+    return () => {};
+  }, [bookNameRef]);
+  
   return (
     <div className={`page ${isProps ? 'expanded' : ''} ${isActive ? 'active-page' : ''} ${shouldHide ? 'hide' : ''}`} onClick={onActivate}>
       <div className="page-buttons">
-        <div className="book-name">{bookName}</div>
+        <div className={`book-name ${showFullName?'':'masked'}`} ref={bookNameRef}>{bookName}</div>
         <Icon name="dots" onClick={(e) => { e.stopPropagation(); onProps(); }} src={<Dots className='icon dots'/>} />
         <Icon name="cross" className='cross-div' onClick={(e) => { e.stopPropagation(); onClose(); }} src={<Cross className='icon cross'/>} />
       </div>

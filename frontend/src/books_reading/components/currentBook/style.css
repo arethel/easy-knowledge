@@ -52,11 +52,15 @@
     z-index: -1;
 }
 
-::-webkit-scrollbar {
+.book .pdf-viewer-container ::-webkit-scrollbar {
     width: 20px;
 }
 
-::-webkit-scrollbar-thumb {
+.book .pdf-viewer-container ::-webkit-scrollbar-thumb {
     background: var(--collection-1-blocks);
     border-radius: 10px;
+}
+
+.book .pdf-viewer-container.hide ::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0);
 }

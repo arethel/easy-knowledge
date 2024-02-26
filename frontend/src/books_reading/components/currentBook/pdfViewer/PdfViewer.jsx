@@ -45,7 +45,7 @@ export const PdfViewer = ({
     const [documentUpdated, setDocumentUpdated] = useState(false);
     
     const handlePageChange = (e) => {
-        setCurrentPage(e.currentPage);
+        setCurrentPage({...currentPage, [book_id]:e.currentPage});
         setDocumentUpdated(!documentUpdated)
     };
     
@@ -260,7 +260,7 @@ export const PdfViewer = ({
                         <Viewer
                             fileUrl={pdfUrl}
                             onPageChange={handlePageChange}
-                            initialPage={currentPage}
+                            initialPage={currentPage[book_id]}
                             defaultScale={SpecialZoomLevel.PageWidth}
                             theme='dark'
                             plugins={[pageNavigationPluginInstance, highlightPluginInstance]}

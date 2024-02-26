@@ -49,6 +49,15 @@
   line-height: var(--main-font-line-height);
   cursor: pointer;
   display: flex;
+  width: 60%;
+  overflow: hidden;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.page .book-name.masked {
+  mask-image: linear-gradient(to right, rgba(0, 0, 0, 1) 80%, rgba(0, 0, 0, 0));
+  justify-content: left;
 }
 
 .page .props {
