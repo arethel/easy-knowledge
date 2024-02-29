@@ -100,7 +100,7 @@ export const TopBar = ({
           if (currentIndex > 0) {
             activatePage(remainingPages[currentIndex - 1], newBooksDictionary);
           } else if (remainingPages.length > 0) {
-            activatePage(remainingPages[0], newBooksDictionary);
+            activatePage(remainingPages[remainingPages.length-1], newBooksDictionary);
           }
         }
         setPagesToHide((prevPagesToHide) => prevPagesToHide.filter((name) => name !== bookName));
@@ -117,11 +117,11 @@ export const TopBar = ({
     setBook_id(book_id);
     setTestsPanel(true);
   }
-  
+  console.log(booksDictionary);
   return (
     <div className="top-bar" id='top-bar'>
       {Object.keys(booksDictionary).map(bookName => {
-        if (bookName === 'selected') return null;
+        if (bookName === 'selected' || booksDictionary[bookName] === undefined) return null;
         const shouldHide = pagesToHide.includes(bookName);
         return <Page 
           key={bookName}

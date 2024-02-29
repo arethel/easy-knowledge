@@ -128,7 +128,13 @@ export const Book = ({
     useEffect(() => {
         console.log(loadedEpubs, book_id);
         if (loadedEpubs[book_id] === undefined) return () => { };
-        if (pdfViewers[book_id] === undefined){
+        if (pdfViewers[book_id] === undefined) {
+            getBookInfo().then((bookInfo) => {
+                console.log(bookInfo);
+                if (bookInfo === undefined) return;
+                if (currentPage[book_id] !== bookInfo.page)
+                    setCurrentPage({...currentPage, [book_id]:bookInfo.page})
+            });
             updatePdfViewer(book_id, () => (
                 <PdfViewer
                     pdfUrl={loadedEpubs[book_id] === undefined ? '' : loadedEpubs[book_id]}
@@ -149,12 +155,6 @@ export const Book = ({
             ));
         }
         
-        getBookInfo().then((bookInfo) => {
-            console.log(bookInfo);
-            if (bookInfo === undefined) return;
-            if (currentPage[book_id] !== bookInfo.page)
-                setCurrentPage({...currentPage, [book_id]:bookInfo.page})
-        });
         return () => { };
     }, [book_id, loadedEpubs]);
     

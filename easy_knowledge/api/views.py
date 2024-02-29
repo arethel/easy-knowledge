@@ -129,22 +129,22 @@ class BookUserInfo(viewsets.ViewSet):
         opened_books_data = {}
         for book in books:
             opened_books_data[book.id] = {'title':book.title}
-            
         last_section = 0
-        last_section_data = {}
+        last_section_data = {'section_id': -1, 'section_name': 'Main', 'sections': {}}
         if opened_books.last_section is not None:
             last_section = opened_books.last_section
-            section_books = Book.objects.filter(book_section=last_section, user=user)
-            last_section_data = {'section_id': last_section.id, 'section_name': last_section.section_name, 'books': {}}
+            last_section_data['section_id'] = last_section.id
+            last_section_data['section_name'] = last_section.section_name
+        
+        user_sections = Section.objects.filter(user=user)
+        sections = {}
+        for section in user_sections:
+            sections[section.id] = {'section_name': section.section_name, 'books': {}}
+            section_books = Book.objects.filter(book_section=section, user=user)
             for book in section_books:
-                last_section_data['books'][book.id] = {'title':book.title, 'processed': book.processed}
-        else:
-            last_section_data = {'section_id': -1, 'section_name': 'Main', 'sections': {}}
-            user_sections = Section.objects.filter(user=user)
-            sections = {}
-            for section in user_sections:
-                sections[section.id] = {'section_name': section.section_name}
-            last_section_data['sections'] = sections
+                sections[section.id]['books'][book.id] = {'title':book.title, 'processed': book.processed}
+        
+        last_section_data['sections'] = sections
             
         if opened_books.last_book is not None:
             opened_books_data['selected'] = {'id': opened_books.last_book.id}

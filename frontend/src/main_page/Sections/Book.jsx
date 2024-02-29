@@ -74,8 +74,8 @@ export const Book = ({ book, sectionId, index, moveBookInsideSection, client, ha
   }
   
   const handleBookClick = (event) => {
-    navigate('/books-reading');
     openBookApi(book.id);
+    navigate('/books-reading');
   }
 
   const displayContent = (

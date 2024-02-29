@@ -23,7 +23,8 @@ export const SideBar = ({
   updateInfo,
   client,
   loadedEpubs,
-  setLoadedEpubs
+  setLoadedEpubs,
+  setSectionName
 }) => {
   const [openedProps, setProps] = useState(null);
   
@@ -60,17 +61,18 @@ export const SideBar = ({
   const [booksToHide, setBooksToHide] = useState([]);
 
   const deleteBook = (bookName) => {
-    setBooksToHide((prevBooksToHide) => [...prevBooksToHide, bookName]);
+    setBooksToHide((prevBooksToHide) => [...prevBooksToHide, {sectionId:sectionName.id, bookId:bookName}]);
   };
 
   useEffect(() => {
     const transitionDelay = 300;
 
-    const timeoutIds = booksToHide.map((bookName) => {
+    const timeoutIds = booksToHide.map((bookToDelData) => {
+      const { sectionId, bookId } = bookToDelData;
       return setTimeout(() => {
         setBooksDictionary((prevBooksDictionary) => {
           const newBooksDictionary = { ...prevBooksDictionary };
-          delete newBooksDictionary[bookName];
+          delete newBooksDictionary[sectionId][bookId];
           return newBooksDictionary;
         });
       }, transitionDelay);
@@ -82,9 +84,10 @@ export const SideBar = ({
   }, [booksToHide, setBooksDictionary]);
   
   const openSection = async (section_id) => {
-    const response = await client.post("api/opened-books/open-section/", { 'section_id': section_id });
-    if (response.data.error === 0)
-      setUpdateInfo(!updateInfo);
+    setSectionName({ id: section_id, name: booksDictionary[section_id].section_name });
+    // const response = await client.post("api/opened-books/open-section/", { 'section_id': section_id });
+    // if (response.data.error === 0)
+    //   setUpdateInfo(!updateInfo);
   }
   
   const changeBookApi = async (book_id) => {
@@ -109,12 +112,13 @@ export const SideBar = ({
       openSection(bookId)
     }
     else {
+      const newPagesDictionary = { ...pagesDictionary };
+      newPagesDictionary[bookId] = booksDictionary[sectionName.id].books[bookId];
+      newPagesDictionary.selected = { id: bookId };
+      setPagesDictionary(newPagesDictionary);
+      
       if (pagesDictionary[bookId] !== undefined){
         if (pagesDictionary.selected!== undefined && pagesDictionary.selected.id != bookId) {
-          const newPagesDictionary = { ...pagesDictionary };
-          newPagesDictionary[bookId] = booksDictionary[bookId];
-          newPagesDictionary.selected = { id: bookId };
-          setPagesDictionary(newPagesDictionary);
           changeBookApi(bookId).then((response) => {
             setBook_id(bookId);
             if (response.data.error === 0 && loadedEpubs[bookId] === undefined) {
@@ -141,10 +145,11 @@ export const SideBar = ({
   }
   
   const leaveSection = async () => {
-    const response = await client.post("api/opened-books/leave-section/", { section_id: sectionName.id });
+    setSectionName({ id: -1, name: 'Main' });
+    // const response = await client.post("api/opened-books/leave-section/", { section_id: sectionName.id });
     // console.log(response);
-    if (response.data.error === 0)
-      setUpdateInfo(!updateInfo);
+    // if (response.data.error === 0)
+    //   setUpdateInfo(!updateInfo);
   }
   
   const onPrevFolderClick = () => {
@@ -195,7 +200,7 @@ export const SideBar = ({
             onClick={onPrevFolderClick}
           />
           <div className="books">
-            {Object.keys(booksDictionary).map(bookName => {
+            {Object.keys(sectionName.id!==-1?booksDictionary[sectionName.id].books:booksDictionary).map(bookName => {
               const shouldHide = booksToHide.includes(bookName);
               return <BookButton
                 key={bookName}
@@ -204,10 +209,10 @@ export const SideBar = ({
                   sectionName.id === -1 ?
                     booksDictionary[bookName].section_name
                   :
-                    booksDictionary[bookName].title
+                    booksDictionary[sectionName.id].books[bookName].title
                 }
                 propsBtn={
-                  sectionName.id !== -1 && booksDictionary[bookName].processed === true
+                  sectionName.id !== -1 && booksDictionary[sectionName.id].books[bookName].processed === true
                 }
                 onProps={() => openProps(bookName)}
                 onClick={() => { openBook(bookName) }}
@@ -217,7 +222,7 @@ export const SideBar = ({
                 shouldHide={shouldHide}
                 onTests={(e) => openTests(bookName)}
                 onHighlights={(e) => setHighlightsPanel(true)}
-                work={booksDictionary[bookName].processed === true || sectionName.id === -1}
+                work={sectionName.id === -1 || booksDictionary[sectionName.id].books[bookName].processed === true}
               />
             })}
             {/* <BookButton

@@ -65,7 +65,7 @@ export const Settings = ({ active, setActive, client }) => {
                         selected: 'General',
                       }
                     setSettingsDictionary(settingsDict);
-                    updateSettingsDict(settingsDict);
+                    // updateSettingsDict(settingsDict);
                 }
             } catch (error) {
                 console.error("Error fetching settings:", error);

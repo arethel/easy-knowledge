@@ -26,7 +26,7 @@ export const BooksReading = ({ userData, client, URL }) => {
 
     const [active, setActive] = useState(false);
     
-    const [sectionName, setSectionName] = useState({id: 0, name: "Section Name"});
+    const [sectionName, setSectionName] = useState({id: -1, name: "Section Name"});
     const [openedBooks, setOpenedBooks] = useState(openedBooks_init);
     const [loadedEpubs, setLoadedEpubs] = useState({});
     const [booksInFolder, setBooksInFolder] = useState(booksInFolder_init);
@@ -42,17 +42,12 @@ export const BooksReading = ({ userData, client, URL }) => {
         try {
             const response = await client.get("api/opened-books");
             setOpenedBooks(response.data.opened_books_data);
+            console.log('check', response.data.opened_books_data);
             const lastSection = response.data.last_section_data
-            if (lastSection.section_id !== -1){
-                setBooksInFolder(lastSection.books);
-                setSectionName({ id: lastSection.section_id, name: lastSection.section_name });
-            }
-            else {
-                setBooksInFolder(lastSection.sections);
-                setSectionName({ id: lastSection.section_id, name: lastSection.section_name });
-            }
+            setBooksInFolder(lastSection.sections);
+            // console.log(lastSection);
+            setSectionName({ id: lastSection.section_id, name: lastSection.section_name });
             // console.log({ id: lastSection.section_id, name: lastSection.section_name });
-            console.log(response.data);
         } catch (error) {
             console.error("Error fetching books data:", error);
         }
@@ -60,7 +55,7 @@ export const BooksReading = ({ userData, client, URL }) => {
 
         fetchBooksData();
         return () => {};
-    }, [updateInfo]);
+    }, []);
 
     const [testsPanel, setTestsPanel] = useState(false);
     const [testPanel, setTestPanel] = useState(false);
@@ -84,6 +79,7 @@ export const BooksReading = ({ userData, client, URL }) => {
                     setHighlightsPanel={setHighlightsPanel}
                     setBook_id={setBook_id}
                     sectionName={sectionName}
+                    setSectionName={setSectionName}
                     setUpdateInfo={setUpdateInfo}
                     updateInfo={updateInfo}
                     client={client}
