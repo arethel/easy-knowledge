@@ -114,6 +114,7 @@ export const SideBar = ({
     else {
       const newPagesDictionary = { ...pagesDictionary };
       newPagesDictionary[bookId] = booksDictionary[sectionName.id].books[bookId];
+      newPagesDictionary[bookId].open_time = new Date().getTime()/1000;
       newPagesDictionary.selected = { id: bookId };
       setPagesDictionary(newPagesDictionary);
       

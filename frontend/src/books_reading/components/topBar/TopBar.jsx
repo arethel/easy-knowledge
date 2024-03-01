@@ -117,26 +117,38 @@ export const TopBar = ({
     setBook_id(book_id);
     setTestsPanel(true);
   }
-  console.log(booksDictionary);
+  
+  const booksDictionaryCopy = { ...booksDictionary };
+  delete booksDictionaryCopy.selected;
+  const booksArray = Object.keys(booksDictionaryCopy).map(bookId => {
+    return {
+      id: bookId,
+      ...booksDictionary[bookId]
+    }
+  }
+  );
+  booksArray.sort((a, b) => a.open_time - b.open_time);
+  
   return (
     <div className="top-bar" id='top-bar'>
-      {Object.keys(booksDictionary).map(bookName => {
-        if (bookName === 'selected' || booksDictionary[bookName] === undefined) return null;
-        const shouldHide = pagesToHide.includes(bookName);
-        return <Page 
-          key={bookName}
-          bookName={booksDictionary[bookName].title}
-          isProps={openedProps == bookName}
-          isActive={activePage == bookName}
-          onProps={() => openProps(bookName)}
-          onActivate={() => activatePage(bookName)}
-          onClose={() => { closePage(bookName) }}
-          shouldHide={shouldHide}
-          onTests={(e) => openTests(bookName)}
-          onHighlights={(e) => setHighlightsPanel(true)}
-        />
-        
-      })}
+      {
+        booksArray.map(book => {
+          if (book.id === 'selected' || book === undefined) return null;
+          const shouldHide = pagesToHide.includes(book.id);
+          return <Page 
+            key={book.id}
+            bookName={book.title}
+            isProps={openedProps == book.id}
+            isActive={activePage == book.id}
+            onProps={() => openProps(book.id)}
+            onActivate={() => activatePage(book.id)}
+            onClose={() => { closePage(book.id) }}
+            shouldHide={shouldHide}
+            onTests={(e) => openTests(book.id)}
+            onHighlights={(e) => setHighlightsPanel(true)}
+          />
+        })
+      }
     </div>
   );
 };

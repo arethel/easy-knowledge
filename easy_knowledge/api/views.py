@@ -98,6 +98,9 @@ class BookUserInfo(viewsets.ViewSet):
         opened_books, created = OpenedBook.objects.get_or_create(user=user)
         if book in opened_books.books.all():
             opened_books.books.remove(book)
+            open_times = opened_books.open_times
+            if book.id in open_times:
+                del open_times[book.id]
             if opened_books.last_book == book:
                 if len(opened_books.books.all()) > 0:
                     opened_books.last_book = opened_books.books.last()
@@ -117,6 +120,7 @@ class BookUserInfo(viewsets.ViewSet):
         opened_books, created = OpenedBook.objects.get_or_create(user=user)
         if book not in opened_books.books.all():
             opened_books.books.add(book)
+            opened_books.open_times[book.id] = datetime.now().timestamp()
         opened_books.last_section = book.book_section
         opened_books.last_book = book
         opened_books.save()
@@ -127,8 +131,21 @@ class BookUserInfo(viewsets.ViewSet):
         opened_books, created = OpenedBook.objects.get_or_create(user=user)
         books = opened_books.books.all()
         opened_books_data = {}
+        existing_books = []
         for book in books:
-            opened_books_data[book.id] = {'title':book.title}
+            existing_books.append(book.id)
+            opened_books_data[book.id] = {'title':book.title, 'open_time': opened_books.open_times.setdefault(book.id, datetime.now().timestamp())}
+        
+        open_times_copy = opened_books.open_times.copy()
+        for book_id in open_times_copy:
+            if book_id not in existing_books:
+                del opened_books.open_times[book_id]
+        
+        if opened_books.last_book is not None:
+            opened_books_data['selected'] = {'id': opened_books.last_book.id}
+        else:
+            opened_books_data['selected'] = {'id': -1}
+        
         last_section = 0
         last_section_data = {'section_id': -1, 'section_name': 'Main', 'sections': {}}
         if opened_books.last_section is not None:
@@ -146,10 +163,6 @@ class BookUserInfo(viewsets.ViewSet):
         
         last_section_data['sections'] = sections
             
-        if opened_books.last_book is not None:
-            opened_books_data['selected'] = {'id': opened_books.last_book.id}
-        else:
-            opened_books_data['selected'] = {'id': -1}
         return Response({'error': 0, 'opened_books_data': opened_books_data, 'last_section_data': last_section_data})
     
     def get_book_info(self, request):

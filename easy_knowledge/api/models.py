@@ -127,6 +127,7 @@ class Test(models.Model):
 class OpenedBook(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     books = models.ManyToManyField(Book, related_name='opened_books')
+    open_times = models.JSONField(default=dict)
     last_section = models.ForeignKey(Section, null=True, default=None, on_delete=models.SET_NULL)
     last_book = models.ForeignKey(Book, null=True, default=None, on_delete=models.SET_NULL, related_name='last_opened_book')
 
