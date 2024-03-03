@@ -82,9 +82,9 @@ export const Book = ({ book, sectionId, index, moveBookInsideSection, client, ha
     <>
       <div className="icons-container">
         {/* <Icon name="pencil" onClick={handleEditClick} src={require("../../images/icon-pencil.png")} /> */}
-        <CreateIcon name="pencil" style={{ cursor: 'pointer' }} onClick={handleEditClick}/>
+        <CreateIcon name="pencil" style={{ color: 'var(--collection-1-font-1)', cursor: 'pointer' }} onClick={handleEditClick}/>
         {/* <Icon name="trashbin" onClick={handleDelete} src={require("../../images/icon-trashbin.png")} /> */}
-        <DeleteIcon name="trashbin" style={{ cursor: 'pointer' }} onClick={handleDelete}/>
+        <DeleteIcon name="trashbin" style={{ color: 'var(--collection-1-font-1)', cursor: 'pointer' }} onClick={handleDelete}/>
       </div>
       <div className={`vertical-rectangle ${!book.is_processed ? 'disabled-book' : ''}`} onClick={handleBookClick}>
         <img className="book-cover" src={`${book.cover_image ? book.cover_image : require('../../images/book1_cover.png')}`} alt={book.title} />

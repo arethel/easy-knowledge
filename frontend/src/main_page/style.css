@@ -111,3 +111,13 @@ span.alert-element-name {
     color: green;
     margin: 0 8px;
 }
+
+::-webkit-scrollbar {
+    width: 10px;
+    background-color: var(--collection-1-bg);
+}
+  
+::-webkit-scrollbar-thumb {
+    background: var(--collection-1-block2);
+    border-radius: 10px;
+}

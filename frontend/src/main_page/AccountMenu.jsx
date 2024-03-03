@@ -49,8 +49,8 @@ export const AccountMenu = ({ username, setShowSettings, client, t }) => {
           aria-haspopup="true"
           aria-expanded={open ? 'true' : undefined}
         >
-          <Avatar sx={{ width: 32, height: 32, mr: 1 }}>{username.charAt(0)}</Avatar>
-          <Typography variant="body0" style={{ color: 'var(--collection-1-font-1)' }}>{username}</Typography>
+          <Avatar sx={{ width: 32, height: 32, mr: 1, bgcolor: 'var(--collection-1-grey)' }} >{username.charAt(0)}</Avatar>
+          <Typography variant="body0" style={{ color: 'var(--collection-1-font-2)' }}>{username}</Typography>
         </IconButton>
       </Box>
       <Menu

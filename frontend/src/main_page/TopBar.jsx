@@ -8,9 +8,9 @@ export const TopBar = ({ userData, handleCreateSection, setShowSettings, client,
         <div className="topbar">
             <Logo />
             <div className="topbar-buttons">
-                <button className="create-section-button" onClick={handleCreateSection}>
-                    {t('create-new-section')}
-                </button>
+                {/* <button className="create-section-button" onClick={handleCreateSection}>
+                    {t('Create new section')}
+                </button> */}
                 <AccountMenu username={userData===null?'':userData.username} setShowSettings={setShowSettings} client={client} t={t} />
             </div>
         </div>

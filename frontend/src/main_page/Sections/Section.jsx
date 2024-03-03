@@ -124,7 +124,7 @@ export const Section = ({ booksList, name, sectionId, handleDeleteSection, setTy
         <EditableText initialText={name} sectionId={sectionId} onTextChange={handleSectionNameChange} />
         <span className="trashbin-icon">
           <div className="section-icon">
-            <DeleteIcon style={{ cursor: 'pointer' }} onClick={handleDelete}/>
+            <DeleteIcon style={{ color: 'var(--collection-1-grey)', cursor: 'pointer' }} onClick={handleDelete}/>
           </div>
         </span>
       </div>

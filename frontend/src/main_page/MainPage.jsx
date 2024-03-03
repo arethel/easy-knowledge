@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Section } from "./Sections/Section";
+import { CreateSection } from "./Sections/CreateSections";
 import { TopBar } from "./TopBar";
 import Divider from '@mui/material/Divider';
 import { Logo } from "../books_reading/components/logo/Logo.jsx";
@@ -150,6 +151,8 @@ export const MainPage = ({ userData, client }) => {
               setGlobalLoading={setGlobalLoading}
             />
           ))}
+          {sections.length < userData.max_sections? <CreateSection createSection={handleCreateSection} />: null}
+          
         </div>
         <Settings active={showSettings} setActive={setShowSettings} client={client}/>
       </div>

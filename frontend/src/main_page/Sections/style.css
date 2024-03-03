@@ -8,6 +8,8 @@
     padding-right: 20px;
     padding-top: 5px;
     border-radius: 20px;
+    cursor: pointer;
+    overflow: hidden;
 }
 
 .vertical-container:hover {
@@ -16,7 +18,7 @@
 }
 
 .vertical-container:hover .vertical-rectangle {
-    border: 1px solid var(--collection-1-font-2);
+    /* border: 1px solid var(--collection-1-font-2); */
 }
 
 .vertical-container.add-book:hover {
@@ -71,17 +73,20 @@
     justify-content: center;
     align-items: center;
     border-radius: 5px;
+    cursor: pointer;
 }
 
 .section-icon:hover {
-    border: 1px solid var(--collection-1-font-2);
-    background-color: rgb(156, 118, 118);
+    /* border: 1px solid var(--collection-1-font-2); */
+    /* background-color: rgb(156, 118, 118); */
 }
 
 .trashbin-icon {
+    opacity: 0;
     background-color: rgba(var(--collection-1-blocks-no-a), 0.36);
     border-radius: 5px;
     margin-right: 10px;
+    transition: all 0.3s ease;
 }
 
 input[type=text] {
@@ -107,10 +112,14 @@ input[type=text] {
     width: calc(100% - 100px);
     margin: 20px 50px; 
 }
+
+.custom-container:hover .trashbin-icon{
+    opacity: 1;
+}
   
 .custom-rectangle {
     position: flex;
-    min-height: 150px;
+    min-height: 300px;
     background-color: rgba(var(--collection-1-blocks-no-a), 0.96);
     border-radius: 10px; 
     flex-direction: row;
@@ -121,10 +130,40 @@ input[type=text] {
     box-shadow: 0 16px 24px rgba(0, 0, 0, 0.1);
 }
 
+.custom-rectangle-create-section {
+    position: flex;
+    min-height: 300px;
+    background-color: rgba(var(--collection-1-blocks-no-a), 0);
+    border-radius: 10px; 
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    transition: all 0.3s ease;
+    height: 100%;
+    width: 100%;
+    cursor: pointer;
+}
+
+.custom-container:hover .custom-rectangle-create-section{
+    background-color: rgba(var(--collection-1-blocks-no-a), 0.2);
+}
+
+.custom-rectangle-create-section .section-icon{
+    fill: var(--collection-1-font-1);
+    height: 60px;
+    width: 500px;
+    opacity: 0.5;
+    transition:all 0.3s ease;
+}
+
+.custom-rectangle-create-section:hover .section-icon{
+    opacity: 1;
+}
+
 .book-cover {
     width: 100%;
     height: 100%;
-    border-radius: 12px;
+    border-radius: 4px;
 }
   
 .name-text {
@@ -192,6 +231,7 @@ input[type=text] {
     justify-content: space-around;
     width: 100px;
     visibility: hidden;
+    margin-bottom: 5px;
 }
 
 .plus-icon {
