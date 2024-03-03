@@ -128,6 +128,7 @@ export const BookMenu = () => {
                 color: 'yellow'
             }
             newHighlightAreas.push(highlight)
+            
             props.setHighlightAreas_(newHighlightAreas)
             sendHighlight(props.client_, highlight, props.book_id_)
         }
@@ -140,7 +141,7 @@ export const BookMenu = () => {
             highlight.text = getTextInsideRectangle(highlight);
             // console.log(highlight.text);
             newHighlightAreas.push(highlight);
-            // console.log(newHighlightAreas);
+            console.log(newHighlightAreas);
             setHighlightAreas(newHighlightAreas)
             sendHighlight(props.client_, highlight, props.book_id_)
         }
@@ -185,6 +186,14 @@ export const BookMenu = () => {
         
     }
     
+    function copy({ event, props }) {
+        const selection = window.getSelection();
+        if (selection) {
+            const text = selection.toString();
+            navigator.clipboard.writeText(text);
+        }
+    }
+    
     function displayMenu(e) {
         show({
             event: e,
@@ -198,13 +207,14 @@ export const BookMenu = () => {
         <Menu id={MENU_ID} preventDefaultOnKeydown={false} theme="dark">
             <Item onClick={mark}>Mark</Item>
             <Item onClick={unmark}>Unmark</Item>
-            <Separator />
+            <Item onClick={copy}>Copy</Item>
+            {/* <Separator />
             <Item disabled>Disabled</Item>
             <Separator />
             <Submenu label="Submenu">
                 <Item onClick={handleItemClick}>Sub Item 1</Item>
                 <Item onClick={handleItemClick}>Sub Item 2</Item>
-            </Submenu>
+            </Submenu> */}
         </Menu>
     );
 }

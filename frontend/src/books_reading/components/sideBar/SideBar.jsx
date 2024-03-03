@@ -24,7 +24,8 @@ export const SideBar = ({
   client,
   loadedEpubs,
   setLoadedEpubs,
-  setSectionName
+  setSectionName,
+  userData
 }) => {
   const [openedProps, setProps] = useState(null);
   
@@ -32,7 +33,7 @@ export const SideBar = ({
     if (openedProps === bookName) setProps(null); else {setProps(bookName);}
   };
   
-  const options = ['Account', 'Settings', 'Log out'];
+  const options = ['Settings', 'Log out'];
   const [selectedOption, setSelectedOption] = useState(null);
 
   const [hidden, setHidden] = useState(false);
@@ -44,12 +45,9 @@ export const SideBar = ({
     console.log(selectedOption);
     switch (option) {
       case options[0]:
-        console.log(options[0]);
-        break;
-      case options[1]:
         settingsSetActive(true);
         break;
-      case options[2]:
+      case options[1]:
         console.log(options[2]);
         fetchLogout(client, navigate);
         break;
@@ -239,7 +237,7 @@ export const SideBar = ({
             mainText={
               <div className="button-content">
                 <UserIcon className='icon-user' />
-                <div className="username">Username</div>
+                <div className="username">{ userData.username }</div>
               </div>
             }
           />

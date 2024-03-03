@@ -27,7 +27,7 @@
     bottom: 100%;
     left: 0;
     width: 100%;
-    background-color: var(--collection-1-blocks);
+    background-color: var(--collection-1-bg);
     padding: 5px;
     margin-bottom: 10px;
     border-radius: 8px;
@@ -40,6 +40,10 @@
 .dropdown-menu .overlap-group{
     margin: 0px;
     border-radius: 10px;
+}
+
+.dropdown-menu .overlap-group:hover {
+    background-color: var(--collection-1-block2);
 }
 
 .dropdown-menu.show {

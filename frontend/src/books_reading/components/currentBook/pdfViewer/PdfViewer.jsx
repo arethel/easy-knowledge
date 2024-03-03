@@ -24,10 +24,18 @@ export const PdfViewer = ({
     pages,
     setPages,
     client,
-    highlightAreas,
-    setHighlightAreas,
-    setHighlightPluginInstance
-    }) => {
+    highlightAreasInit,
+    setHighlightPluginInstance,
+    highlightAreasBooks,
+    setHighlightAreasBooks,
+}) => {
+    
+    const [highlightAreas, setHighlightAreas] = useState(highlightAreasInit);
+    
+    useEffect(() => {
+        setHighlightAreasBooks({ ...highlightAreasBooks, [book_id]: highlightAreas });
+        return () => { }
+    }, [highlightAreas]);
     
     const { show } = useContextMenu({
         id: 'book-menu',
@@ -36,17 +44,18 @@ export const PdfViewer = ({
     const [pagesContainer, setPagesContainer] = useState(null);
     
     const onDocumentLoad = async (e) => {
+        console.log('onDocumentLoad');
         setPages({ ...pages, [book_id]: e.doc.numPages });
         const el = pdfViewerRef.current.querySelector('.rpv-core__inner-pages').children[0];
         setPagesContainer(el);
         await new Promise((resolve) => setTimeout(resolve, 2000));
-        setDocumentUpdated(!documentUpdated)
+        setDocumentUpdated(new Date().getTime())
     };
-    const [documentUpdated, setDocumentUpdated] = useState(false);
+    const [documentUpdated, setDocumentUpdated] = useState(new Date().getTime());
     
     const handlePageChange = (e) => {
         setCurrentPage({...currentPage, [book_id]:e.currentPage});
-        setDocumentUpdated(!documentUpdated)
+        setDocumentUpdated(new Date().getTime())
     };
     
     const [showRectangle, setShowRectangle] = useState(false);
@@ -72,10 +81,10 @@ export const PdfViewer = ({
         const { clientHeight, clientWidth } = e.srcElement;
         const page = parseInt(e.srcElement.offsetParent.attributes[2].value);
         setStartPosition({ x: offsetX, y: offsetY, page: page, rectX: layerX, rectY: layerY, height: clientHeight, width: clientWidth });
+        setEndPosition({ x: offsetX, y: offsetY, page: page, rectX: layerX, rectY: layerY, height: clientHeight, width: clientWidth });
         console.log({ x: offsetX, y: offsetY, page: page, rectX: layerX, rectY: layerY, height: clientHeight, width: clientWidth });
         setMouseDown(true);
         setShowRectangle(true);
-        setEndPosition(null);
     };
     
     const handleMouseUp = (e) => {
@@ -111,7 +120,6 @@ export const PdfViewer = ({
     };
     
     const handleClick = (e) => {
-        console.log('click');
         if (
             showRectangle &&
             !mouseDown &&
@@ -148,9 +156,10 @@ export const PdfViewer = ({
     
     useEffect(() => {
         if (booksInfo[book_id] === undefined) return;
+        console.log('setHighlightAreas');
         setHighlightAreas(booksInfo[book_id].highlights);
         return () => { }
-    }, [booksInfo, book_id]);
+    }, []);
     
     let highlightProps = null;
     const [textHighlightProps, setTextHighlightProps] = useState({selectedText:null});
@@ -201,7 +210,22 @@ export const PdfViewer = ({
         return () => { }
     }, []);
     
+    const [updateTimer, setUpdateTimer] = useState(new Date().getTime());
+    
     useEffect(() => {
+        
+        function getTime() {
+            return new Date().getTime();
+        }
+        
+        setInterval(() => {
+            setUpdateTimer(getTime());
+        }, 1000);
+        return () => { }
+    }, []);
+    
+    useEffect(() => {
+        console.log('event listeners');
         const elements = Array.from(document.querySelectorAll('.rpv-core__text-layer'));
         elements.forEach((element) => {
             element.addEventListener('mousedown', handleMouseDown);
@@ -218,7 +242,7 @@ export const PdfViewer = ({
                 element.removeEventListener('click', handleClick);
             });
         };
-    }, [documentUpdated, setDocumentUpdated, startPosition, setStartPosition, endPosition, setEndPosition, textHighlightProps]);
+    }, [documentUpdated, setDocumentUpdated, startPosition, setStartPosition, endPosition, setEndPosition, textHighlightProps, updateTimer]);
     
     useEffect(() => {
         const elements = Array.from(document.querySelectorAll('.rpv-core__text-layer-text'));

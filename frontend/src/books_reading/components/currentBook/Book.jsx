@@ -50,7 +50,7 @@ export const Book = ({
                 newBooksInfo[book_id] = response.data.book_info;
                 setBooksInfo(newBooksInfo);
             }
-            console.log(response.data);
+            console.log('getBookInfo',response.data);
             return response.data.book_info;
         } catch (error) {
             console.error("Error fetching book info:", error);
@@ -99,10 +99,11 @@ export const Book = ({
     
     const [pdfViewers, setPdfViewers] = useState({});
     const updatePdfViewer = (bookId, pdfViewerComponent) => {
-        setPdfViewers(prevState => ({
-          ...prevState,
-          [bookId]: pdfViewerComponent
-        }));
+        if (pdfViewers[bookId] === undefined)
+            setPdfViewers(prevState => ({
+            ...prevState,
+            [bookId]: pdfViewerComponent
+            }));
     };
     
     const deletePdfViewer = (bookId) => {
@@ -133,30 +134,36 @@ export const Book = ({
                 console.log(bookInfo);
                 if (bookInfo === undefined) return;
                 if (currentPage[book_id] !== bookInfo.page)
-                    setCurrentPage({...currentPage, [book_id]:bookInfo.page})
+                    setCurrentPage({ ...currentPage, [book_id]: bookInfo.page })
+                
+                if (pdfViewers[book_id] === undefined) {
+                    console.log('updatePdfViewer');
+                    updatePdfViewer(book_id, () => (
+                        <PdfViewer
+                            pdfUrl={loadedEpubs[book_id] === undefined ? '' : loadedEpubs[book_id]}
+                            book_id={book_id}
+                            booksInfo={{[book_id]: bookInfo}}
+                            setBooksInfo={setBooksInfo}
+                            currentPage={currentPage}
+                            setCurrentPage={setCurrentPage}
+                            pageNavigationPluginInstance={pageNavigationPluginInstance}
+                            maxWidth_={TopBarWidth}
+                            setPages={setPages}
+                            pages={pages}
+                            client={client}
+                            highlightAreasInit={booksInfo[book_id] === undefined ? [] : booksInfo[book_id].highlights}
+                            highlightAreasBooks={highlightAreas}
+                            setHighlightAreasBooks={setHighlightAreas}
+                            setHighlightPluginInstance={setHighlightPluginInstance}
+                        />
+                    ));
+                }
             });
-            updatePdfViewer(book_id, () => (
-                <PdfViewer
-                    pdfUrl={loadedEpubs[book_id] === undefined ? '' : loadedEpubs[book_id]}
-                    book_id={book_id}
-                    booksInfo={booksInfo}
-                    setBooksInfo={setBooksInfo}
-                    currentPage={currentPage}
-                    setCurrentPage={setCurrentPage}
-                    pageNavigationPluginInstance={pageNavigationPluginInstance}
-                    maxWidth_={TopBarWidth}
-                    setPages={setPages}
-                    pages={pages}
-                    client={client}
-                    highlightAreas={highlightAreas}
-                    setHighlightAreas={setHighlightAreas}
-                    setHighlightPluginInstance={setHighlightPluginInstance}
-                />
-            ));
+            
         }
         
         return () => { };
-    }, [book_id, loadedEpubs]);
+    }, [book_id, loadedEpubs, booksInfo]);
     
     const bookRef = useRef(null);
     
@@ -214,84 +221,12 @@ export const Book = ({
             }
         };
     }, [sideId, topId]);
-    
-    // const getUpperVisibleDiv = () => {
-    //     const content = scrollRef.current;
-    //     if (content) {
-    //         const { scrollTop, clientHeight } = content;
-    //         const divs = document.querySelectorAll('.book-element.paragraph'); // Replace with your div selector
-    
-    //         for (let i = 0; i < divs.length; i++) {
-    //             const div = divs[i];
-    //             const { top, bottom } = div.getBoundingClientRect();
-    //             if (top >= 0 && bottom <= clientHeight) {
-    //                 // Return the div that is fully visible in the upper portion
-    //                 return div;
-    //             }
-    //         }
-    //     }
-    //     return null;
-    // };
-    
-    // const getPageFromClassName = (className) => {
-    //     const match = className.match(/page-(\d+)/);
-    //     if (match && match[1]) {
-    //         return parseInt(match[1]);
-    //     }
-    //     return null;
-    // };
-    
-    // const scrollRef = useRef(null);
-    // const scrollSignal = 0.2;
-    // useEffect(() => {
-    //     const handleScroll = () => {
-    //         const content = scrollRef.current;
-    //         if (content) {
-    //             const { scrollTop, scrollHeight, clientHeight } = content;
-    //             const isAtBottom = scrollTop + clientHeight >= scrollHeight * (1 - scrollSignal);
-    //             const isAtTop = scrollTop <= scrollHeight * scrollSignal;
-    //             // console.log(content.scrollHeight > content.clientHeight);
-    //             const upperVisibleDiv = getUpperVisibleDiv();
-    //             const currentPage = upperVisibleDiv ? getPageFromClassName(upperVisibleDiv.className) : null;
-    //             setCurrentPage(currentPage);
-    //             // if (isAtBottom) {
-    //             //     // Logic to add items at the bottom
-    //             //     console.log("Reached bottom");
-    //             // }
-
-    //             // if (isAtTop) {
-    //             //     // Logic to remove items from the top
-    //             //     console.log("Reached top");
-    //             // }
-    //         }
-    //     };
-
-    //     const content = scrollRef.current;
-    //     if (content) {
-    //         content.addEventListener("scroll", handleScroll);
-    //     }
-
-    //     return () => {
-    //         if (content) {
-    //             content.removeEventListener("scroll", handleScroll);
-    //         }
-    //     };
-    // }, []);
-    
     return (
         <div className="book" ref={bookRef} style={{ height: constantHeight }} >
-            {/* <div className="paragraphs" ref={scrollRef} style={{ height: constantHeight }}>
-                {paragraphs.map((paragraph, index) => (
-                    <Paragraph key={index} mainText={''} text={paragraph.content} page={Number(paragraph.page) + 1} />
-                ))}
-                {/*
-                <EndOfParagraph/>
-                <NewChapter text='New chapter'/>
-            </div>*/}
-            <PagesCount page={currentPage[book_id]===undefined? 0: currentPage[book_id]} totalPages={pages[book_id]?pages[book_id]:0} /> 
+            <PagesCount page={currentPage[book_id]===undefined? 1: currentPage[book_id]+1} totalPages={pages[book_id]?pages[book_id]:0} /> 
             {Object.keys(pdfViewers).length > 0 ? Object.keys(pdfViewers).map((bookId, index) => {
                 return (
-                    <div key={index} className={`pdf-viewer-container ${bookId!==book_id?'hide':''}`}>
+                    <div key={index} className={`pdf-viewer-container ${bookId!=book_id?'hide':''}`}>
                         {renderPdfViewer(bookId)}
                     </div>
                 );

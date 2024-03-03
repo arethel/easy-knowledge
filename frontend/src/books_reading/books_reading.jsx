@@ -42,7 +42,7 @@ export const BooksReading = ({ userData, client, URL }) => {
         try {
             const response = await client.get("api/opened-books");
             setOpenedBooks(response.data.opened_books_data);
-            console.log('check', response.data.opened_books_data);
+            // console.log('check', response.data.opened_books_data);
             const lastSection = response.data.last_section_data
             setBooksInFolder(lastSection.sections);
             // console.log(lastSection);
@@ -60,7 +60,7 @@ export const BooksReading = ({ userData, client, URL }) => {
     const [testsPanel, setTestsPanel] = useState(false);
     const [testPanel, setTestPanel] = useState(false);
     const [highlightsPanel, setHighlightsPanel] = useState(false);
-    const [highlightAreas, setHighlightAreas] = useState([]);
+    const [highlightAreas, setHighlightAreas] = useState({});
     const [highlightPluginInstance, setHighlightPluginInstance] = useState(null);
     const [test_id, setTest_id] = useState(0);
     const [book_id, setBook_id] = useState(0);
@@ -85,6 +85,7 @@ export const BooksReading = ({ userData, client, URL }) => {
                     client={client}
                     loadedEpubs={loadedEpubs}
                     setLoadedEpubs={setLoadedEpubs}
+                    userData={userData}
                 />
             )}
             <div className="main-container">
@@ -103,7 +104,7 @@ export const BooksReading = ({ userData, client, URL }) => {
                     toggleSidebar={toggleSidebar}
                 />
                 <div className="book-area">
-                    <Logo />
+                    {/* <Logo /> */}
                     <Book
                         booksDictionary={openedBooks}
                         book_id={book_id}
@@ -142,6 +143,7 @@ export const BooksReading = ({ userData, client, URL }) => {
                 highlightPluginInstance={highlightPluginInstance}
             />
             <Highlights
+                book_id={book_id}
                 active={highlightsPanel}
                 setActive={setHighlightsPanel}
                 book_info={booksInfo[book_id]}
