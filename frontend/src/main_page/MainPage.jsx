@@ -12,6 +12,7 @@ import { MyCircularProgress } from './Sections/MyCircularProgress';
 import { useTranslation } from "react-i18next";
 import './style.css'
 import MyAlert from "./MyAlert.jsx";
+import {SubscribtionWindow} from "../subscribtions_window/SubscribtionWindow";
 
 export const MainPage = ({ userData, client }) => {
   const sectionsContainerRef = useRef(null);
@@ -25,6 +26,7 @@ export const MainPage = ({ userData, client }) => {
   const { t } = useTranslation();
   const [openAlert, setOpenAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
+  const [subscribtionWindow, setSubscribtionWindow] = useState(false);
 
   useEffect(() => {
     localStorage.setItem("globalLoading", globalLoading);
@@ -36,12 +38,18 @@ export const MainPage = ({ userData, client }) => {
   });
 
   useEffect(() => {
+    
+    window.scrollTo(0, 0);
+    
     const fetchData = async () => {
       try {
         const response = await client.get("api/section/all");
         console.log(response.data.sections);
         setSections(response.data.sections);
         setLoading(false);
+        window.onload = () => {
+          window.scrollTo(0, 0);
+        };
       } catch (error) {
         console.error("Error fetching data:", error);
         setLoading(false);
@@ -115,13 +123,14 @@ export const MainPage = ({ userData, client }) => {
     }
   };
 
-  useEffect(() => {
-    if (sectionsContainerRef.current && sectionsContainerRef.current.lastChild) {
-      const newSection = sectionsContainerRef.current.lastChild;
-      const topPos = newSection.offsetTop + newSection.offsetHeight;
-      window.scrollTo({ top: topPos, behavior: 'smooth' });
-    }
-  }, [sections]);
+  // useEffect(() => {
+  //   if (sectionsContainerRef.current && sectionsContainerRef.current.lastChild) {
+  //     const newSection = sectionsContainerRef.current.lastChild;
+  //     const topPos = newSection.offsetTop + newSection.offsetHeight;
+  //     // window.scrollTo({ top: topPos, behavior: 'smooth' });
+  //   }
+    
+  // }, [sections]);
 
   if (loading) {
     return (
@@ -130,12 +139,13 @@ export const MainPage = ({ userData, client }) => {
       </div>
     );
   }
-
+  
+  
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="flex flex-col min-w-full bg-bgColor min-h-full">
-        <MyAlert open={openAlert} setOpen={setOpenAlert} severity={"error"} message={alertMessage} t={t}/>
-        <TopBar userData={userData} handleCreateSection={handleCreateSection} setShowSettings={setShowSettings} client={client} t={t}/>
+        <MyAlert open={openAlert} setOpen={setOpenAlert} severity={"error"} message={alertMessage} t={t} />
+        <TopBar userData={userData} handleCreateSection={handleCreateSection} setShowSettings={setShowSettings} client={client} t={t} setSubscribtionWindow={setSubscribtionWindow}/>
         <AlertDialog open={open} handleClose={handleClose} actionConfirmation={actionConfirmation} type={"Section"} t={t}/>
         <Divider variant="middle" className="main-divider" />
         <div ref={sectionsContainerRef}> 
@@ -154,7 +164,8 @@ export const MainPage = ({ userData, client }) => {
           {sections.length < userData.max_sections? <CreateSection createSection={handleCreateSection} />: null}
           
         </div>
-        <Settings active={showSettings} setActive={setShowSettings} client={client}/>
+        <Settings active={showSettings} setActive={setShowSettings} client={client} />
+        <SubscribtionWindow active={ subscribtionWindow } setActive={setSubscribtionWindow} userData={userData} client={client} />
       </div>
     </DndProvider>
   );

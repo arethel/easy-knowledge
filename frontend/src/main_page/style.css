@@ -72,6 +72,29 @@ body {
     margin-right: 30px;
 }
 
+.topbar .left-part{
+    display: flex;
+    align-items: center;
+    
+}
+
+.topbar .subscribtion-button{
+    padding: 5px 10px;
+    margin-left: 20px;
+    border: none;
+    background-color: var(--collection-1-blocks);
+    font-family: var(--smaller-font-font-family, "Inter-Regular", Helvetica);
+    font-size: 18px;
+    color: var(--collection-1-font-2);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.topbar .subscribtion-button:hover{
+    background-color: #308fe8;
+}
+
 .topbar-buttons {
     display: flex;
     align-items: center;

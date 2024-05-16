@@ -3,6 +3,7 @@
   --big-font-font-size: 32px;
   --big-font-font-style: normal;
   --big-font-font-weight: 400;
+  --big-font-font-weight2: 600;
   --big-font-letter-spacing: 0px;
   --big-font-line-height: normal;
   --collection-1-bg: rgba(34, 40, 49, 1);
@@ -20,6 +21,7 @@
   --collection-1-font-3: rgb(87, 124, 145);
   --collection-1-gold: rgba(255, 187, 92, 1);
   --collection-1-grey: rgb(121, 121, 121);
+  --collection-1-green: rgb(45, 156, 45);
   --main-font-font-family: "Inter-Regular", Helvetica;
   --main-font-font-size: 22px;
   --bigger-font-font-size: 26px;

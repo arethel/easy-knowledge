@@ -1,0 +1,85 @@
+.sub-type{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 20px;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: var(--collection-1-bg);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    transition: 0.3s;
+    user-select: none;
+}
+
+.sub-type.only-text{
+    background-color: rgba(0, 0, 0, 0);
+    box-shadow: none;
+    
+}
+
+.sub-type .title{
+    font-family: var(--main-font-font-family);
+    font-size: var(--bigger-font-font-size);
+    font-style: var(--main-font-font-style);
+    font-weight: var(--main-font-font-weight);
+    letter-spacing: var(--main-font-letter-spacing);
+    line-height: var(--main-font-line-height);
+    color: var(--color-greyD3);
+    margin: 20px;
+}
+
+.sub-type .title.only-text{
+    color: rgba(0, 0, 0, 0);
+}
+
+.sub-type .option{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    border-radius: 5px;
+    transition: 0.3s;
+    color: var(--collection-1-font-2);
+    width: 100%;
+}
+
+.sub-type .option .item{
+    font-family: var(--main-font-font-family);
+    font-size: var(--smaller-font-font-size);
+    font-style: var(--main-font-font-style);
+    font-weight: var(--main-font-font-weight);
+    letter-spacing: var(--main-font-letter-spacing);
+    line-height: var(--main-font-line-height);
+    color: var(--collection-1-font-2);
+    margin: 5px;
+
+}
+
+.sub-type .subscribe-button{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin: 20px;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: var(--collection-1-blocks);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    transition: 0.3s;
+    color: var(--collection-1-font-2);
+    font-size: var(--smaller-font-font-size);
+    font-family: var(--main-font-font-family);
+    font-size: var(--smaller-font-font-size);
+    font-style: var(--main-font-font-style);
+    font-weight: var(--main-font-font-weight);
+    letter-spacing: var(--main-font-letter-spacing);
+    line-height: var(--main-font-line-height);
+    width: 100%;
+    cursor: pointer;
+}
+
+.sub-type .subscribe-button:hover{
+    background-color: var(--collection-1-blocks-half-alpha);
+}

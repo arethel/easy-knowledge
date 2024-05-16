@@ -39,6 +39,7 @@
     align-items: center;
     justify-content: flex-start;
     padding-left: 20px;
+    user-select: none;
 }
 
 .logo-container-main {

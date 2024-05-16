@@ -1,0 +1,63 @@
+.subscribtion-window{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.no-scroll {
+    overflow: hidden;
+}
+
+.subscribtion-window .panel {
+    width: auto;
+    height: auto;
+    background-color: var(--collection-1-bg2);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    position: relative;
+}
+
+.subscribtion-window .panel .sub-types-container{
+    display: flex;
+    flex-direction: row;
+    align-items: start;
+    justify-content: center;
+}
+
+.subscribtion-window .icon {
+    width: 1.1em;
+    height: 1.1em;
+}
+
+.subscribtion-window .subscribtion-cross.under-icon-circle{
+    height: 30px;
+    right: 0px;
+    position: absolute;
+    top: 0px;
+    transform: translateY(0%);
+    margin: 7px;
+    width: 30px;
+    visibility: visible;
+    opacity: 1.0;
+    justify-content: center;
+    align-items: center;
+}
+
+.subscribtion-window .subscribtion-cross.under-icon-circle:hover{
+    background-color: var(--collection-1-blocks);
+}
+
+.subscribtion-window .svg-container {
+    height: 18px;
+    width: 18px;
+    display: flex;
+}
