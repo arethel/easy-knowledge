@@ -1,5 +1,6 @@
 .test-element-div{
     width: 100%;
+    position: relative;
 }
 
 .test-element {
@@ -85,4 +86,47 @@
 .tests .test-element-create-box {
     height: 100%;
     margin: 0 20px;
+}
+
+.tests .error-in-generation-container{
+    position: absolute;
+    left: 10px;
+}
+
+.tests .error-in-generation{
+    position: absolute;
+    height: 30px;
+    width: 30px;
+    color: var(--collection-1-font-1);
+    transform: translateY(-50%);
+}
+
+.tests .error-in-generation-popover{
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    width: 300px;
+    background-color: var(--collection-1-blocks-half-alpha);
+    border-radius: 5px;
+    display: flex;
+    padding: 5px;
+    flex-direction: column;
+    z-index: 100;
+    cursor: default;
+    visibility: hidden;
+    color: var(--collection-1-font-2);
+    font-family: var(--big-font-font-family);
+    font-size: 8;
+}
+
+.tests .error-in-generation:hover ~ .error-in-generation-popover{
+    visibility: visible;
+}
+
+.tests .error-in-generation-popover .title{
+    font-size: 12px;
+    font-weight: 600;
+}
+.tests .error-in-generation-popover .description{
+    font-size: 12px;
 }

@@ -523,7 +523,7 @@ class BookProcessing(viewsets.ViewSet):
         for qa_ in qa:
             qa_data = {'highlight': qa_.highlight, 'question': qa_.question, 'answer': qa_.answer, 'generated': qa_.generated}
             test_data.append(qa_data)
-        return Response({'error': 0, 'test': test_data})
+        return Response({'error': 0, 'test': test_data, 'test_length': len(test_data)})
     
     def get_limitations_info(self, request):
         user = request.user

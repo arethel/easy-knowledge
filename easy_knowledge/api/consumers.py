@@ -54,11 +54,12 @@ class GetTestInfo(AsyncWebsocketConsumer):
                 if (((failed or result == 'FAILURE') and task_id != '') or task_id == '') and not test.is_ready:
                     test.is_ready = True
                     await sync_to_async(test.save)()
-                test_info.append({'id': test.id, 
+                test_info.append({'id': test.id,
                                   'name': test.name,
-                                  'qa_count': test.qa_count, 
-                                  'is_ready': test.is_ready, 
-                                  'progress': progress, 
+                                  'qa_count': test.qa_count,
+                                  'is_ready': test.is_ready,
+                                  'progress': progress,
+                                  'qa_errors_count': test.qa_errors_count,
                                   'creation_date': test.creation_date.strftime('%d.%m.%Y')})
                 test_info.sort(key=lambda x: x['id'], reverse=False)
                 if not test.is_ready:

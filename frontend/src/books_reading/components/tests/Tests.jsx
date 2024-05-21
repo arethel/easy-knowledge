@@ -4,6 +4,7 @@ import { Icon } from "../reusableComponents/icons/Icons.jsx"
 import { ReactComponent as Cross } from '../../../images/cross.svg';
 import { TestElement } from "./testElement/TestElement.jsx";
 
+
 const Tests = forwardRef(({booksDictionary, activateTest, setTestId, test, client, URL, book_id=0, active = false, setActive = null}, ref) => {
     
     const [availableQuestions, setAvailableQuestions] = useState(0);
@@ -101,6 +102,7 @@ const Tests = forwardRef(({booksDictionary, activateTest, setTestId, test, clien
                                 questions={test.qa_count}
                                 testName={test.name}
                                 progress={test.progress}
+                                popover={test.qa_errors_count>0}
                             />
                         ))}
                         < TestElement

@@ -97,6 +97,7 @@ class QA(models.Model):
     question = models.TextField(default='')
     answer = models.TextField(default='')
     generation_task_id = models.CharField(max_length=200, default='')
+    error = models.BooleanField(default=False)
 
     class Meta:
         db_table = 'question_answers'
@@ -108,11 +109,15 @@ class Test(models.Model):
     name = models.CharField(max_length=200, default='Test')
     creation_date = models.DateField(auto_now_add=True)
     qa_count = models.IntegerField(default=0)
+    qa_errors_count = models.IntegerField(default=0)
     is_ready = models.BooleanField(default=False)
     generation_task_id = models.CharField(max_length=200, default='')
     
     async def get_progress(self):
-        progress = await sync_to_async(self.qa.filter(generated=True).count)() / self.qa_count * 100
+        if self.qa_count>0:
+            progress = await sync_to_async(self.qa.filter(generated=True).count)() / self.qa_count * 100
+        else:
+            progress = 100
         if progress == 100:
             self.is_ready = True
             await sync_to_async(self.save)()

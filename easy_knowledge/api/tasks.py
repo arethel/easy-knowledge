@@ -45,14 +45,19 @@ gpt_rate_limit = 500
 @shared_task(queue = 'generate_qa', ignore_result=True, rate_limit=f'{gpt_rate_limit}/m')
 def generate_qa(qa_id, content):
     qa_ = create_question(content)
-    print(qa_)
-    qa_ = qa_.split('<!>')
-    qa = QA.objects.get(id=qa_id)
-    qa.question = qa_[0].replace('<?>', '')
-    qa.answer = qa_[1]
-    print(qa.question, qa.answer)
-    qa.generated = True
-    qa.save()
+    
+    try:
+        qa_ = qa_.split('<!>')
+        qa = QA.objects.get(id=qa_id)
+        qa.question = qa_[0].replace('<?>', '')
+        qa.answer = qa_[1]
+        qa.generated = True
+        qa.save()
+    except:
+        qa = QA.objects.get(id=qa_id)
+        qa.error = True
+        qa.save()
+        
     
 @shared_task(queue = 'create_test')
 def create_test_c(user_id, processed_book_id, test_id):
@@ -64,16 +69,44 @@ def create_test_c(user_id, processed_book_id, test_id):
     highlights = processed_book.highlights
     test = create_test(qa_count, highlights)
     test_len = len(test)
-    test_db.qa_count = test_len
     test_db.save()
-    user_limitations.used_questions += test_len
-    user_limitations.save()
     print(test_len)
     for i in range(test_len):
         qa = QA.objects.create(highlight=test[i], test=test_db)
-        qa_gen = generate_qa.delay(qa.id, test[i]['text'])
-        qa.generation_task_id = qa_gen.id
+        content = test[i]['text']
+        if len(content) < user_limitations.max_gpt_request_length:
+            qa_gen = generate_qa.delay(qa.id, content)
+            qa.generation_task_id = qa_gen.id
+        else:
+            qa.error = True
         qa.save()
+    
+    check_test.delay(user_id, test_db.id)
     
     return test
     
+@shared_task(queue = 'check_test')
+def check_test(user_id, test_id):
+    user = User.objects.get(id=user_id)
+    user_limitations = UserLimitations.objects.get(user=user)
+    test = Test.objects.get(id=test_id)
+    while True:
+        stop = True
+        qas = QA.objects.filter(test=test)
+        for qa in qas:
+            if not qa.generated:
+                stop = False
+            if qa.error:
+                test.qa_errors_count += 1
+                qa.delete()
+        
+        if stop:
+            break
+        
+        time.sleep(1)
+    
+    qa_amount = QA.objects.filter(test=test).count()
+    test.qa_count = qa_amount
+    test.save()
+    user_limitations.used_questions += qa_amount
+    user_limitations.save()
