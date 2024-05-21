@@ -38,6 +38,8 @@ class UserLimitations(models.Model):
     used_questions = models.IntegerField(default=0)
     last_update_questions = models.DateField(auto_now_add=True)
     
+    max_files_size = models.IntegerField(default=100)
+    
     def get_available_questions(self):
         if self.last_update_questions != datetime.now().date():
             self.used_questions = 0

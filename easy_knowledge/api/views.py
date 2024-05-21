@@ -15,6 +15,16 @@ from PIL import Image
 import tempfile
 #from easyknowledge.pdf_processing.pdf_utils import extract_pdf_metadata, save_cover_image
 
+def sanitize_highlight(highlight):
+    """Remove null characters from highlight data."""
+    if isinstance(highlight, dict):
+        return {k: v.replace('\u0000', '') if isinstance(v, str) else v for k, v in highlight.items()}
+    elif isinstance(highlight, list):
+        return [sanitize_highlight(item) for item in highlight]
+    elif isinstance(highlight, str):
+        return highlight.replace('\u0000', '')
+    return highlight
+
 def extract_pdf_metadata(pdf_file):
     cover_image = None
     author = None
@@ -205,6 +215,7 @@ class BookUserInfo(viewsets.ViewSet):
         highlight = request.data.get('highlight')
         if highlight is None:
             return Response({'error': 1, 'details': 'No highlight provided'})
+        highlight = sanitize_highlight(highlight)
         processed_book.highlights.append(highlight)
         processed_book.save()
         return Response({'error': 0})
@@ -270,6 +281,12 @@ class BookView(viewsets.ViewSet):
         section = get_object_or_404(Section, id=section_id, user=user)
         cover_image, author, title = extract_pdf_metadata(book_file)
         len_books_in_section = len(Book.objects.filter(book_section=section))
+        books_size = 0
+        for book in Book.objects.filter(user=user):
+            books_size += book.book_file.size
+        
+        if (books_size + book_file.size)/(1024 * 1024) > user_limitations.max_files_size:
+            return Response({'error': 3, 'details': 'Not enough space'})
         book = Book(book_file=book_file, user=user, title=title, book_section=section, author=author, index=len_books_in_section, processed = True)
         if cover_image:
             cover_image_path = save_cover_image(cover_image)

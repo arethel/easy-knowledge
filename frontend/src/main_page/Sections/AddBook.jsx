@@ -38,6 +38,7 @@ export const AddBook = ({ onFileSelect, client, sectionId, globalLoading, setGlo
           console.error("Error during the API call", error);
           alert("Error during the API call");
         }
+        setLoading(false);
       } else {
         setGlobalLoading(prev => Math.max(prev - 1, 0));
         console.error("Invalid file type. Please choose a PDF file.");

@@ -45,6 +45,7 @@ gpt_rate_limit = 500
 @shared_task(queue = 'generate_qa', ignore_result=True, rate_limit=f'{gpt_rate_limit}/m')
 def generate_qa(qa_id, content):
     qa_ = create_question(content)
+    print(qa_)
     qa_ = qa_.split('<!>')
     qa = QA.objects.get(id=qa_id)
     qa.question = qa_[0].replace('<?>', '')
